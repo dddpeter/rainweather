@@ -1,6 +1,7 @@
 package com.dddpeter.app.rainweather;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.LocalActivityManager;
@@ -26,7 +27,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
-import com.baidu.ssslocation.BDLocation;
+import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
@@ -185,6 +186,7 @@ public class IndexActivity extends FinalActivity {
 
     };
     private Thread mThread;
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
@@ -226,11 +228,9 @@ public class IndexActivity extends FinalActivity {
                     File file2 = new File(IndexActivity.this.DATA_PATH + IndexActivity.this.DATA_NAME);
                     File file3 = new File(IndexActivity.this.DATA_PATH + IndexActivity.this.DATA_AIR);
                     SharedPreferences preferences = getSharedPreferences("night_picture", MODE_PRIVATE);
-                    preferences.edit().clear();
-                    preferences.edit().commit();
+                    preferences.edit().clear().apply();
                     preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
-                    preferences.edit().clear();
-                    preferences.edit().commit();
+                    preferences.edit().clear().apply();
                     if (file1.exists()) {
                         file1.delete();
                     }
@@ -282,7 +282,6 @@ public class IndexActivity extends FinalActivity {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 dialog.dismiss();
             }
         }).setNeutralButton("Wifi设置", new DialogInterface.OnClickListener() {
