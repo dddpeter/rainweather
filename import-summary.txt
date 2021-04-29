@@ -1,0 +1,107 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* LICENSE
+* README.md
+* ic_launcher-web.png
+* out\
+* out\production\
+* out\production\rainweather\
+* out\production\rainweather\com\
+* out\production\rainweather\com\dddpeter\
+* out\production\rainweather\com\dddpeter\app\
+* out\production\rainweather\com\dddpeter\app\rainweather\
+* out\production\rainweather\com\dddpeter\app\rainweather\AboutActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\AirActivity$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\AirActivity$2.class
+* out\production\rainweather\com\dddpeter\app\rainweather\AirActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\BuildConfig.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$1$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$2.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$3.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$4.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$5.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$6.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$7.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$8.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity$9.class
+* out\production\rainweather\com\dddpeter\app\rainweather\IndexActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\Manifest$permission.class
+* out\production\rainweather\com\dddpeter\app\rainweather\Manifest.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$anim.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$attr.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$color.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$dimen.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$drawable.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$id.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$layout.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$menu.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$string.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$style.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R$styleable.class
+* out\production\rainweather\com\dddpeter\app\rainweather\R.class
+* out\production\rainweather\com\dddpeter\app\rainweather\RecentActivity$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\RecentActivity$2.class
+* out\production\rainweather\com\dddpeter\app\rainweather\RecentActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\SplashScreenActivity$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\SplashScreenActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\TodayActivity$1.class
+* out\production\rainweather\com\dddpeter\app\rainweather\TodayActivity$2.class
+* out\production\rainweather\com\dddpeter\app\rainweather\TodayActivity.class
+* out\production\rainweather\com\dddpeter\app\rainweather\object\
+* out\production\rainweather\com\dddpeter\app\rainweather\object\ParamApplication.class
+* out\production\rainweather\com\dddpeter\app\rainweather\util\
+* out\production\rainweather\com\dddpeter\app\rainweather\util\FileOperator.class
+* proguard-project.txt
+* rainweather.iml
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:30.+
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app\src\main\AndroidManifest.xml
+* assets\ => app\src\main\assets\
+* libs\achartengine-1.0.0.jar => app\libs\achartengine-1.0.0.jar
+* libs\afinal-0.3.3-bin.jar => app\libs\afinal-0.3.3-bin.jar
+* libs\armeabi\liblocSDK3.so => app\src\main\jniLibs\armeabi\liblocSDK3.so
+* libs\jsoup-1.7.2.jar => app\libs\jsoup-1.7.2.jar
+* libs\locSDK_3.3.jar => app\libs\locSDK_3.3.jar
+* libs\okhttp-2.7.5.jar => app\libs\okhttp-2.7.5.jar
+* res\ => app\src\main\res\
+* src\ => app\src\main\java\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
