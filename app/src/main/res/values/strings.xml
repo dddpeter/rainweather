@@ -20,5 +20,5 @@
     <string name="about_info">知雨天气</string>
     <string name="title_activity_air">空气指数</string>
     <string name="reset">清除缓存</string>
-
+    <string name="blank_string"></string>
 </resources>

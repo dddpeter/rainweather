@@ -9,8 +9,6 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.dddpeter.app.rainweather.object.ParamApplication;
-
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
 
@@ -49,7 +47,7 @@ public class AirActivity extends FinalActivity {
 
 
     };
-    String airDetail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

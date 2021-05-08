@@ -11,7 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dddpeter.app.rainweather.object.ParamApplication;
+import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.dddpeter.app.rainweather.common.ACache;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -35,10 +36,12 @@ public class RecentActivity extends FinalActivity {
     final int REFRESH_MSG = 0x1000;
     @ViewInject(id = R.id.recent)
     RelativeLayout my;
+    ACache mCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCache = ACache.get(this);
         this.setContentView(R.layout.activity_recent);
 
         final TextView text = new TextView(this);
@@ -79,7 +82,7 @@ public class RecentActivity extends FinalActivity {
     }
 
     protected void updateContent(JSONObject weatherObjectDetail) throws JSONException, ParseException {
-        JSONObject temp0 = weatherObjectDetail.getJSONObject("weatherinfo");
+        JSONObject temp0 = mCache.getAsJSONObject(CacheKey.WEATHER_DATA);
         String todayStr = temp0.getString("date_y");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINESE);
         SimpleDateFormat sdf1 = new SimpleDateFormat("MM月dd日", Locale.CHINESE);

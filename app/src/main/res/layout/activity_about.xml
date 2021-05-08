@@ -1,16 +1,33 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".AboutActivity" >
+
+    <TextView
+        android:id="@+id/title_about"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_weight="20"
+        android:layout_marginTop="30px"
+        android:gravity="center"
+        android:text="@string/about_info"
+        android:textColor="@color/black_overlay"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/info"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/about_info"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
         android:background="@color/myblue"
+        android:gravity="top"
+        android:padding="18dp"
+        android:text="@string/about_info"
         android:textColor="@color/black_overlay"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textSize="20sp"
+        />
 
-</RelativeLayout>
+</LinearLayout>

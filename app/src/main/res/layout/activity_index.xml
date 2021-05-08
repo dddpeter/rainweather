@@ -9,46 +9,22 @@
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent">
 
-    	  <LinearLayout
-    	      android:layout_width="fill_parent"
-    	      android:layout_height="wrap_content"
-    	      android:background="@color/skyblue"
-    	      android:gravity="right"
-    	      android:orientation="horizontal" >
-
-    	 <ImageButton
-    	     android:id="@+id/imageButtonRefresh"
-    	     android:layout_width="fill_parent"
-    	     android:layout_height="wrap_content"
-    	     android:layout_weight="1"
-    	     android:background="@color/myblue"
-    	     android:src="@drawable/refresh" />
-
-        <ImageButton
-            android:id="@+id/imageButtonExit"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/myblue"
-            android:src="@drawable/exit" />
-        </LinearLayout>
-
-    	<TabWidget
+		<TabWidget
     	    android:id="@android:id/tabs"
     	    android:layout_width="fill_parent"
     	    android:layout_height="wrap_content"
     	    android:layout_weight="0.0"
     	    android:background="@color/myblue"
     	    android:visibility="gone" />
-        
+
     	<FrameLayout
     	    android:id="@android:id/tabcontent"
     	    android:layout_width="fill_parent"
     	    android:layout_height="fill_parent"
     	    android:layout_weight="1"
     	    android:background="@color/skyblue" >
-     
-    	    
+
+
     	</FrameLayout>
     <RadioGroup
         android:id="@+id/radioGroup1"
@@ -74,17 +50,17 @@
             android:id="@+id/radio1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="@string/tab2" 
+            android:text="@string/tab2"
               style="@style/tabs_bottom"
               android:drawableTop="@drawable/me"
             />
 
         <RadioButton
             android:id="@+id/radio2"
-            
+
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="@string/tab3" 
+            android:text="@string/tab3"
               style="@style/tabs_bottom"
               android:drawableTop="@drawable/air"/>
 
@@ -92,8 +68,8 @@
             android:id="@+id/radio3"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-             android:text="@string/tab4" 
-             style="@style/tabs_bottom"             
+             android:text="@string/tab4"
+             style="@style/tabs_bottom"
             android:drawableTop="@drawable/recent"
            />
 

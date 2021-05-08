@@ -1,8 +1,10 @@
 <resources>
 
-    <color name="black_overlay">#66FFFFFF</color>
+    <color name="ba_1">#E9DEB0</color>
+    <color name="black_overlay">#FFFFFFFF</color>
     <color name="skyblue">#663299CC</color>
-    <color name="myblue">#660099cc</color>
+    <color name="tips">#020F52</color>
+    <color name="myblue">#0099cc</color>
     <color name="transparent">#80000000</color>
 
 </resources>

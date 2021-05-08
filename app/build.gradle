@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.dddpeter.app.rainweather"
-        minSdkVersion 14
+        minSdkVersion 28
         targetSdkVersion 30
     }
 
@@ -23,14 +23,30 @@ android {
 }
 
 dependencies {
-    /* 引入所有libs目录的jar包
-    implementation fileTree(include: ['*.jar'], dir: 'libs')*/
+    /* 引入所有libs目录的jar包*/
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     implementation files('libs/afinal-0.3.3-bin.jar')
-    implementation files('libs/locSDK_3.3.jar')
-    implementation files('libs/QWeather_Public_Android_V4.4.jar')
+    implementation files('libs/achartengine-1.2.0.jar')
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
-    implementation group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
+    implementation 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    //noinspection GradleCompatible
+    implementation group: 'com.android.support', name: 'appcompat-v7', version: '28.0.0'
+
+
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { details ->
+                // Force all of the primary support libraries to use the same version.
+                if (details.requested.group == 'com.android.support') {
+                    if (!requested.name.startsWith("multidex")) {
+                        details.useVersion '28.0.0'
+                    }
+                }
+            }
+        }
+    }
 }

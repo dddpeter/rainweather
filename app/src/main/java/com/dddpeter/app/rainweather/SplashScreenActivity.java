@@ -12,14 +12,11 @@ public class SplashScreenActivity extends Activity {
 
         setContentView(R.layout.activity_splash_screen);
         //启动动画持续1秒钟
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
-                startActivity(intent);
-                SplashScreenActivity.this.finish();    // 结束启动动画界面
-            }
-        }, 2000);    //启动动画持续2秒钟
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
+            startActivity(intent);
+            SplashScreenActivity.this.finish();
+        }, 1000);
 
     }
 }

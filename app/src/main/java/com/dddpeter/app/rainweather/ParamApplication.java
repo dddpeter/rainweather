@@ -1,16 +1,12 @@
-package com.dddpeter.app.rainweather.object;
+package com.dddpeter.app.rainweather;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-
-import com.dddpeter.app.rainweather.util.FileOperator;
 
 import org.json.JSONObject;
 
 
 public class ParamApplication extends Application {
-    private final String DATA_PATH = "/sdcard/tmp/";
-    private final String DATA_AIR = "air.txt";
     private final String TAB_TAG_TODAY = "tab_tag_today";
     private final String TAB_TAG_RECENT = "tab_tag_recent";
     private final String TAB_TAG_AIR = "tab_tag_air";
@@ -20,25 +16,17 @@ public class ParamApplication extends Application {
     private JSONObject weatherObject = new JSONObject();
     private JSONObject weatherObjectDetail = new JSONObject();
 
+
+
     @Override
     public void onCreate() {
+        super.onCreate();
+
         initDayWeather();
         initNightWeather();
         initDistrict();
         initCities();
-        try {
-            String temp = FileOperator.readFile(DATA_PATH + DATA_AIR);
-            if (temp != null && !"".equals(temp.trim())) {
-                this.airInfo = temp;
-            } else {
-                this.airInfo = "<h6>暂时没有此地区的PM2.5信息或者获取信息失败</h6>";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            this.airInfo = "<h6>暂时没有此地区的PM2.5信息或者获取信息失败</h6>";
-        }
 
-        super.onCreate();
     }
 
     private void initCities() {
@@ -3036,7 +3024,6 @@ public class ParamApplication extends Application {
             editor.putString("南投", "101340404");
             editor.putString("花莲", "101340405");
             editor.putString("云林", "101340406");
-
             editor.putBoolean("init", true);
             editor.commit();
         }
