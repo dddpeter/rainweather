@@ -1,8 +1,16 @@
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/tabhost"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/myblue" >
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@android:id/tabhost"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@color/myblue">
+	<com.wang.avi.AVLoadingIndicatorView
+		android:id="@+id/loading"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:indicatorName="BallPulseIndicator"
+		app:indicatorColor="@color/tips"
+		/>
 
     <LinearLayout
     	android:orientation="vertical"
@@ -28,49 +36,52 @@
     	</FrameLayout>
     <RadioGroup
         android:id="@+id/radioGroup1"
-        android:background="@drawable/maintab_toolbar_bg"
+        android:background="@drawable/border"
     		android:orientation="horizontal"
     		android:layout_width="fill_parent"
-    		android:layout_height="70dip"
+    		android:layout_height="52dip"
     		android:gravity="center_vertical"
     		android:layout_gravity="bottom"
     		>
 
         <RadioButton
-            android:id="@+id/radio0"
+            android:id="@+id/home"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:checked="true"
             android:text="@string/tab1"
+			android:textColor="@color/myblue"
              style="@style/tabs_bottom"
              android:drawableTop="@drawable/home"
              />
 
         <RadioButton
-            android:id="@+id/radio1"
+            android:id="@+id/main"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+			android:textColor="@color/myblue"
             android:text="@string/tab2"
               style="@style/tabs_bottom"
-              android:drawableTop="@drawable/me"
+              android:drawableTop="@drawable/main"
             />
 
         <RadioButton
-            android:id="@+id/radio2"
-
+            android:id="@+id/air"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="@string/tab3"
+			android:textColor="@color/myblue"
               style="@style/tabs_bottom"
               android:drawableTop="@drawable/air"/>
 
         <RadioButton
-            android:id="@+id/radio3"
+            android:id="@+id/about"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
              android:text="@string/tab4"
              style="@style/tabs_bottom"
-            android:drawableTop="@drawable/recent"
+			android:textColor="@color/myblue"
+            android:drawableTop="@drawable/about"
            />
 
     </RadioGroup>

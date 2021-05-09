@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivty"
+    android:padding="15dp"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/title_about"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="30px"
+        android:gravity="center"
+        android:text="主要城市天气预报"
+        android:textColor="@color/tips"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:padding="25dp"
+        android:layout_height="wrap_content" />
+</LinearLayout>

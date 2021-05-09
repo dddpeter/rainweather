@@ -11,10 +11,10 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/app_name"
         android:gravity="center"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/notclear" />
 
     <TextView
@@ -24,8 +24,7 @@
         android:layout_weight="20"
         android:gravity="center_horizontal"
         android:text="@string/weather_content"
-        android:textColor="@color/black_overlay"
-        android:textStyle="bold"
+        android:textColor="@color/tips"
         android:textSize="25sp" />
     <TextView
         android:id="@+id/type"
@@ -34,7 +33,7 @@
         android:layout_weight="20"
         android:gravity="center_horizontal"
         android:text="@string/blank_string"
-        android:textColor="@color/black_overlay"
+        android:textColor="@color/tips"
         android:textStyle="bold"
         android:textSize="20sp" />
     <TextView
@@ -45,7 +44,6 @@
         android:gravity="center_horizontal"
         android:text="@string/blank_string"
         android:textColor="@color/black_overlay"
-        android:textStyle="bold"
         android:textSize="30sp" />
 
     <TextView
@@ -56,7 +54,6 @@
         android:gravity="center_horizontal"
         android:text="@string/blank_string"
         android:textColor="@color/black_overlay"
-        android:textStyle="bold"
         android:textSize="20sp" />
     <TextView
         android:id="@+id/wind"
@@ -66,33 +63,27 @@
         android:gravity="center_horizontal"
         android:text="@string/blank_string"
         android:textColor="@color/black_overlay"
-        android:textStyle="bold"
         android:textSize="20sp" />
-
+    <RelativeLayout
+        android:id="@+id/recent_today"
+        android:layout_width="match_parent"
+        android:background="@color/myblue"
+        android:padding="8dp"
+        android:textColor="@color/myblue"
+        android:layout_height="200dp">
+    </RelativeLayout>
     <TextView
         android:id="@+id/ganmao"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="20"
         android:gravity="start"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:text="@string/blank_string"
-        android:radius="15dp"
-        android:padding="8dp"
-        android:background="@color/ba_1"
-        android:textColor="@color/tips"
         android:textStyle="bold"
+        android:padding="8dp"
+        android:background="@color/tips"
+        android:textColor="@color/ba_1"
         android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/other"
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:layout_weight="20"
-        android:gravity="start"
-        android:text="@string/blank_string"
-        android:textColor="@color/black_overlay"
-        android:textStyle="bold"
-        android:textSize="20sp" />
+
 </LinearLayout>

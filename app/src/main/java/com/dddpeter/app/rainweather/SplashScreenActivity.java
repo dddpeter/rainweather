@@ -16,7 +16,7 @@ public class SplashScreenActivity extends Activity {
             Intent intent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
             startActivity(intent);
             SplashScreenActivity.this.finish();
-        }, 1000);
+        }, 600);
 
     }
 }

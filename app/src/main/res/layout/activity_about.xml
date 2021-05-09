@@ -4,7 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".AboutActivity" >
-
+    <ImageView
+        android:id="@+id/imageBrand"
+        android:background="@color/black_overlay"
+        android:layout_width="match_parent"
+        android:contentDescription="@string/app_name"
+        android:padding="5px"
+        android:layout_height="180dp"
+        android:gravity="center"
+        android:src="@drawable/dddpeter_logo" />
     <TextView
         android:id="@+id/title_about"
         android:layout_width="fill_parent"

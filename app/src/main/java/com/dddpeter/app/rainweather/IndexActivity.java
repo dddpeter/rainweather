@@ -4,6 +4,7 @@ package com.dddpeter.app.rainweather;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 
@@ -12,12 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
-import android.widget.Toast;
 
 
 import com.amap.api.location.AMapLocationClient;
@@ -44,16 +43,20 @@ import okhttp3.Response;
 public class IndexActivity extends FinalActivity {
     @ViewInject(id = R.id.radioGroup1)
     RadioGroup rg;
-    @ViewInject(id = R.id.radio0)
-    RadioButton rb1;
-    @ViewInject(id = R.id.radio1)
-    RadioButton rb2;
-    @ViewInject(id = R.id.radio2)
-    RadioButton rb3;
-    @ViewInject(id = R.id.radio3)
-    RadioButton rb4;
+    @ViewInject(id = R.id.home)
+    RadioButton home;
+    @ViewInject(id = R.id.main)
+    RadioButton main;
+    @ViewInject(id = R.id.air)
+    RadioButton air;
+    @ViewInject(id = R.id.about)
+    RadioButton about;
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
+    @ViewInject(id=R.id.loading)
+    com.wang.avi.AVLoadingIndicatorView avLoadingIndicatorView;
+    public final static int TAB_ICON_SIZE = 100;
+
 
     LocalActivityManager activityGroup;
 
@@ -74,12 +77,14 @@ public class IndexActivity extends FinalActivity {
 
         if (amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
-                String u = url + amapLocation.getCity();
+                String u = url + amapLocation.getDistrict();
                 Log.i("Location", "onLocationChanged: " + amapLocation.toStr());
                 if(mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION) == null){
                     mCache.put(CacheKey.CURRENT_LOCATION,amapLocation.toJson(1));
                 }
-                if(mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION+":"+CacheKey.WEATHER_DATA) == null){
+                String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
+                if(mCache.getAsJSONObject(location +":" + CacheKey.WEATHER_DATA) == null){
+                    avLoadingIndicatorView.show();
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
                             .url(u)//访问连接
@@ -94,10 +99,16 @@ public class IndexActivity extends FinalActivity {
                         response = call.execute();
                         if (response.isSuccessful()) {
                             JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                            mCache.put(CacheKey.CURRENT_LOCATION+":"+CacheKey.WEATHER_DATA, weather);
+                            mCache.put(location+":"+CacheKey.WEATHER_DATA, weather);
+                            Intent intent = new Intent();
+                            intent.setAction(CacheKey.REFRESH);
+                            sendBroadcast(intent);
                         }
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
+                    }
+                    finally {
+                        avLoadingIndicatorView.hide();
                     }
 
                 }
@@ -111,13 +122,13 @@ public class IndexActivity extends FinalActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d("权限", "onRequestPermissionsResult: "+  grantResults.toString());
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
-            Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
             if(requestCode==REQUEST_GPS){
                 mLocationClient.startLocation();
             }
 
         } else {
-            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -155,17 +166,17 @@ public class IndexActivity extends FinalActivity {
         this.tabHost.setup(activityGroup);
         //初始化
         prepareIntent();
-
+        initView();
         rg.setOnCheckedChangeListener((rg, id) -> {
             ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
-            if (id == rb1.getId()) {
+            if (id == home.getId()) {
                 tabHost.setCurrentTabByTag(application.getTAB_TAG_TODAY());
 
-            } else if (id == rb2.getId()) {
+            } else if (id == main.getId()) {
                 tabHost.setCurrentTabByTag(application.getTAB_TAG_RECENT());
-            } else if (id == rb3.getId()) {
+            } else if (id == air.getId()) {
                 tabHost.setCurrentTabByTag(application.getTAB_TAG_AIR());
-            } else if (id == rb4.getId()) {
+            } else if (id == about.getId()) {
                 tabHost.setCurrentTabByTag(application.getTAB_TAG_ABOUT());
             }
 
@@ -184,13 +195,13 @@ public class IndexActivity extends FinalActivity {
 
     private void prepareIntent() {
         todayIntent = new Intent(this, TodayActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        recentIntent = new Intent(this, RecentActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        recentIntent = new Intent(this, MainActivty.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         airIntent = new Intent(this, AirActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         aboutIntent = new Intent(this, AboutActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
         TabHost localTabHost = this.tabHost;
         localTabHost.addTab(buildTabSpec(application.getTAB_TAG_TODAY(), R.string.tab1, R.drawable.home, todayIntent));
-        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_RECENT(), R.string.tab2, R.drawable.recent, recentIntent));
+        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_RECENT(), R.string.tab2, R.drawable.main, recentIntent));
         localTabHost.addTab(buildTabSpec(application.getTAB_TAG_AIR(), R.string.tab3, R.drawable.air, airIntent));
         localTabHost.addTab(buildTabSpec(application.getTAB_TAG_ABOUT(), R.string.tab4, R.drawable.about, aboutIntent));
 
@@ -230,5 +241,36 @@ public class IndexActivity extends FinalActivity {
         }
         return false;
     }
+
+    private void initView() {
+        //定义底部标签图片大小和位置
+        Drawable drawableHome = getResources().getDrawable(R.drawable.home);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        drawableHome.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
+        //设置图片在文字的哪个方向
+        home.setCompoundDrawables(null, drawableHome, null, null);
+
+        //定义底部标签图片大小和位置
+        Drawable drawableMain= getResources().getDrawable(R.drawable.main);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        drawableMain.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
+        //设置图片在文字的哪个方向
+        main.setCompoundDrawables(null, drawableMain, null, null);
+
+        //定义底部标签图片大小和位置
+        Drawable drawableAir = getResources().getDrawable(R.drawable.air);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        drawableAir.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
+        //设置图片在文字的哪个方向
+        air.setCompoundDrawables(null, drawableAir, null, null);
+
+        //定义底部标签图片大小和位置
+        Drawable drawableAbout = getResources().getDrawable(R.drawable.about);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        drawableAbout.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
+        //设置图片在文字的哪个方向
+        about.setCompoundDrawables(null, drawableAbout, null, null);
+    }
+
 
 }
