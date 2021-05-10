@@ -4,19 +4,12 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="@color/myblue">
-	<com.wang.avi.AVLoadingIndicatorView
-		android:id="@+id/loading"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		app:indicatorName="BallPulseIndicator"
-		app:indicatorColor="@color/tips"
-		/>
+
 
     <LinearLayout
     	android:orientation="vertical"
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent">
-
 		<TabWidget
     	    android:id="@android:id/tabs"
     	    android:layout_width="fill_parent"

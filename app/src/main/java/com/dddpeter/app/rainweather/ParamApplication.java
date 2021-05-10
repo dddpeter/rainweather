@@ -1,6 +1,7 @@
 package com.dddpeter.app.rainweather;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -11,6 +12,7 @@ import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
+import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalDb;
 
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,47 +47,55 @@ public class ParamApplication extends Application {
     ACache mCache;
     @Override
     public void onCreate() {
+        XUI.init(this);
         super.onCreate();
-        initDayWeather();
-        initNightWeather();
-        initWeatherIcon();
         mCache = ACache.get(this);
         try {
+            initDayWeather();
+            initNightWeather();
+            initWeatherIcon();
             initCityIds();
+            initCommonCities();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+
+
+    private void initCommonCities(){
         List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
         for(String city : MAIN_CITY){
-           Callable callable  = (Callable<JSONObject>) () -> {
-               JSONObject weather = new JSONObject();
-               Request request = new Request.Builder()
-                       .url(url+city)//访问连接
-                       .addHeader("Accept", "application/json")
-                       .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
-                       .get()
-                       .build();
-               Call call = client.newCall(request);
-               //通过execute()方法获得请求响应的Response对象
-               Response response = null;
-               try {
-                   response = call.execute();
-                   if (response.isSuccessful()) {
-                       weather = new JSONObject(response.body().string()).getJSONObject("data");
-                       mCache.put(city+":"+CacheKey.WEATHER_DATA, weather);
-                       Intent intent = new Intent();
-                       intent.setAction(CacheKey.REFRESH_CITY);
-                       sendBroadcast(intent);
-                   }
-               } catch (IOException | JSONException e) {
-                   e.printStackTrace();
-               }
-               finally {
+            Callable callable  = (Callable<JSONObject>) () -> {
+                JSONObject weather = new JSONObject();
+                Request request = new Request.Builder()
+                        .url(url+city)//访问连接
+                        .addHeader("Accept", "application/json")
+                        .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                        .get()
+                        .build();
+                Call call = client.newCall(request);
+                //通过execute()方法获得请求响应的Response对象
+                Response response = null;
+                try {
+                    response = call.execute();
+                    if (response.isSuccessful()) {
+                        weather = new JSONObject(response.body().string()).getJSONObject("data");
+                        mCache.put(city+":"+CacheKey.WEATHER_DATA, weather);
+                        Intent intent = new Intent();
+                        intent.setAction(CacheKey.REFRESH_CITY);
+                        sendBroadcast(intent);
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                finally {
 
-                   return  weather;
-               }
-           };
+                    return  weather;
+                }
+            };
             callables.add(callable);
         }
         try {
@@ -97,7 +108,6 @@ public class ParamApplication extends Application {
             e.printStackTrace();
         }
     }
-
    private void initWeatherIcon(){
       SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
        SharedPreferences.Editor editor = preferences.edit();

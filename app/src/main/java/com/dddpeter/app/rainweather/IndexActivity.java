@@ -2,6 +2,7 @@ package com.dddpeter.app.rainweather;
 
 
 import android.app.LocalActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.po.CityInfo;
+import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.FinalDb;
@@ -36,6 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import lombok.NonNull;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -56,8 +59,6 @@ public class IndexActivity extends FinalActivity {
     RadioButton about;
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
-    @ViewInject(id=R.id.loading)
-    com.wang.avi.AVLoadingIndicatorView avLoadingIndicatorView;
     public final static int TAB_ICON_SIZE = 100;
 
 
@@ -88,7 +89,6 @@ public class IndexActivity extends FinalActivity {
                 String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
                 String city = amapLocation.getDistrict();
                 if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_DATA) == null){
-                    avLoadingIndicatorView.show();
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
                             .url(u)//访问连接
@@ -112,12 +112,11 @@ public class IndexActivity extends FinalActivity {
                         e.printStackTrace();
                     }
                     finally {
-                        avLoadingIndicatorView.hide();
+
                     }
 
                 }
                 if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_ALL) == null){
-                    avLoadingIndicatorView.show();
                     String shortLocation = city
                             .replace("省","")
                             .replace("市","")
@@ -155,7 +154,7 @@ public class IndexActivity extends FinalActivity {
                             e.printStackTrace();
                         }
                         finally {
-                            avLoadingIndicatorView.hide();
+
                         }
                     }
 
@@ -185,9 +184,14 @@ public class IndexActivity extends FinalActivity {
     protected void onResume() {
         super.onResume();
     }
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        //注入字体
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);

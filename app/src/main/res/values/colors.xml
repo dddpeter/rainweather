@@ -10,4 +10,8 @@
     <color name="transparent">#80000000</color>
     <color name="mygrey">#7a8f9a</color>
     <color name="myorange">#FF9933</color>
+    <color name="colorPrimary">#339933</color>
+    <color name="colorPrimaryDark">#222</color>
+    <color name="colorAccent">#00968a</color>
+
 </resources>

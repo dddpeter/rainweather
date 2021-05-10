@@ -24,9 +24,4 @@
  -keep public class org.codehaus.* { *; }
  -keep public class java.nio.* { *; }
 
-#  排除QWeather
- -dontwarn com.qweather.sdk.**
- -keep class com.qweather.sdk.** { *;}
 
- -keep class com.wang.avi.** { *; }
- -keep class com.wang.avi.indicators.** { *; }
