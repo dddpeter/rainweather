@@ -31,7 +31,6 @@
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/imageBrand"
         android:background="@color/black_overlay"
         android:layout_width="match_parent"
         android:contentDescription="@string/app_name"

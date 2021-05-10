@@ -16,7 +16,6 @@
         android:src="@drawable/ic_launcher" />
 
     <TextView
-        android:id="@+id/textView2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView1"
