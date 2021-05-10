@@ -25,6 +25,7 @@ android {
 dependencies {
     /* 引入所有libs目录的jar包*/
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.github.xuexiangjys:XUI:1.0.9-support'
 
     implementation files('libs/afinal-0.3.3-bin.jar')
     implementation files('libs/achartengine-1.2.0.jar')
@@ -36,6 +37,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     //noinspection GradleCompatible
     implementation group: 'com.android.support', name: 'appcompat-v7', version: '28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
 
 
     configurations.all {

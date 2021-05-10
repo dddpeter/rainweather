@@ -34,7 +34,7 @@ public class BorderBottomLinearLayout extends LinearLayout {
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(getResources().getColor(R.color.mygrey,null));
-       canvas.drawLine(-25, this.getHeight() - sroke_width, this.getWidth() - sroke_width, this.getHeight() - sroke_width, paint);
+        canvas.drawLine(-25, this.getHeight() - sroke_width, this.getWidth() - sroke_width, this.getHeight() - sroke_width, paint);
         super.onDraw(canvas);
     }
 

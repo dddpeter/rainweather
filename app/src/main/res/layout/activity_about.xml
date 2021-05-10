@@ -3,27 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="15dp"
     tools:context=".AboutActivity" >
-    <ImageView
-        android:id="@+id/imageBrand"
-        android:background="@color/black_overlay"
-        android:layout_width="match_parent"
-        android:contentDescription="@string/app_name"
-        android:padding="5px"
-        android:layout_height="180dp"
-        android:gravity="center"
-        android:src="@drawable/dddpeter_logo" />
+
     <TextView
         android:id="@+id/title_about"
         android:layout_width="fill_parent"
-        android:layout_height="120dp"
-        android:layout_weight="20"
         android:layout_marginTop="30px"
         android:gravity="center"
-        android:text="@string/about_info"
-        android:textColor="@color/black_overlay"
+        android:text="关于本软件"
+        android:textColor="@color/tips"
         android:textSize="25sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:padding="25dp"
+        android:layout_height="wrap_content"  />
 
     <TextView
         android:id="@+id/info"
@@ -37,5 +30,13 @@
         android:textColor="@color/black_overlay"
         android:textSize="20sp"
         />
-
+    <ImageView
+        android:id="@+id/imageBrand"
+        android:background="@color/black_overlay"
+        android:layout_width="match_parent"
+        android:contentDescription="@string/app_name"
+        android:padding="18dp"
+        android:layout_height="180dp"
+        android:gravity="center"
+        android:src="@drawable/dddpeter_logo" />
 </LinearLayout>

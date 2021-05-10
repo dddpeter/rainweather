@@ -66,6 +66,11 @@ public class TodayActivity extends FinalActivity {
     TextView ganmao;
     @ViewInject(id = R.id.recent_today)
     RelativeLayout recent;
+    @ViewInject(id=R.id.air)
+    com.xuexiang.xui.widget.progress.HorizontalProgressView air;
+    @ViewInject(id=R.id.air_text)
+    TextView airText;
+
     ACache mCache;
 
 
@@ -75,8 +80,9 @@ public class TodayActivity extends FinalActivity {
             String action = intent.getAction();
             if (action.equals(CacheKey.REFRESH))
             {
-               renderContent();
+
                 try {
+                    renderContent();
                     renderRecent();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -93,8 +99,9 @@ public class TodayActivity extends FinalActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH);
         registerReceiver(mRefreshBroadcastReceiver, intentFilter);
-        renderContent();
+
         try {
+            renderContent();
             renderRecent();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -111,8 +118,9 @@ public class TodayActivity extends FinalActivity {
             Toast.makeText(TodayActivity.this, "正在刷新天气", Toast.LENGTH_SHORT).show();
         }
         super.onResume();
-        renderContent();
+
         try {
+            renderContent();
             renderRecent();
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,9 +128,11 @@ public class TodayActivity extends FinalActivity {
 
     }
 
-    public void renderContent(){
+    public void renderContent() throws JSONException {
         String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
-        JSONObject weatherJson = mCache.getAsJSONObject(location+":"+CacheKey.WEATHER_DATA);
+        JSONObject cityJson = new JSONObject(location);
+        JSONObject weatherJson = mCache.getAsJSONObject(cityJson.getString("district")+":"+CacheKey.WEATHER_DATA);
+        JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district")+":"+CacheKey.WEATHER_ALL);
         StringBuilder htmlStrBuilder = new StringBuilder();
         SharedPreferences preferencesWI = getSharedPreferences("weahter_icon", MODE_PRIVATE);
         htmlStrBuilder.append("<p>");
@@ -137,6 +147,10 @@ public class TodayActivity extends FinalActivity {
             wind.setText( Html.fromHtml(today.getString("fengxiang") + "   " + today.getString("fengli"),
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
             ganmao.setText(weatherJson.getString("ganmao"));
+            JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
+            air.setProgress(airJson.getInt("AQI")*1.0f/5.0f);
+            air.setProgressTextVisibility(false);
+            airText.setText("空气指数："+ airJson.getInt("AQI") +"（" +airJson.getString("levelIndex")+"）");
             SharedPreferences preferences;
             if(DataUtil.isDay()){
                 preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
@@ -153,11 +167,11 @@ public class TodayActivity extends FinalActivity {
             e.printStackTrace();
         }
 
-
     }
     protected void renderRecent() throws Exception {
         String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
-        JSONObject weatherJson = mCache.getAsJSONObject(location+":"+CacheKey.WEATHER_DATA);
+        JSONObject cityJson = new JSONObject(location);
+        JSONObject weatherJson = mCache.getAsJSONObject(cityJson.getString("district") + ":"+CacheKey.WEATHER_DATA);
         JSONArray recentArray = weatherJson.getJSONArray("forecast");
         SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
         int len = recentArray.length();

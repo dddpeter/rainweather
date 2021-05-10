@@ -1,21 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:id="@+id/list_view_item"
     android:layout_height="wrap_content"
      android:background="@color/myblue"
         android:textColor="@color/black_overlay"
         android:textSize="12sp"
         android:textStyle="bold"
+    android:orientation="vertical"
+    android:padding="8dp"
      >
- 
 
-    <TextView
-        android:id="@+id/textViewItemcontent"
+    <LinearLayout
+        android:id="@+id/h24_info"
         android:layout_width="fill_parent"
-        android:layout_height="60dip"
+        android:layout_height="28dip"
         android:gravity="center_vertical"
-         android:textColor="@color/black_overlay"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
 
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/h24_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:gravity="center_vertical"
+            android:textColor="@color/tips"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/info_temprature"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black_overlay"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            />
+
+        <TextView
+            android:id="@+id/info_w"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="30"
+            android:textColor="@color/black_overlay"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            />
+        <TextView
+            android:id="@+id/info_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="30"
+            android:textColor="@color/black_overlay"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
 </LinearLayout>

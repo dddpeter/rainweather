@@ -39,7 +39,7 @@
         android:background="@drawable/border"
     		android:orientation="horizontal"
     		android:layout_width="fill_parent"
-    		android:layout_height="52dip"
+    		android:layout_height="55dip"
     		android:gravity="center_vertical"
     		android:layout_gravity="bottom"
     		>
@@ -54,7 +54,14 @@
              style="@style/tabs_bottom"
              android:drawableTop="@drawable/home"
              />
-
+		<RadioButton
+			android:id="@+id/h24"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/tab3"
+			android:textColor="@color/myblue"
+			style="@style/tabs_bottom"
+			android:drawableTop="@drawable/main"/>
         <RadioButton
             android:id="@+id/main"
             android:layout_width="fill_parent"
@@ -62,17 +69,10 @@
 			android:textColor="@color/myblue"
             android:text="@string/tab2"
               style="@style/tabs_bottom"
-              android:drawableTop="@drawable/main"
+              android:drawableTop="@drawable/air"
             />
 
-        <RadioButton
-            android:id="@+id/air"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:text="@string/tab3"
-			android:textColor="@color/myblue"
-              style="@style/tabs_bottom"
-              android:drawableTop="@drawable/air"/>
+
 
         <RadioButton
             android:id="@+id/about"

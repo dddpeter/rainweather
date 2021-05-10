@@ -12,7 +12,7 @@
     <string name="title_activity_index">知雨天气</string>
     <string name="tab1">今日</string>
     <string name="tab2">城市</string>
-    <string name="tab3">空气</string>
+    <string name="tab3">24H</string>
     <string name="tab4">关于</string>
     <string name="title_activity_recent">最近天气</string>
     <string name="hello_world">Hello world!</string>

@@ -24,14 +24,17 @@ import com.amap.api.location.AMapLocationListener;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
+import com.dddpeter.app.rainweather.po.CityInfo;
 
 import net.tsz.afinal.FinalActivity;
+import net.tsz.afinal.FinalDb;
 import net.tsz.afinal.annotation.view.ViewInject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import lombok.NonNull;
 import okhttp3.Call;
@@ -47,7 +50,7 @@ public class IndexActivity extends FinalActivity {
     RadioButton home;
     @ViewInject(id = R.id.main)
     RadioButton main;
-    @ViewInject(id = R.id.air)
+    @ViewInject(id = R.id.h24)
     RadioButton air;
     @ViewInject(id = R.id.about)
     RadioButton about;
@@ -83,7 +86,8 @@ public class IndexActivity extends FinalActivity {
                     mCache.put(CacheKey.CURRENT_LOCATION,amapLocation.toJson(1));
                 }
                 String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
-                if(mCache.getAsJSONObject(location +":" + CacheKey.WEATHER_DATA) == null){
+                String city = amapLocation.getDistrict();
+                if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_DATA) == null){
                     avLoadingIndicatorView.show();
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
@@ -99,7 +103,7 @@ public class IndexActivity extends FinalActivity {
                         response = call.execute();
                         if (response.isSuccessful()) {
                             JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                            mCache.put(location+":"+CacheKey.WEATHER_DATA, weather);
+                            mCache.put(city+":"+CacheKey.WEATHER_DATA, weather);
                             Intent intent = new Intent();
                             intent.setAction(CacheKey.REFRESH);
                             sendBroadcast(intent);
@@ -109,6 +113,50 @@ public class IndexActivity extends FinalActivity {
                     }
                     finally {
                         avLoadingIndicatorView.hide();
+                    }
+
+                }
+                if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_ALL) == null){
+                    avLoadingIndicatorView.show();
+                    String shortLocation = city
+                            .replace("省","")
+                            .replace("市","")
+                            .replace("自治区","")
+                            .replace("区","")
+                            .replace("县","")
+                            .replace("自治县","")
+                            .replace("特区","")
+                            .replace("特别行政区","");
+                    FinalDb db = FinalDb.create(this,"my.db");
+                    List<CityInfo> list= db.findAllByWhere(CityInfo.class," city ='" +city +
+                            "' or  city ='" + shortLocation
+                              +"' or city like '" + shortLocation + "%'");
+                    if(list.size()>0){
+                        OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+                        Request request = new Request.Builder()
+                                .url(CacheKey.DETAIL_API + list.get(0).getCityid())//访问连接
+                                .addHeader("Accept", "application/json")
+                                .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                                .get()
+                                .build();
+                        Call call = client.newCall(request);
+                        //通过execute()方法获得请求响应的Response对象
+                        Response response = null;
+                        try {
+                            response = call.execute();
+                            if (response.isSuccessful()) {
+                                JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
+                                mCache.put(city+":"+CacheKey.WEATHER_ALL, weather);
+                                //Intent intent = new Intent();
+                                // intent.setAction(CacheKey.REFRESH);
+                                //sendBroadcast(intent);
+                            }
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                        finally {
+                            avLoadingIndicatorView.hide();
+                        }
                     }
 
                 }
@@ -196,7 +244,7 @@ public class IndexActivity extends FinalActivity {
     private void prepareIntent() {
         todayIntent = new Intent(this, TodayActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         recentIntent = new Intent(this, MainActivty.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        airIntent = new Intent(this, AirActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        airIntent = new Intent(this, H24Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         aboutIntent = new Intent(this, AboutActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
         TabHost localTabHost = this.tabHost;

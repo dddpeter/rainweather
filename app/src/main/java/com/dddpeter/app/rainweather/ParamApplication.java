@@ -3,21 +3,28 @@ package com.dddpeter.app.rainweather;
 import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.util.Log;
 
-import com.amap.api.location.AMapLocationClient;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.dddpeter.app.rainweather.po.CityInfo;
 
+import net.tsz.afinal.FinalDb;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -42,8 +49,12 @@ public class ParamApplication extends Application {
         initNightWeather();
         initWeatherIcon();
         mCache = ACache.get(this);
-
-       List<Callable<JSONObject>> callables = new ArrayList<>();
+        try {
+            initCityIds();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
         for(String city : MAIN_CITY){
            Callable callable  = (Callable<JSONObject>) () -> {
@@ -218,5 +229,31 @@ public class ParamApplication extends Application {
         return TAB_TAG_ABOUT;
     }
 
+    public void initCityIds() throws IOException, JSONException {
+        FinalDb db = FinalDb.create(this, "my.db");
+        AssetManager manager = getAssets();
+        InputStream is = manager.open("city.json");
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while((line=bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JSONArray citys = new JSONArray(stringBuffer.toString());
+        Log.i("cityinfo", "initCityIds: "+citys.length());
+       for(int i=0;i<citys.length();i++){
+           JSONObject c = citys.getJSONObject(i);
+           CityInfo cityInfo = new CityInfo(c.getString("id"),c.getString("name"));
+           CityInfo cityInfo1 = db.findById(c.getString("id"),CityInfo.class);
+           if(cityInfo1 == null){
+               db.save(cityInfo);
+           }
+
+       }
+    }
 
 }
