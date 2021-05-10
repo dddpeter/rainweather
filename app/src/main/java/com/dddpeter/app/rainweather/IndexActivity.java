@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -255,32 +256,6 @@ public class IndexActivity extends FinalActivity {
         spec.setIndicator(getResources().getString(titleResourceID),
                 getResources().getDrawable(iconResourceID));
         return spec;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.index, menu);
-
-
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.refresh_menu:
-                // messageSender(REFRESH_MSG);
-                break;
-            case R.id.reset_menu:
-                // messageSender(RESET_MSG);
-                break;
-
-
-            case R.id.exit_menu:
-                // messageSender(EXIT_MSG);
-                break;
-        }
-        return false;
     }
 
     private void initView() {

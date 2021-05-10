@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/Users/hqins/workspace/keystore.ks')
+            storePassword 'picc1234'
+            keyAlias 'lijinde'
+            keyPassword 'picc1234'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -8,6 +16,8 @@ android {
         applicationId "com.dddpeter.app.rainweather"
         minSdkVersion 28
         targetSdkVersion 30
+        signingConfig signingConfigs.debug
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -20,6 +30,11 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    ndkVersion '22.1.7171670'
 }
 
 dependencies {
@@ -31,15 +46,14 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-
-    implementation files('libs/afinal-0.3.3-bin.jar')
     implementation files('libs/achartengine-1.2.0.jar')
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
     implementation 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
-
+    debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
+    releaseImplementation 'com.didichuxing.doraemonkit:dokitx-no-op:3.3.5'
 
     configurations.all {
         resolutionStrategy {

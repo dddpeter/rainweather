@@ -110,9 +110,8 @@
         android:gravity="start"
         android:text="@string/blank_string"
         android:textStyle="bold"
-        android:padding="8dp"
-        android:background="@color/tips"
-        android:textColor="@color/ba_1"
+        android:padding="15dp"
+        android:textColor="@color/tips"
         android:textSize="18sp" />
 
 

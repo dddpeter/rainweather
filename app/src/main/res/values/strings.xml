@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">知雨天气</string>
-    <string name="refresh">定位刷新</string>
+    <string name="refresh">刷新</string>
     <string name="weather_content">\n\n请按菜单键进行定位刷新</string>
     <string name="exit">退出</string>
     <string name="copyright">版权所有©烈焰之雨</string>

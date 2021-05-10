@@ -1,6 +1,7 @@
 package com.dddpeter.app.rainweather;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -11,6 +12,7 @@ import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
+import com.didichuxing.doraemonkit.DoraemonKit;
 import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalDb;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,7 +50,9 @@ public class ParamApplication extends Application {
     @Override
     public void onCreate() {
         XUI.init(this);
+        XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate();
+        DoraemonKit.install(this,"RainWeather");
         mCache = ACache.get(this);
         try {
             initDayWeather();
@@ -61,7 +66,11 @@ public class ParamApplication extends Application {
 
     }
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        //注入字体
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
     private void initCommonCities() {
         List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
