@@ -2,7 +2,6 @@ package com.dddpeter.app.rainweather.common;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.view.View;
 import android.widget.TextView;
 
 public class CommonUtil {
@@ -15,6 +14,7 @@ public class CommonUtil {
         }
         return max == -100 ? 0 : max;
     }
+
     public static int minOfAarray(int[] arr) {
         int min = 100;
         for (int i = 0; i < arr.length; i++) {      //遍历
@@ -24,14 +24,15 @@ public class CommonUtil {
         }
         return min == 100 ? 48 : min;
     }
-    public static  void fontType(Context ctx, String path, TextView view){
-        Typeface fontFace = Typeface.createFromAsset( ctx.getAssets(),path);
+
+    public static void fontType(Context ctx, String path, TextView view) {
+        Typeface fontFace = Typeface.createFromAsset(ctx.getAssets(), path);
         view.setTypeface(fontFace);
     }
 
-    public  static Typeface weatherIconFontFace(Context ctx){
-       Typeface typeface = Typeface.createFromAsset( ctx.getAssets(),"iconfont/iconfont.ttf");
-       return typeface;
+    public static Typeface weatherIconFontFace(Context ctx) {
+        Typeface typeface = Typeface.createFromAsset(ctx.getAssets(), "iconfont/iconfont.ttf");
+        return typeface;
     }
 
 }

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="XUITheme.Phone">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:background">@color/myblue</item>
     </style>
+
     <style name="tabs_bottom">
-       <item name="android:textSize">10sp</item> 
-       <item name="android:layout_weight">1</item> 
-       <item name="android:button">@null</item> 
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/mygrey</item>
-      <item name="android:gravity">center</item>
-      <item name="android:background">@drawable/home_btn_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/home_btn_bg</item>
     </style>
 </resources>

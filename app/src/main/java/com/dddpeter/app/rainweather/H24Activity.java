@@ -28,7 +28,7 @@ public class H24Activity extends FinalActivity {
     @ViewInject(id = R.id.list_24h)
     ListView content;
 
-    @ViewInject(id=R.id.textViewtitle)
+    @ViewInject(id = R.id.textViewtitle)
     TextView textViewtitle;
 
     ACache mCache;
@@ -37,8 +37,7 @@ public class H24Activity extends FinalActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(CacheKey.REFRESH))
-            {
+            if (action.equals(CacheKey.REFRESH)) {
 
                 try {
                     updateContent();
@@ -49,6 +48,7 @@ public class H24Activity extends FinalActivity {
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,17 +79,18 @@ public class H24Activity extends FinalActivity {
         String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
         JSONObject cityJson = new JSONObject(location);
 
-        textViewtitle.setText(textViewtitle.getText() + "("+ cityJson.getString("district") + ")");
-        JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district")+":"+CacheKey.WEATHER_ALL);
+        textViewtitle.setText(textViewtitle.getText() + "(" + cityJson.getString("district") + ")");
+        JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_ALL);
         JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
-        List<JSONObject> forcasts =new ArrayList<>(forecast24h.length());
-        for(int i =0;i<forecast24h.length();i++){
+        List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
+        for (int i = 0; i < forecast24h.length(); i++) {
             forcasts.add(forecast24h.getJSONObject(i));
         }
-        ArrayAdapter<JSONObject> adapter=new H24Adapter(this, R.layout.listview_item,forcasts, getSharedPreferences("weahter_icon", MODE_PRIVATE));
+        ArrayAdapter<JSONObject> adapter = new H24Adapter(this, R.layout.listview_item, forcasts, getSharedPreferences("weahter_icon", MODE_PRIVATE));
         content.setAdapter(adapter);
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

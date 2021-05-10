@@ -6,6 +6,7 @@
     tools:context=".MainActivty"
     android:padding="15dp"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/title_about"
         android:layout_width="fill_parent"

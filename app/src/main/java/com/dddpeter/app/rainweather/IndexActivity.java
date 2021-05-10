@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
-
-
-import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,12 +16,13 @@ import android.widget.RadioGroup;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
+import androidx.core.app.ActivityCompat;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationListener;
-import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
+import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
 import com.xuexiang.xui.XUI;
 
@@ -47,6 +45,9 @@ import okhttp3.Response;
 
 
 public class IndexActivity extends FinalActivity {
+    public final static int TAB_ICON_SIZE = 100;
+    private final int REQUEST_GPS = 1;
+    public AMapLocationClient mLocationClient = null;
     @ViewInject(id = R.id.radioGroup1)
     RadioGroup rg;
     @ViewInject(id = R.id.home)
@@ -59,23 +60,9 @@ public class IndexActivity extends FinalActivity {
     RadioButton about;
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
-    public final static int TAB_ICON_SIZE = 100;
-
-
     LocalActivityManager activityGroup;
-
-    // 内容Intent
-    private Intent todayIntent;
-    private Intent recentIntent;
-    private Intent airIntent;
-    private Intent aboutIntent;
-    private final int REQUEST_GPS = 1;
-
-
     String url = CacheKey.API_DOMAIN + CacheKey.API_CITY;
-    public AMapLocationClient mLocationClient = null;
     ACache mCache;
-
     //异步获取定位结果
     public AMapLocationListener mAMapLocationListener = amapLocation -> {
 
@@ -83,17 +70,17 @@ public class IndexActivity extends FinalActivity {
             if (amapLocation.getErrorCode() == 0) {
                 String u = url + amapLocation.getDistrict();
                 Log.i("Location", "onLocationChanged: " + amapLocation.toStr());
-                if(mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION) == null){
-                    mCache.put(CacheKey.CURRENT_LOCATION,amapLocation.toJson(1));
+                if (mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION) == null) {
+                    mCache.put(CacheKey.CURRENT_LOCATION, amapLocation.toJson(1));
                 }
                 String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
                 String city = amapLocation.getDistrict();
-                if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_DATA) == null){
+                if (mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_DATA) == null) {
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
                             .url(u)//访问连接
                             .addHeader("Accept", "application/json")
-                            .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                            .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
                             .get()
                             .build();
                     Call call = client.newCall(request);
@@ -103,39 +90,38 @@ public class IndexActivity extends FinalActivity {
                         response = call.execute();
                         if (response.isSuccessful()) {
                             JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                            mCache.put(city+":"+CacheKey.WEATHER_DATA, weather);
+                            mCache.put(city + ":" + CacheKey.WEATHER_DATA, weather);
                             Intent intent = new Intent();
                             intent.setAction(CacheKey.REFRESH);
                             sendBroadcast(intent);
                         }
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
-                    }
-                    finally {
+                    } finally {
 
                     }
 
                 }
-                if(mCache.getAsJSONObject(city +":" + CacheKey.WEATHER_ALL) == null){
+                if (mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_ALL) == null) {
                     String shortLocation = city
-                            .replace("省","")
-                            .replace("市","")
-                            .replace("自治区","")
-                            .replace("区","")
-                            .replace("县","")
-                            .replace("自治县","")
-                            .replace("特区","")
-                            .replace("特别行政区","");
-                    FinalDb db = FinalDb.create(this,"my.db");
-                    List<CityInfo> list= db.findAllByWhere(CityInfo.class," city ='" +city +
+                            .replace("省", "")
+                            .replace("市", "")
+                            .replace("自治区", "")
+                            .replace("区", "")
+                            .replace("县", "")
+                            .replace("自治县", "")
+                            .replace("特区", "")
+                            .replace("特别行政区", "");
+                    FinalDb db = FinalDb.create(this, "my.db");
+                    List<CityInfo> list = db.findAllByWhere(CityInfo.class, " city ='" + city +
                             "' or  city ='" + shortLocation
-                              +"' or city like '" + shortLocation + "%'");
-                    if(list.size()>0){
+                            + "' or city like '" + shortLocation + "%'");
+                    if (list.size() > 0) {
                         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                         Request request = new Request.Builder()
                                 .url(CacheKey.DETAIL_API + list.get(0).getCityid())//访问连接
                                 .addHeader("Accept", "application/json")
-                                .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                                .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
                                 .get()
                                 .build();
                         Call call = client.newCall(request);
@@ -145,15 +131,14 @@ public class IndexActivity extends FinalActivity {
                             response = call.execute();
                             if (response.isSuccessful()) {
                                 JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                                mCache.put(city+":"+CacheKey.WEATHER_ALL, weather);
+                                mCache.put(city + ":" + CacheKey.WEATHER_ALL, weather);
                                 //Intent intent = new Intent();
                                 // intent.setAction(CacheKey.REFRESH);
                                 //sendBroadcast(intent);
                             }
                         } catch (IOException | JSONException e) {
                             e.printStackTrace();
-                        }
-                        finally {
+                        } finally {
 
                         }
                     }
@@ -162,15 +147,18 @@ public class IndexActivity extends FinalActivity {
             }
         }
     };
-
-
+    // 内容Intent
+    private Intent todayIntent;
+    private Intent recentIntent;
+    private Intent airIntent;
+    private Intent aboutIntent;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("权限", "onRequestPermissionsResult: "+  grantResults.toString());
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED ) {
+        Log.d("权限", "onRequestPermissionsResult: " + grantResults.toString());
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
-            if(requestCode==REQUEST_GPS){
+            if (requestCode == REQUEST_GPS) {
                 mLocationClient.startLocation();
             }
 
@@ -180,15 +168,18 @@ public class IndexActivity extends FinalActivity {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
@@ -233,7 +224,7 @@ public class IndexActivity extends FinalActivity {
             }
 
         });
-        ActivityCompat.requestPermissions(this,new String[]{ "android.permission.ACCESS_FINE_LOCATION","android.permission.WRITE_EXTERNAL_STORAGE" }, REQUEST_GPS);
+        ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.WRITE_EXTERNAL_STORAGE"}, REQUEST_GPS);
         Log.d("知雨天气", "开始进行定位:");
         //初始化定位
         mLocationClient = new AMapLocationClient(getApplicationContext());
@@ -241,8 +232,6 @@ public class IndexActivity extends FinalActivity {
         mLocationClient.setLocationListener(this.mAMapLocationListener);
 
     }
-
-
 
 
     private void prepareIntent() {
@@ -280,7 +269,7 @@ public class IndexActivity extends FinalActivity {
 
         switch (item.getItemId()) {
             case R.id.refresh_menu:
-               // messageSender(REFRESH_MSG);
+                // messageSender(REFRESH_MSG);
                 break;
             case R.id.reset_menu:
                 // messageSender(RESET_MSG);
@@ -303,7 +292,7 @@ public class IndexActivity extends FinalActivity {
         home.setCompoundDrawables(null, drawableHome, null, null);
 
         //定义底部标签图片大小和位置
-        Drawable drawableMain= getResources().getDrawable(R.drawable.main);
+        Drawable drawableMain = getResources().getDrawable(R.drawable.main);
         //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
         drawableMain.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
         //设置图片在文字的哪个方向

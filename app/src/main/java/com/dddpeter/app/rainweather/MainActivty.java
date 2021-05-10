@@ -15,8 +15,6 @@ import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 import com.dddpeter.app.rainweather.componet.BorderBottomLinearLayout;
 import com.dddpeter.app.rainweather.componet.BorderBottomTextView;
-
-
 import com.dddpeter.app.rainweather.enums.CacheKey;
 
 import net.tsz.afinal.FinalActivity;
@@ -34,8 +32,7 @@ public class MainActivty extends FinalActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(CacheKey.REFRESH_CITY))
-            {
+            if (action.equals(CacheKey.REFRESH_CITY)) {
                 try {
                     update();
                 } catch (JSONException e) {
@@ -47,39 +44,39 @@ public class MainActivty extends FinalActivity {
     };
 
     private void update() throws JSONException {
-             String[] citys = ParamApplication.MAIN_CITY;
-             for(String city:citys){
-                 ViewGroup.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                         ViewGroup.LayoutParams.WRAP_CONTENT, 9f);
-                 BorderBottomLinearLayout cityLinear = new BorderBottomLinearLayout(this);
-                 cityLinear.setOrientation(LinearLayout.HORIZONTAL);
-                 BorderBottomTextView child  = new BorderBottomTextView(cityLinear.getContext());
-                 child.setTextSize(22);
-                 child.setPadding(25,25,25,25);
-                 child.setTextColor(getResources().getColor(R.color.black_overlay,null));
-                 child.setText(city);
-                 child.setLayoutParams(params);
+        String[] citys = ParamApplication.MAIN_CITY;
+        for (String city : citys) {
+            ViewGroup.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, 9f);
+            BorderBottomLinearLayout cityLinear = new BorderBottomLinearLayout(this);
+            cityLinear.setOrientation(LinearLayout.HORIZONTAL);
+            BorderBottomTextView child = new BorderBottomTextView(cityLinear.getContext());
+            child.setTextSize(22);
+            child.setPadding(25, 25, 25, 25);
+            child.setTextColor(getResources().getColor(R.color.black_overlay, null));
+            child.setText(city);
+            child.setLayoutParams(params);
 
-                 JSONObject weatherJson = mCache.getAsJSONObject(city+":"+CacheKey.WEATHER_DATA);
-                 SharedPreferences preferencesWI = getSharedPreferences("weahter_icon", MODE_PRIVATE);
-                 JSONObject today =  ((JSONObject)weatherJson.getJSONArray("forecast").get(0));
+            JSONObject weatherJson = mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_DATA);
+            SharedPreferences preferencesWI = getSharedPreferences("weahter_icon", MODE_PRIVATE);
+            JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
 
-                 ViewGroup.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                         ViewGroup.LayoutParams.WRAP_CONTENT, 2f);
-                 TextView child2  = new TextView(cityLinear.getContext());
-                 child2.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                 child2.setTextSize(20);
-                 child2.setPadding(25,25,10,25);
-                 child2.setTextColor(getResources().getColor(R.color.tips,null));
-                 child2.setTypeface(CommonUtil.weatherIconFontFace(this));
-                 child2.setText( preferencesWI.getString(today.getString("type"),"\ue73e")
-                         + "\t" + today.getString("type")  + "\t" + weatherJson.getString("wendu")+"°C") ;
-                 child2.setLayoutParams(params1);
+            ViewGroup.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, 2f);
+            TextView child2 = new TextView(cityLinear.getContext());
+            child2.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            child2.setTextSize(20);
+            child2.setPadding(25, 25, 10, 25);
+            child2.setTextColor(getResources().getColor(R.color.tips, null));
+            child2.setTypeface(CommonUtil.weatherIconFontFace(this));
+            child2.setText(preferencesWI.getString(today.getString("type"), "\ue73e")
+                    + "\t" + today.getString("type") + "\t" + weatherJson.getString("wendu") + "°C");
+            child2.setLayoutParams(params1);
 
-                 cityLinear.addView(child);
-                 cityLinear.addView(child2);
-                 my.addView(cityLinear);
-             }
+            cityLinear.addView(child);
+            cityLinear.addView(child2);
+            my.addView(cityLinear);
+        }
 
     }
 

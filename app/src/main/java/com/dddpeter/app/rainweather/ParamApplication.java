@@ -1,7 +1,6 @@
 package com.dddpeter.app.rainweather;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -28,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -36,6 +34,7 @@ import okhttp3.Response;
 
 
 public class ParamApplication extends Application {
+    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "澳门"};
     private final String TAB_TAG_TODAY = "tab_tag_today";
     private final String TAB_TAG_RECENT = "tab_tag_recent";
     private final String TAB_TAG_AIR = "tab_tag_air";
@@ -43,8 +42,8 @@ public class ParamApplication extends Application {
     public boolean isRefreshed = false;
     public String airInfo;
     String url = CacheKey.API_DOMAIN + CacheKey.API_CITY;
-    public final static  String[] MAIN_CITY ={"北京","上海","香港","成都","广州","深圳","澳门"};
     ACache mCache;
+
     @Override
     public void onCreate() {
         XUI.init(this);
@@ -63,17 +62,16 @@ public class ParamApplication extends Application {
     }
 
 
-
-    private void initCommonCities(){
+    private void initCommonCities() {
         List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-        for(String city : MAIN_CITY){
-            Callable callable  = (Callable<JSONObject>) () -> {
+        for (String city : MAIN_CITY) {
+            Callable callable = (Callable<JSONObject>) () -> {
                 JSONObject weather = new JSONObject();
                 Request request = new Request.Builder()
-                        .url(url+city)//访问连接
+                        .url(url + city)//访问连接
                         .addHeader("Accept", "application/json")
-                        .addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                        .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
                         .get()
                         .build();
                 Call call = client.newCall(request);
@@ -83,59 +81,59 @@ public class ParamApplication extends Application {
                     response = call.execute();
                     if (response.isSuccessful()) {
                         weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        mCache.put(city+":"+CacheKey.WEATHER_DATA, weather);
+                        mCache.put(city + ":" + CacheKey.WEATHER_DATA, weather);
                         Intent intent = new Intent();
                         intent.setAction(CacheKey.REFRESH_CITY);
                         sendBroadcast(intent);
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
-                }
-                finally {
+                } finally {
 
-                    return  weather;
+                    return weather;
                 }
             };
             callables.add(callable);
         }
         try {
             List<JSONObject> results = Promise.all(callables);
-            for(JSONObject r:results){
-                mCache.put(r.getString("city")+":"+CacheKey.WEATHER_DATA,r);
+            for (JSONObject r : results) {
+                mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_DATA, r);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-   private void initWeatherIcon(){
-      SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
-       SharedPreferences.Editor editor = preferences.edit();
-       editor.putString("大雨", "\ue723");
-       editor.putString("暴雨", "\ue725");
-       editor.putString("冻雨", "\ue731");
-       editor.putString("大雪", "\ue72c");
-       editor.putString("暴雪", "\ue72b");
-       editor.putString("多云", "\ue716");
-       editor.putString("雷阵雨", "\ue726");
-       editor.putString("沙尘暴", "\ue733");
-       editor.putString("多云转晴", "\ue716");
-       editor.putString("晴转多云", "\ue716");
-       editor.putString("雾", "\ue72f");
-       editor.putString("小雪", "\ue729");
-       editor.putString("小雨", "\ue717");
-       editor.putString("阴", "\ue721");
-       editor.putString("晴", "\ue719");
-       editor.putString("雨夹雪", "\ue727");
-       editor.putString("中雨", "\ue720");
-       editor.putString("中雪", "\ue72a");
-       editor.putString("阵雨", "\ue71f");
-       editor.putString("雷阵雨", "\ue726");
-       editor.putString("霾", "\ue730");
-       editor.putString("扬沙", "\ue72e");
-       editor.putString("浮尘", "\ue732");
-       editor.putBoolean("init", true);
-       editor.commit();
+
+    private void initWeatherIcon() {
+        SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("大雨", "\ue723");
+        editor.putString("暴雨", "\ue725");
+        editor.putString("冻雨", "\ue731");
+        editor.putString("大雪", "\ue72c");
+        editor.putString("暴雪", "\ue72b");
+        editor.putString("多云", "\ue716");
+        editor.putString("雷阵雨", "\ue726");
+        editor.putString("沙尘暴", "\ue733");
+        editor.putString("多云转晴", "\ue716");
+        editor.putString("晴转多云", "\ue716");
+        editor.putString("雾", "\ue72f");
+        editor.putString("小雪", "\ue729");
+        editor.putString("小雨", "\ue717");
+        editor.putString("阴", "\ue721");
+        editor.putString("晴", "\ue719");
+        editor.putString("雨夹雪", "\ue727");
+        editor.putString("中雨", "\ue720");
+        editor.putString("中雪", "\ue72a");
+        editor.putString("阵雨", "\ue71f");
+        editor.putString("雷阵雨", "\ue726");
+        editor.putString("霾", "\ue730");
+        editor.putString("扬沙", "\ue72e");
+        editor.putString("浮尘", "\ue732");
+        editor.putBoolean("init", true);
+        editor.commit();
     }
 
     private void initNightWeather() {
@@ -222,7 +220,6 @@ public class ParamApplication extends Application {
     }
 
 
-
     public String getTAB_TAG_TODAY() {
         return TAB_TAG_TODAY;
     }
@@ -247,23 +244,23 @@ public class ParamApplication extends Application {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
             String line;
-            while((line=bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         JSONArray citys = new JSONArray(stringBuffer.toString());
-        Log.i("cityinfo", "initCityIds: "+citys.length());
-       for(int i=0;i<citys.length();i++){
-           JSONObject c = citys.getJSONObject(i);
-           CityInfo cityInfo = new CityInfo(c.getString("id"),c.getString("name"));
-           CityInfo cityInfo1 = db.findById(c.getString("id"),CityInfo.class);
-           if(cityInfo1 == null){
-               db.save(cityInfo);
-           }
+        Log.i("cityinfo", "initCityIds: " + citys.length());
+        for (int i = 0; i < citys.length(); i++) {
+            JSONObject c = citys.getJSONObject(i);
+            CityInfo cityInfo = new CityInfo(c.getString("id"), c.getString("name"));
+            CityInfo cityInfo1 = db.findById(c.getString("id"), CityInfo.class);
+            if (cityInfo1 == null) {
+                db.save(cityInfo);
+            }
 
-       }
+        }
     }
 
 }

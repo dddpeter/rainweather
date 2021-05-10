@@ -37,7 +37,8 @@ public class Promise {
         final CountDownLatch done = new CountDownLatch(length);
         for (final Callable<T> callable : callableList) {
             executorService.execute(new Runnable() {
-                @Override                public void run() {
+                @Override
+                public void run() {
                     ready.countDown();
                     try {
                         start.await();

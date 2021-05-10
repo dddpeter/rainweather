@@ -8,8 +8,20 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-@Table(name="t_cityinfo")
+@Table(name = "t_cityinfo")
 public class CityInfo implements Serializable {
+    @Id
+    private String cityid;
+    private String city;
+
+    public CityInfo() {
+    }
+
+    public CityInfo(String id, String name) {
+        this.city = name;
+        this.cityid = id;
+    }
+
     public String getCityid() {
         return cityid;
     }
@@ -24,14 +36,5 @@ public class CityInfo implements Serializable {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    @Id
-    private String cityid;
-    private String city;
-    public CityInfo(){};
-    public CityInfo(String id,String name){
-        this.city = name;
-        this.cityid = id;
     }
 }

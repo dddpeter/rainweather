@@ -11,4 +11,5 @@ out/
 *.dex
 build/
 .gradle/
-
+release/
+*.swp
