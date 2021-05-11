@@ -7,11 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
@@ -44,6 +40,8 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+/*import android.os.StrictMode;*/
 
 
 public class IndexActivity extends FinalActivity {
@@ -96,7 +94,7 @@ public class IndexActivity extends FinalActivity {
                             sendBroadcast(intent);
                         }
                     } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                        Log.w("RainWather", "Exception: ", e);
                     } finally {
 
                     }
@@ -137,7 +135,7 @@ public class IndexActivity extends FinalActivity {
                                 //sendBroadcast(intent);
                             }
                         } catch (IOException | JSONException e) {
-                            e.printStackTrace();
+                            Log.w("RainWather", "Exception: ", e);
                         } finally {
 
                         }
@@ -186,7 +184,7 @@ public class IndexActivity extends FinalActivity {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);
-        String strVer = android.os.Build.VERSION.RELEASE;
+      /*  String strVer = android.os.Build.VERSION.RELEASE;
         float fv = Float.valueOf(strVer);
         if (fv > 2.3) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -200,7 +198,7 @@ public class IndexActivity extends FinalActivity {
                     .penaltyLog() //打印logcat
                     .penaltyDeath()
                     .build());
-        }
+        }*/
 
         activityGroup = new LocalActivityManager(this,
                 true);

@@ -1,5 +1,7 @@
 package com.dddpeter.app.rainweather.common;
 
+import android.util.Log;
+
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
@@ -23,7 +25,7 @@ public class OKHttpClientBuilder {
             builder.hostnameVerifier((hostname, session) -> true);
             return builder;
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
+            Log.w("OkHttp", "Exception: ", e);
             return new OkHttpClient.Builder();
         }
     }

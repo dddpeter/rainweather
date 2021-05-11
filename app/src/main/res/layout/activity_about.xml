@@ -3,20 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp"
+    android:paddingLeft="@dimen/activity_padding_lr"
+    android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".AboutActivity">
 
-    <TextView
-        android:id="@+id/title_about"
-        android:layout_width="fill_parent"
-        android:layout_marginTop="30px"
+    <ImageView
+        android:background="@color/black_overlay"
+        android:layout_width="match_parent"
+        android:contentDescription="@string/app_name"
+        android:padding="@dimen/view_padding_lr"
+        android:layout_height="180dp"
         android:gravity="center"
-        android:text="关于本软件"
-        android:textColor="@color/tips"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:padding="25dp"
-        android:layout_height="wrap_content" />
+        android:src="@drawable/dddpeter_logo" />
 
     <TextView
         android:id="@+id/info"
@@ -25,9 +23,10 @@
         android:lineHeight="26sp"
         android:layout_weight="15"
         android:gravity="top"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
-        android:text="@string/about_info"
+        android:paddingLeft="@dimen/view_padding_lr"
+        android:paddingRight="@dimen/view_padding_lr"
+        android:layout_marginTop="20dp"
+        android:text=""
         android:textColor="@color/black_overlay"
         android:textSize="18sp" />
     <TextView
@@ -36,18 +35,19 @@
         android:layout_height="wrap_content"
         android:layout_weight="25"
         android:gravity="top"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
-        android:text="@string/about_info"
+        android:paddingLeft="@dimen/view_padding_lr"
+        android:paddingRight="@dimen/view_padding_lr"
+        android:text=""
         android:textColor="@color/tips"
-        android:textSize="14sp" />
-
-    <ImageView
-        android:background="@color/black_overlay"
+        android:textSize="20sp" />
+    <Button
+        android:id="@+id/blog_btn"
         android:layout_width="match_parent"
-        android:contentDescription="@string/app_name"
-        android:padding="18dp"
-        android:layout_height="180dp"
-        android:gravity="center"
-        android:src="@drawable/dddpeter_logo" />
+        android:text="😁去我的博客💯"
+        android:textSize="24sp"
+        android:layout_gravity="bottom"
+        android:textColor="@color/colorPrimaryDark"
+        android:background="@color/myorange"
+        android:layout_height="55dp"/>
+
 </LinearLayout>

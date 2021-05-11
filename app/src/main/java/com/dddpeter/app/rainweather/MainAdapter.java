@@ -3,6 +3,7 @@ package com.dddpeter.app.rainweather;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,7 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
                                  "\t" + item.getString("type") );
             mainfengli.setText(Html.fromHtml(item.getString("fengxiang") + "("+item.getString("fengli") +")",Html.FROM_HTML_MODE_LEGACY));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
         return view;
     }

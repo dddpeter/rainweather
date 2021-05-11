@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,7 @@ import com.dddpeter.app.rainweather.common.CommonUtil;
 import com.dddpeter.app.rainweather.componet.BorderBottomLinearLayout;
 import com.dddpeter.app.rainweather.componet.BorderBottomTextView;
 import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -43,7 +45,7 @@ public class MainActivty extends FinalActivity {
                 try {
                     update();
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.w("RainWather", "Exception: ", e);
                 }
             }
 
@@ -69,14 +71,27 @@ public class MainActivty extends FinalActivity {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         this.setContentView(R.layout.activity_main);
+        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH_CITY);
         registerReceiver(mRefreshBroadcastReceiver, intentFilter);
         try {
             update();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
+        FloatingActionButton fab = findViewById(R.id.home1);
+        if(isFromHome){
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
+                startActivity(intent);
+            });
+        }
+        else{
+            fab.setVisibility(View.GONE);
+        }
+
     }
 
 

@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/today"
+    android:paddingLeft="@dimen/activity_padding_lr"
+    android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".TodayActivity">
 
     <ImageView
@@ -22,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="10"
         android:gravity="center"
-        android:text="@string/weather_content"
+        android:text="🥺🥺🥺💢"
         android:textColor="@color/tips"
         android:textSize="25sp" />
 
@@ -66,22 +69,15 @@
         android:text="@string/blank_string"
         android:textColor="@color/black_overlay"
         android:textSize="20sp" />
-
-    <com.xuexiang.xui.widget.progress.HorizontalProgressView
-        android:id="@+id/air"
+    <ImageView
         android:layout_width="match_parent"
-        app:hpv_end_color="#FF0000"
-        app:hpv_end_progress="100"
-        app:hpv_isTracked="true"
-        app:hpv_progress_duration="2600"
-        app:hpv_corner_radius="0dp"
-        app:hpv_progress_textVisibility="false"
-        app:hpv_start_color="@color/ba_1"
-        app:hpv_track_color="@color/black_overlay"
-        android:layout_margin="8dp"
-        app:hpv_track_width="15dp"
-        app:hpv_start_progress="0"
-        android:layout_height="15dp" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="@dimen/view_padding_lr"
+        android:paddingBottom="@dimen/view_padding_lr"
+        android:scaleType="centerInside"
+        android:src="@drawable/aqi"
+        ></ImageView>
 
     <TextView
         android:id="@+id/air_text"
@@ -89,15 +85,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="10"
         android:gravity="center_horizontal"
-        android:text="kongqizhiliang"
+        android:text=""
         android:textColor="@color/tips"
         android:textSize="15sp" />
 
     <RelativeLayout
         android:id="@+id/recent_today"
         android:layout_width="match_parent"
-        android:padding="8dp"
-        android:layout_height="200dp"></RelativeLayout>
+        android:paddingRight="@dimen/view_padding_lr"
+        android:paddingLeft="@dimen/view_padding_lr"
+        android:layout_height="180dp">
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/ganmao"
@@ -109,6 +108,35 @@
         android:padding="15dp"
         android:textColor="@color/tips"
         android:textSize="16sp" />
+    <LinearLayout
+        android:id="@+id/redirect"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="bottom"
+        >
 
+        <Button
+            android:id="@+id/h24_btn"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:text="24小时天气"
+            android:textSize="18sp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="10">
+        </Button>
+
+        <Button
+            android:id="@+id/main_btn"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:text="主要城市天气"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@color/myorange"
+            >
+        </Button>
+    </LinearLayout>
 
 </LinearLayout>

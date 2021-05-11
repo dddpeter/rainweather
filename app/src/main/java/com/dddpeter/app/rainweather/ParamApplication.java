@@ -61,7 +61,7 @@ public class ParamApplication extends Application {
             initCityIds();
             initCommonCities();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
 
     }
@@ -96,7 +96,7 @@ public class ParamApplication extends Application {
                         sendBroadcast(intent);
                     }
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.w("RainWather", "Exception: ", e);
                 } finally {
 
                     return weather;
@@ -111,7 +111,7 @@ public class ParamApplication extends Application {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
     }
 
@@ -257,7 +257,7 @@ public class ParamApplication extends Application {
                 stringBuffer.append(line);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
         JSONArray citys = new JSONArray(stringBuffer.toString());
         Log.i("cityinfo", "initCityIds: " + citys.length());

@@ -1,5 +1,7 @@
 package com.dddpeter.app.rainweather.common;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -49,7 +51,7 @@ public class Promise {
                         Thread.currentThread().interrupt();
                         // set null mean exception
                         result.add(null);
-                        e.printStackTrace();
+                        Log.w("RainWather", "Exception: ", e);
                     } finally {
                         done.countDown();
                     }

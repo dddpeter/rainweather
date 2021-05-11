@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -116,14 +117,14 @@ public class ACache {
             out = new BufferedWriter(new FileWriter(file), 1024);
             out.write(value);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
         } finally {
             if (out != null) {
                 try {
                     out.flush();
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "Exception: ", e);
                 }
             }
             mCache.put(file);
@@ -170,14 +171,14 @@ public class ACache {
                 return null;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("ACache", "IOException: ", e);
             return null;
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "IOException: ", e);
                 }
             }
             if (removeFile)
@@ -226,7 +227,7 @@ public class ACache {
             JSONObject obj = new JSONObject(JSONString);
             return obj;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
             return null;
         }
     }
@@ -272,7 +273,7 @@ public class ACache {
             JSONArray obj = new JSONArray(JSONString);
             return obj;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
             return null;
         }
     }
@@ -295,14 +296,14 @@ public class ACache {
             out = new FileOutputStream(file);
             out.write(value);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
         } finally {
             if (out != null) {
                 try {
                     out.flush();
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "Exception: ", e);
                 }
             }
             mCache.put(file);
@@ -346,14 +347,14 @@ public class ACache {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
             return null;
         } finally {
             if (RAFile != null) {
                 try {
                     RAFile.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "Exception: ", e);
                 }
             }
             if (removeFile)
@@ -400,11 +401,12 @@ public class ACache {
                 put(key, data);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("ACache", "Exception: ", e);
         } finally {
             try {
                 oos.close();
             } catch (IOException e) {
+                Log.w("ACache", "Exception: ", e);
             }
         }
     }
@@ -426,20 +428,20 @@ public class ACache {
                 Object reObject = ois.readObject();
                 return reObject;
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w("ACache", "Exception: ", e);
                 return null;
             } finally {
                 try {
                     if (bais != null)
                         bais.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "Exception: ", e);
                 }
                 try {
                     if (ois != null)
                         ois.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w("ACache", "Exception: ", e);
                 }
             }
         }
