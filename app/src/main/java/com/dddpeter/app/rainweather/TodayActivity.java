@@ -7,13 +7,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,11 +67,12 @@ public class TodayActivity extends FinalActivity {
     TextView ganmao;
     @ViewInject(id = R.id.recent_today)
     RelativeLayout recent;
-    @ViewInject(id = R.id.air)
-    com.xuexiang.xui.widget.progress.HorizontalProgressView air;
     @ViewInject(id = R.id.air_text)
     TextView airText;
-
+    @ViewInject(id = R.id.h24_btn)
+    Button h24Btn;
+    @ViewInject(id = R.id.main_btn)
+    Button mainBtn;
     ACache mCache;
 
 
@@ -80,28 +86,39 @@ public class TodayActivity extends FinalActivity {
                     renderContent();
                     renderRecent();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.w("RainWather", "Exception: ", e);
                 }
             }
         }
     };
-
+    View.OnClickListener l1 = v -> {
+        Intent intent=new Intent(getApplicationContext(),H24Activity.class);
+        intent.putExtra("IS_FROM_HOME",true);
+        startActivity(intent);
+    };
+    View.OnClickListener l2 = v -> {
+        Intent intent=new Intent(getApplicationContext(),MainActivty.class);
+        intent.putExtra("IS_FROM_HOME",true);
+        startActivity(intent);
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_today);
+
+        h24Btn.setOnClickListener(l1);
+        mainBtn.setOnClickListener(l2);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH);
         registerReceiver(mRefreshBroadcastReceiver, intentFilter);
-
         try {
             renderContent();
             renderRecent();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
 
     }
@@ -118,7 +135,7 @@ public class TodayActivity extends FinalActivity {
             renderContent();
             renderRecent();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
 
     }
@@ -135,16 +152,15 @@ public class TodayActivity extends FinalActivity {
             JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
             city.setText(weatherJson.getString("city"));
             type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            type.setText(preferencesWI.getString(today.getString("type"), "\ue73e")
-                    + "\t" + today.getString("type"));
+            type.setText(Html.fromHtml("<font>"+preferencesWI.getString(today.getString("type"), "\ue73e")
+                    + "</font>\t" + today.getString("type"),Html.FROM_HTML_MODE_LEGACY));
             wendu.setText(weatherJson.getString("wendu") + "°C");
             wendugd.setText(today.getString("low") + "  ~  " + today.getString("high"));
             wind.setText(Html.fromHtml(today.getString("fengxiang") + "   " + today.getString("fengli"),
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
-            ganmao.setText(weatherJson.getString("ganmao"));
+            ganmao.setText( "1. " + wAllJson.getJSONObject("current").getString("tips") + "\n2. " + weatherJson.getString("ganmao"));
             JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
-            air.setProgress(airJson.getInt("AQI") * 1.0f / 5.0f);
-            air.setProgressTextVisibility(false);
+            setAirColor(new Integer(airJson.getInt("AQI")));
             airText.setText("空气指数：" + airJson.getInt("AQI") + "（" + airJson.getString("levelIndex") + "）");
             SharedPreferences preferences;
             if (DataUtil.isDay()) {
@@ -158,9 +174,30 @@ public class TodayActivity extends FinalActivity {
             image.setImageDrawable(Drawable.createFromStream(is, weatherImg));
             is.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
 
+    }
+
+    private void setAirColor(Integer aqi) {
+        if(aqi<=50){
+            airText.setTextColor(getResources().getColor(R.color.color0_,null));
+        }
+        else if(aqi<=100){
+            airText.setTextColor(getResources().getColor(R.color.color51_,null));
+        }
+        else if(aqi<=150){
+            airText.setTextColor(getResources().getColor(R.color.color100_,null));
+        }
+        else if(aqi<=200){
+            airText.setTextColor(getResources().getColor(R.color.color150_,null));
+        }
+        else if(aqi<=300){
+            airText.setTextColor(getResources().getColor(R.color.color200_,null));
+        }
+        else{
+            airText.setTextColor(getResources().getColor(R.color.color300_,null));
+        }
     }
 
     protected void renderRecent() throws Exception {
@@ -242,7 +279,7 @@ public class TodayActivity extends FinalActivity {
         XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
         // 3.1设置颜色
 
-        xyRenderer.setColor(this.getResources().getColor(R.color.tips, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.color51_, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);

@@ -37,7 +37,7 @@ import okhttp3.Response;
 
 
 public class ParamApplication extends Application {
-    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "澳门"};
+    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津","杭州","南京","澳门"};
     private final String TAB_TAG_TODAY = "tab_tag_today";
     private final String TAB_TAG_RECENT = "tab_tag_recent";
     private final String TAB_TAG_AIR = "tab_tag_air";
@@ -61,7 +61,7 @@ public class ParamApplication extends Application {
             initCityIds();
             initCommonCities();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
 
     }
@@ -96,7 +96,7 @@ public class ParamApplication extends Application {
                         sendBroadcast(intent);
                     }
                 } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                    Log.w("RainWather", "Exception: ", e);
                 } finally {
 
                     return weather;
@@ -111,7 +111,7 @@ public class ParamApplication extends Application {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
     }
 
@@ -257,7 +257,7 @@ public class ParamApplication extends Application {
                 stringBuffer.append(line);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
         JSONArray citys = new JSONArray(stringBuffer.toString());
         Log.i("cityinfo", "initCityIds: " + citys.length());

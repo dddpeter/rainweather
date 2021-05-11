@@ -7,11 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
@@ -20,6 +16,7 @@ import android.widget.TabHost.TabSpec;
 import androidx.core.app.ActivityCompat;
 
 import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
@@ -43,6 +40,8 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+/*import android.os.StrictMode;*/
 
 
 public class IndexActivity extends FinalActivity {
@@ -71,9 +70,7 @@ public class IndexActivity extends FinalActivity {
             if (amapLocation.getErrorCode() == 0) {
                 String u = url + amapLocation.getDistrict();
                 Log.i("Location", "onLocationChanged: " + amapLocation.toStr());
-                if (mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION) == null) {
-                    mCache.put(CacheKey.CURRENT_LOCATION, amapLocation.toJson(1));
-                }
+                mCache.put(CacheKey.CURRENT_LOCATION, amapLocation.toJson(1));
                 String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
                 String city = amapLocation.getDistrict();
                 if (mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_DATA) == null) {
@@ -97,7 +94,7 @@ public class IndexActivity extends FinalActivity {
                             sendBroadcast(intent);
                         }
                     } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                        Log.w("RainWather", "Exception: ", e);
                     } finally {
 
                     }
@@ -138,7 +135,7 @@ public class IndexActivity extends FinalActivity {
                                 //sendBroadcast(intent);
                             }
                         } catch (IOException | JSONException e) {
-                            e.printStackTrace();
+                            Log.w("RainWather", "Exception: ", e);
                         } finally {
 
                         }
@@ -187,7 +184,7 @@ public class IndexActivity extends FinalActivity {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);
-        String strVer = android.os.Build.VERSION.RELEASE;
+      /*  String strVer = android.os.Build.VERSION.RELEASE;
         float fv = Float.valueOf(strVer);
         if (fv > 2.3) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -201,7 +198,7 @@ public class IndexActivity extends FinalActivity {
                     .penaltyLog() //打印logcat
                     .penaltyDeath()
                     .build());
-        }
+        }*/
 
         activityGroup = new LocalActivityManager(this,
                 true);
@@ -231,6 +228,10 @@ public class IndexActivity extends FinalActivity {
         mLocationClient = new AMapLocationClient(getApplicationContext());
         //设置定位回调监听
         mLocationClient.setLocationListener(this.mAMapLocationListener);
+        AMapLocationClientOption locationOption = new AMapLocationClientOption();
+        locationOption.setInterval(5000);
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationClient.setLocationOption(locationOption);
 
     }
 

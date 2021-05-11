@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -43,7 +46,7 @@ public class H24Activity extends FinalActivity {
                     updateContent();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.w("RainWather", "Exception: ", e);
                 }
             }
         }
@@ -53,6 +56,7 @@ public class H24Activity extends FinalActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h24);
+        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);
         mCache = ACache.get(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH);
@@ -60,7 +64,18 @@ public class H24Activity extends FinalActivity {
         try {
             updateContent();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
+        }
+        FloatingActionButton fab = findViewById(R.id.home);
+        if(isFromHome){
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
+                startActivity(intent);
+            });
+        }
+        else{
+            fab.setVisibility(View.GONE);
         }
     }
 
@@ -70,7 +85,7 @@ public class H24Activity extends FinalActivity {
         try {
             updateContent();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
     }
 
@@ -78,8 +93,6 @@ public class H24Activity extends FinalActivity {
 
         String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
         JSONObject cityJson = new JSONObject(location);
-
-        textViewtitle.setText(textViewtitle.getText() + "(" + cityJson.getString("district") + ")");
         JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_ALL);
         JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
         List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());

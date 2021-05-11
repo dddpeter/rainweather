@@ -2,6 +2,7 @@ package com.dddpeter.app.rainweather;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
             infoW.setText(preferences.getString(item.getString("weather"), "\ue73e") + "\t" + item.getString("weather"));
             infoWind.setText(item.getString("windDir") + "(" + item.getString("windPower") + ")");
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("RainWather", "Exception: ", e);
         }
         return view;
     }

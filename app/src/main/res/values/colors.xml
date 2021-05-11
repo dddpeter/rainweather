@@ -9,6 +9,11 @@
     <color name="myorange">#FF9933</color>
     <color name="colorPrimary">#339933</color>
     <color name="colorPrimaryDark">#222</color>
-    <color name="colorAccent">#00968a</color>
-
+    <color name="colorAccent">#F49A00</color>
+    <color name="color0_">#31A30B</color>
+    <color name="color51_">#8BC34A</color>
+    <color name="color100_">#FFC107</color>
+    <color name="color150_">#E06633</color>
+    <color name="color200_">#EA4433</color>
+    <color name="color300_">#FF0033</color>
 </resources>
