@@ -22,13 +22,25 @@
         android:id="@+id/info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
-        android:background="@color/myblue"
+        android:lineHeight="26sp"
+        android:layout_weight="15"
         android:gravity="top"
-        android:padding="18dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
         android:text="@string/about_info"
         android:textColor="@color/black_overlay"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/contact"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="25"
+        android:gravity="top"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:text="@string/about_info"
+        android:textColor="@color/tips"
+        android:textSize="14sp" />
 
     <ImageView
         android:background="@color/black_overlay"

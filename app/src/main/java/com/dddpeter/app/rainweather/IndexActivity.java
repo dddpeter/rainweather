@@ -20,6 +20,7 @@ import android.widget.TabHost.TabSpec;
 import androidx.core.app.ActivityCompat;
 
 import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
@@ -231,6 +232,10 @@ public class IndexActivity extends FinalActivity {
         mLocationClient = new AMapLocationClient(getApplicationContext());
         //设置定位回调监听
         mLocationClient.setLocationListener(this.mAMapLocationListener);
+        AMapLocationClientOption locationOption = new AMapLocationClientOption();
+        locationOption.setInterval(5000);
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationClient.setLocationOption(locationOption);
 
     }
 
