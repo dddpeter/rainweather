@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/title_about"
+        android:id="@+id/title_main"
         android:layout_width="fill_parent"
         android:layout_marginTop="30px"
         android:gravity="center"
@@ -18,4 +18,15 @@
         android:textStyle="bold"
         android:padding="25dp"
         android:layout_height="wrap_content" />
+    <ListView
+        android:id="@+id/main_list"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:textColor="@color/ba_1"
+        android:textSize="18sp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textStyle="bold"
+        android:divider="@drawable/list_view_style"
+        android:dividerHeight="0.5px"/>
 </LinearLayout>

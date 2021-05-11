@@ -37,7 +37,7 @@ import okhttp3.Response;
 
 
 public class ParamApplication extends Application {
-    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "澳门"};
+    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津","杭州","南京","澳门"};
     private final String TAB_TAG_TODAY = "tab_tag_today";
     private final String TAB_TAG_RECENT = "tab_tag_recent";
     private final String TAB_TAG_AIR = "tab_tag_air";

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/myblue"
     android:orientation="vertical"
     tools:context=".TodayActivity">
 
@@ -90,16 +89,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="10"
         android:gravity="center_horizontal"
-        android:text=""
+        android:text="kongqizhiliang"
         android:textColor="@color/tips"
         android:textSize="15sp" />
 
     <RelativeLayout
         android:id="@+id/recent_today"
         android:layout_width="match_parent"
-        android:background="@color/myblue"
         android:padding="8dp"
-        android:textColor="@color/myblue"
         android:layout_height="200dp"></RelativeLayout>
 
     <TextView
@@ -108,11 +105,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="20"
         android:gravity="start"
-        android:text="@string/blank_string"
-        android:textStyle="bold"
+        android:text="@string/title_activity_about"
         android:padding="15dp"
         android:textColor="@color/tips"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
 
 </LinearLayout>

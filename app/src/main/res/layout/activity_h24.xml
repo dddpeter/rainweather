@@ -29,7 +29,6 @@
         android:id="@+id/list_24h"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="@color/myblue"
         android:textColor="@color/ba_1"
         android:textSize="18sp"
         android:paddingLeft="15dp"

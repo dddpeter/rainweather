@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -135,16 +136,17 @@ public class TodayActivity extends FinalActivity {
             JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
             city.setText(weatherJson.getString("city"));
             type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            type.setText(preferencesWI.getString(today.getString("type"), "\ue73e")
-                    + "\t" + today.getString("type"));
+            type.setText(Html.fromHtml("<font>"+preferencesWI.getString(today.getString("type"), "\ue73e")
+                    + "</font>\t" + today.getString("type"),Html.FROM_HTML_MODE_LEGACY));
             wendu.setText(weatherJson.getString("wendu") + "°C");
             wendugd.setText(today.getString("low") + "  ~  " + today.getString("high"));
             wind.setText(Html.fromHtml(today.getString("fengxiang") + "   " + today.getString("fengli"),
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
-            ganmao.setText(weatherJson.getString("ganmao"));
+            ganmao.setText( "1. " + wAllJson.getJSONObject("current").getString("tips") + "\n2. " + weatherJson.getString("ganmao"));
             JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
             air.setProgress(airJson.getInt("AQI") * 1.0f / 5.0f);
             air.setProgressTextVisibility(false);
+            setAirColor(new Integer(airJson.getInt("AQI")));
             airText.setText("空气指数：" + airJson.getInt("AQI") + "（" + airJson.getString("levelIndex") + "）");
             SharedPreferences preferences;
             if (DataUtil.isDay()) {
@@ -161,6 +163,27 @@ public class TodayActivity extends FinalActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private void setAirColor(Integer aqi) {
+        if(aqi<=50){
+            airText.setTextColor(getResources().getColor(R.color.color0_,null));
+        }
+        else if(aqi<=100){
+            airText.setTextColor(getResources().getColor(R.color.color51_,null));
+        }
+        else if(aqi<=150){
+            airText.setTextColor(getResources().getColor(R.color.color100_,null));
+        }
+        else if(aqi<=200){
+            airText.setTextColor(getResources().getColor(R.color.color150_,null));
+        }
+        else if(aqi<=300){
+            airText.setTextColor(getResources().getColor(R.color.color200_,null));
+        }
+        else{
+            airText.setTextColor(getResources().getColor(R.color.color300_,null));
+        }
     }
 
     protected void renderRecent() throws Exception {
@@ -242,7 +265,7 @@ public class TodayActivity extends FinalActivity {
         XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
         // 3.1设置颜色
 
-        xyRenderer.setColor(this.getResources().getColor(R.color.tips, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.color51_, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);
