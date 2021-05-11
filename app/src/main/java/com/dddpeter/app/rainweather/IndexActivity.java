@@ -72,9 +72,7 @@ public class IndexActivity extends FinalActivity {
             if (amapLocation.getErrorCode() == 0) {
                 String u = url + amapLocation.getDistrict();
                 Log.i("Location", "onLocationChanged: " + amapLocation.toStr());
-                if (mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION) == null) {
-                    mCache.put(CacheKey.CURRENT_LOCATION, amapLocation.toJson(1));
-                }
+                mCache.put(CacheKey.CURRENT_LOCATION, amapLocation.toJson(1));
                 String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
                 String city = amapLocation.getDistrict();
                 if (mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_DATA) == null) {
