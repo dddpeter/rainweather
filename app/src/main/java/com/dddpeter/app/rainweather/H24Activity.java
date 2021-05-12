@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -25,6 +26,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class H24Activity extends FinalActivity {
 
@@ -51,11 +54,16 @@ public class H24Activity extends FinalActivity {
             }
         }
     };
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        //注入字体
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h24);
+        XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);
         mCache = ACache.get(this);
         IntentFilter intentFilter = new IntentFilter();

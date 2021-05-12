@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_padding_lr"
     android:paddingRight="@dimen/activity_padding_lr"
@@ -10,58 +10,68 @@
 
     <ImageView
         android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_gravity="center"
+        android:background="@color/cardview_light_background"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/view_padding_lr"
-        android:layout_height="180dp"
-        android:gravity="center"
-        android:background="@color/cardview_light_background"
         android:src="@drawable/dddpeter_logo" />
 
     <TextView
-        android:layout_weight="15"
         android:id="@+id/info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:lineHeight="26sp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="15"
+        android:gravity="center_vertical"
+        android:lineHeight="35sp"
         android:paddingLeft="@dimen/view_padding_lr"
         android:paddingRight="@dimen/view_padding_lr"
-        android:layout_marginTop="20dp"
         android:text="知雨天气"
-        android:gravity="center_vertical"
         android:textColor="@color/black_overlay"
         android:textSize="23sp" />
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="15dp"
-        android:layout_weight="25"
-        android:paddingTop="30dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp"
 
-        android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/contact"
-        android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:layout_height="match_parent"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:text="烈焰之雨"
-        android:background="@color/contact"
-        android:textColor="@color/tips"
-        android:textSize="20sp" />
-    </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/contact"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:background="@color/contact"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="软件作者：烈焰之雨"
+                android:textColor="@color/tips"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/contact_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:background="@color/contact"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="电子邮件：dddpeter@126.com"
+                android:textColor="@color/tips"
+                android:textSize="20sp" />
+        </LinearLayout>
     <Button
         android:id="@+id/blog_btn"
         android:layout_width="match_parent"
-        android:text="😁去我的博客💯"
-        android:textSize="24sp"
+        android:layout_height="55dp"
         android:layout_gravity="bottom"
-        android:textColor="@color/colorPrimaryDark"
-        android:background="@color/myorange"
-        android:layout_height="55dp"/>
+        android:background="@color/colorPrimary"
+        android:text="😁去我的博客💯"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="20sp" />
 
 </LinearLayout>

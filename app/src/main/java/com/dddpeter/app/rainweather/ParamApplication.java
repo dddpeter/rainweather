@@ -44,7 +44,7 @@ public class ParamApplication extends Application {
     private final String TAB_TAG_ABOUT = "tab_tag_about";
     public boolean isRefreshed = false;
     public String airInfo;
-    String url = CacheKey.API_DOMAIN + CacheKey.API_CITY;
+    String url = CacheKey.DETAIL_API;
     ACache mCache;
 
     @Override
@@ -76,9 +76,22 @@ public class ParamApplication extends Application {
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
         for (String city : MAIN_CITY) {
             Callable callable = (Callable<JSONObject>) () -> {
+                String shortLocation = city
+                        .replace("省", "")
+                        .replace("市", "")
+                        .replace("自治区", "")
+                        .replace("区", "")
+                        .replace("县", "")
+                        .replace("自治县", "")
+                        .replace("特区", "")
+                        .replace("特别行政区", "");
+                FinalDb db = FinalDb.create(this, "my.db");
+                List<CityInfo> list = db.findAllByWhere(CityInfo.class, " city ='" + city +
+                        "' or  city ='" + shortLocation
+                        + "' or city like '" + shortLocation + "%'");
                 JSONObject weather = new JSONObject();
                 Request request = new Request.Builder()
-                        .url(url + city)//访问连接
+                        .url(url + list.get(0).getCityid())//访问连接
                         .addHeader("Accept", "application/json")
                         .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
                         .get()
@@ -90,7 +103,7 @@ public class ParamApplication extends Application {
                     response = call.execute();
                     if (response.isSuccessful()) {
                         weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        mCache.put(city + ":" + CacheKey.WEATHER_DATA, weather);
+                        mCache.put(city + ":" + CacheKey.WEATHER_ALL, weather);
                         Intent intent = new Intent();
                         intent.setAction(CacheKey.REFRESH_CITY);
                         sendBroadcast(intent);
@@ -107,7 +120,7 @@ public class ParamApplication extends Application {
         try {
             List<JSONObject> results = Promise.all(callables);
             for (JSONObject r : results) {
-                mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_DATA, r);
+                mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
             }
 
         } catch (Exception e) {

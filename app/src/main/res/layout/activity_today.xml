@@ -14,6 +14,7 @@
         android:layout_height="340dp"
         android:background="@color/skyblue">
         <LinearLayout
+            android:id="@+id/top_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/backgroud"
@@ -36,92 +37,167 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="20"
+                    android:layout_weight="40"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
                     android:background="@color/xui_transparent"
                     >
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="2dp"
+                        app:cardCornerRadius="9dp"
+                        app:cardElevation="9dp"
+                        >
+                        <TextView
+                            android:id="@+id/airq"
+                            android:layout_width="32dp"
+                            android:layout_height="21dp"
+                            android:gravity="center"
+                            android:text="10"
+                            android:paddingTop="1dp"
+                            android:textColor="@color/fontWhite"
+                            android:background="@color/colorPrimary"
+                            android:textSize="10sp" />
+                        <TextView
+                            android:layout_marginTop="16dp"
+                            android:id="@+id/airq1"
+                            android:layout_width="32dp"
+                            android:layout_height="21dp"
+                            android:gravity="center"
+                            android:text="优"
+                            android:paddingBottom="1dp"
+                            android:textColor="@color/fontWhite"
+                            android:background="@color/colorPrimary"
+                            android:textSize="10sp" />
+                    </androidx.cardview.widget.CardView>
+
                     <ImageView
                         android:id="@+id/imageView1"
-                        android:layout_width="match_parent"
+                        android:layout_width="80dp"
                         android:layout_height="100dp"
                         android:contentDescription="@string/app_name"
-                        android:gravity="center"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="-40dp"
                         android:layout_marginBottom="5dp"
                         android:background="@color/xui_transparent"
                         android:src="@drawable/notclear" />
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:gravity="center"
+                        android:layout_marginTop="-10dp"
                         android:text="晴"
                         android:textColor="@color/fontWhite"
                         android:background="@color/xui_transparent"
-                        android:textSize="20sp" />
+                        android:textSize="25sp" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="20"
+                    android:layout_weight="10"
                     android:background="@color/xui_transparent"
                     android:paddingTop="20dp"
-                    android:gravity="center_horizontal"
                     android:orientation="vertical"
                     >
-                    <TextView
-                        android:id="@+id/wendu"
-                        android:layout_width="wrap_content"
-                        android:gravity="top|center"
-                        android:text="10°"
-                        android:textColor="@color/fontWhite"
-                        android:layout_height="70dp"
-                        android:background="@color/xui_transparent"
-                        android:textSize="35sp" />
+
+                        <TextView
+                            android:id="@+id/wendu"
+                            android:layout_width="match_parent"
+                            android:gravity="top|left"
+                            android:paddingLeft="35dp"
+                            android:text="10°"
+                            android:textColor="@color/fontWhite"
+                            android:layout_height="60dp"
+                            android:background="@color/xui_transparent"
+                            android:textSize="35sp" />
 
 
-                    <TextView
-                        android:id="@+id/wendu_low"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="低温 10°"
-                        android:textColor="@color/fontWhite"
-                        android:layout_marginBottom="3dp"
-                        android:background="@color/xui_transparent"
-                        android:textSize="18sp" />
-                    <TextView
-                        android:id="@+id/wendu_high"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="高温 20°"
-                        android:textColor="@color/fontWhite"
-                        android:layout_marginBottom="3dp"
-                        android:background="@color/xui_transparent"
-                        android:textSize="18sp" />
 
+
+                     <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/xui_transparent"
+                         android:layout_marginBottom="3dp"
+                    >
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:src="@drawable/sk_fx"
+                        android:background="@color/xui_transparent"
+                        >
+
+                    </ImageView>
                     <TextView
                         android:id="@+id/wind"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="left"
                         android:layout_marginBottom="3dp"
                         android:textColor="@color/fontWhite"
-                        android:text="南风(1级)"
+                        android:text="南风1级"
                         android:background="@color/xui_transparent"
                         android:textSize="18sp" />
+                     </LinearLayout>
+                     <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/xui_transparent"
+                         android:layout_marginBottom="3dp"
+                    >
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:src="@drawable/sk_sd"
+                        android:background="@color/xui_transparent"
+                        >
+
+                    </ImageView>
                     <TextView
                         android:id="@+id/shidu"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="湿度"
+                        android:gravity="left"
+                        android:text="湿度:40%"
                         android:textColor="@color/fontWhite"
-                        android:layout_marginBottom="3dp"
                         android:background="@color/xui_transparent"
                         android:textSize="18sp" />
+                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/xui_transparent"
+                        android:layout_marginBottom="3dp"
+                        >
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="match_parent"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="3dp"
+                            android:src="@drawable/sk_yq"
+                            android:background="@color/xui_transparent"
+                            >
+
+                        </ImageView>
+                        <TextView
+                            android:id="@+id/hpa"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:text="压强:1000hpa"
+                            android:textColor="@color/fontWhite"
+                            android:background="@color/xui_transparent"
+                            android:textSize="18sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -132,38 +208,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="10dp"
+        android:paddingTop="25dp"
         android:paddingBottom="5dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerInside"
         android:src="@drawable/aqi">
     </ImageView>
     <TextView
         android:id="@+id/air_text"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="20dp"
         android:gravity="center|top"
+        android:layout_gravity="center"
         android:text="良好"
         android:textStyle="bold"
         android:textColor="@color/tips"
         android:textSize="14sp" />
-    <RelativeLayout
-        android:id="@+id/recent_today"
-        android:layout_width="match_parent"
-        android:paddingRight="@dimen/view_padding_lr"
-        android:paddingLeft="@dimen/view_padding_lr"
-        android:layout_height="140dp">
+        <RelativeLayout
+            android:id="@+id/recent_today"
+            android:layout_width="match_parent"
+            android:paddingRight="@dimen/view_padding_lr"
+            android:paddingLeft="@dimen/view_padding_lr"
+            android:layout_height="160dp">
 
-    </RelativeLayout>
-    <TextView
-        android:id="@+id/ganmao"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
-        android:gravity="start|top"
-        android:text=""
-        android:padding="15dp"
-        android:textColor="@color/tips"
-        android:textSize="15sp" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/ganmao"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:gravity="start|top"
+            android:text="今天天气怎么样呢"
+            android:padding="15dp"
+            android:textColor="@color/tips"
+            android:textSize="15sp" />
+
     <LinearLayout
         android:id="@+id/redirect"
         android:layout_width="match_parent"
@@ -194,5 +272,14 @@
             >
         </Button>
     </LinearLayout>
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:background="@color/colorPrimary"
+        android:text="返回">
+    </Button>
 
 </LinearLayout>
