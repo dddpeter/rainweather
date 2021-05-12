@@ -59,16 +59,22 @@ public class TodayActivity extends FinalActivity {
     TextView type;
     @ViewInject(id = R.id.wendu)
     TextView wendu;
-    @ViewInject(id = R.id.wendugd)
-    TextView wendugd;
+    @ViewInject(id = R.id.wendu_low)
+    TextView wendugLow;
+    @ViewInject(id = R.id.wendu_high)
+    TextView wendugHigh;
     @ViewInject(id = R.id.wind)
     TextView wind;
     @ViewInject(id = R.id.ganmao)
     TextView ganmao;
+    @ViewInject(id = R.id.shidu)
+    TextView  shidu;
     @ViewInject(id = R.id.recent_today)
     RelativeLayout recent;
     @ViewInject(id = R.id.air_text)
     TextView airText;
+    @ViewInject(id=R.id.top_pic)
+    LinearLayout topPic;
     @ViewInject(id = R.id.h24_btn)
     Button h24Btn;
     @ViewInject(id = R.id.main_btn)
@@ -145,21 +151,23 @@ public class TodayActivity extends FinalActivity {
         JSONObject cityJson = new JSONObject(location);
         JSONObject weatherJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_DATA);
         JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_ALL);
-        StringBuilder htmlStrBuilder = new StringBuilder();
-        SharedPreferences preferencesWI = getSharedPreferences("weahter_icon", MODE_PRIVATE);
-        htmlStrBuilder.append("<p>");
+
         try {
             JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
-            city.setText(weatherJson.getString("city"));
+            JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
+            JSONObject current = wAllJson.getJSONObject("current").getJSONObject("current");
+            String wtype = today.getString("type");
+            city.setTypeface(CommonUtil.weatherIconFontFace(this));
             type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            type.setText(Html.fromHtml("<font>"+preferencesWI.getString(today.getString("type"), "\ue73e")
-                    + "</font>\t" + today.getString("type"),Html.FROM_HTML_MODE_LEGACY));
-            wendu.setText(weatherJson.getString("wendu") + "°C");
-            wendugd.setText(today.getString("low") + "  ~  " + today.getString("high"));
+            city.setText(Html.fromHtml( "<font>\ue71b</font> " + weatherJson.getString("city"),Html.FROM_HTML_MODE_LEGACY));
+            type.setText(Html.fromHtml(wtype,Html.FROM_HTML_MODE_LEGACY));
+            wendu.setText(weatherJson.getString("wendu") + "°");
+            wendugLow.setText(today.getString("low"));
+            wendugHigh.setText(today.getString("high"));
             wind.setText(Html.fromHtml(today.getString("fengxiang") + "   " + today.getString("fengli"),
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
+            shidu.setText("湿度 "+current.getString("humidity"));
             ganmao.setText( "1. " + wAllJson.getJSONObject("current").getString("tips") + "\n2. " + weatherJson.getString("ganmao"));
-            JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
             setAirColor(new Integer(airJson.getInt("AQI")));
             airText.setText("空气指数：" + airJson.getInt("AQI") + "（" + airJson.getString("levelIndex") + "）");
             SharedPreferences preferences;
@@ -167,6 +175,19 @@ public class TodayActivity extends FinalActivity {
                 preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
             } else {
                 preferences = getSharedPreferences("night_picture", MODE_PRIVATE);
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyblue_night,null));
+            }
+            if(wtype == "阴天" || wtype == "多云" ){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skygrey,null));
+            }
+            if(wtype.indexOf("雨") !=-1 && wtype.indexOf("转") < 0){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyrain,null));
+            }
+            if(wtype.indexOf("雪") !=-1 && wtype.indexOf("转") < 0){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skysnow,null));
+            }
+            if(wtype == "沙尘暴" || wtype == "扬沙"  || wtype == "浮尘"){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skydust,null));
             }
             String weatherImg = preferences.getString(today.getString("type"), "notclear.png");
             AssetManager manager = getAssets();
@@ -252,10 +273,10 @@ public class TodayActivity extends FinalActivity {
         renderer.setAxisTitleTextSize(25);
         renderer.setLegendTextSize(25);
         renderer.setChartTitleTextSize(30);
-        renderer.setMarginsColor(this.getResources().getColor(R.color.myblue, null));
+        renderer.setMarginsColor(this.getResources().getColor(R.color.cardview_light_background, null));
         renderer.setLabelsColor(this.getResources().getColor(R.color.tips, null));
         renderer.setXLabelsColor(this.getResources().getColor(R.color.tips, null));
-        renderer.setGridColor(this.getResources().getColor(R.color.mygrey, null));
+        renderer.setGridColor(this.getResources().getColor(R.color.mybord, null));
         renderer.setYTitle("温度(℃)");
         renderer.setApplyBackgroundColor(true);
         renderer.setFitLegend(true);
@@ -263,12 +284,9 @@ public class TodayActivity extends FinalActivity {
         renderer.setMargins(new int[]{50, 50, 70, 50});//设置图表的外边框(上/左/下/右)
         renderer.setZoomRate(1.1f);
         renderer.setPointSize(10);
-        renderer.setBackgroundColor(this.getResources().getColor(R.color.myblue, null));
         renderer.setLabelsTextSize(25);
         renderer.setAxisTitleTextSize(25);
-        //renderer.setChartTitle("最近天气");
         renderer.setChartTitleTextSize(35);
-
         renderer.setShowGrid(true);
         renderer.setRange(new double[]{-0.36, 4.36, min, max});
         renderer.setYLabelsAlign(Paint.Align.LEFT);
@@ -279,7 +297,7 @@ public class TodayActivity extends FinalActivity {
         XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
         // 3.1设置颜色
 
-        xyRenderer.setColor(this.getResources().getColor(R.color.color51_, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.myblue, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);

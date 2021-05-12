@@ -1,19 +1,27 @@
 <resources>
 
     <color name="ba_1">#339933</color>
-    <color name="black_overlay">#FFFFFFFF</color>
-    <color name="skyblue">#663299CC</color>
-    <color name="tips">#FFCC33</color>
+    <color name="black_overlay">#333333</color>
+    <color name="skyblue">#9903A9F4</color>
+    <color name="skyblue_night">#0C1B6D</color>
+    <color name="skygrey">#B1B1B2</color>
+    <color name="skyrain">#435F6B</color>
+    <color name="skysnow">#09AABE</color>
+    <color name="skydust">#A58C3E</color>
+    <color name="tips">#336699</color>
     <color name="myblue">#336699</color>
-    <color name="mygrey">#7a8f9a</color>
+    <color name="mybord">#e4e4e4</color>
+    <color name="fontWhite">#D9FAF6F6</color>
     <color name="myorange">#FF9933</color>
     <color name="colorPrimary">#339933</color>
     <color name="colorPrimaryDark">#222</color>
     <color name="colorAccent">#F49A00</color>
-    <color name="color0_">#31A30B</color>
-    <color name="color51_">#8BC34A</color>
-    <color name="color100_">#FFC107</color>
-    <color name="color150_">#E06633</color>
-    <color name="color200_">#EA4433</color>
-    <color name="color300_">#FF0033</color>
+    <color name="color0_">#28D28B</color>
+    <color name="color51_">#FDE73B</color>
+    <color name="color100_">#FDAA3A</color>
+    <color name="color150_">#FE3A45</color>
+    <color name="color200_">#F53AB6</color>
+    <color name="color300_">#A52504</color>
+    <color name="airbg">#E6009688</color>
+    <color name="contact">#80EDDAA1</color>
 </resources>

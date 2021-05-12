@@ -2,44 +2,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_padding_lr"
     android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".AboutActivity">
 
     <ImageView
-        android:background="@color/black_overlay"
         android:layout_width="match_parent"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/view_padding_lr"
         android:layout_height="180dp"
         android:gravity="center"
+        android:background="@color/cardview_light_background"
         android:src="@drawable/dddpeter_logo" />
 
     <TextView
+        android:layout_weight="15"
         android:id="@+id/info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:lineHeight="26sp"
-        android:layout_weight="15"
-        android:gravity="top"
         android:paddingLeft="@dimen/view_padding_lr"
         android:paddingRight="@dimen/view_padding_lr"
         android:layout_marginTop="20dp"
-        android:text=""
+        android:text="知雨天气"
+        android:gravity="center_vertical"
         android:textColor="@color/black_overlay"
-        android:textSize="18sp" />
+        android:textSize="23sp" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="15dp"
+        android:layout_weight="25"
+        android:paddingTop="30dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+
+        android:layout_height="wrap_content">
     <TextView
         android:id="@+id/contact"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="25"
-        android:gravity="top"
-        android:paddingLeft="@dimen/view_padding_lr"
-        android:paddingRight="@dimen/view_padding_lr"
-        android:text=""
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="烈焰之雨"
+        android:background="@color/contact"
         android:textColor="@color/tips"
         android:textSize="20sp" />
+    </androidx.cardview.widget.CardView>
     <Button
         android:id="@+id/blog_btn"
         android:layout_width="match_parent"
