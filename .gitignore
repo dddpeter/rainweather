@@ -13,3 +13,4 @@ build/
 .gradle/
 release/
 *.swp
+debug/
