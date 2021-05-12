@@ -30,6 +30,7 @@ import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 import com.dddpeter.app.rainweather.common.DataUtil;
 import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.google.common.base.Strings;
 import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
@@ -44,10 +45,9 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.internal.StringUtil;
+
 
 import java.io.InputStream;
-import java.time.LocalDateTime;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
@@ -140,7 +140,7 @@ public class TodayActivity extends FinalActivity {
         setContentView(R.layout.activity_today);
         cityName = getIntent().getStringExtra("city");
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
-        if(StringUtil.isBlank(cityName)){
+        if(Strings.isNullOrEmpty(cityName)){
             h24Btn.setOnClickListener(l1);
             mainBtn.setOnClickListener(l2);
             IntentFilter intentFilter = new IntentFilter();
@@ -185,7 +185,7 @@ public class TodayActivity extends FinalActivity {
     public void renderContent() throws JSONException {
         JSONObject wAllJson;
         String cityCurrent;
-        if(StringUtil.isBlank(cityName)){
+        if(Strings.isNullOrEmpty(cityName)){
             JSONObject cityJson  = mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION);
             cityCurrent = cityJson.getString("district");
         }
@@ -201,7 +201,7 @@ public class TodayActivity extends FinalActivity {
             String wtype = current.getString("weather");
             city.setTypeface(CommonUtil.weatherIconFontFace(this));
             type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            city.setText(Html.fromHtml(  (StringUtil.isBlank(cityName)?"<font>\ue71b</font> " : "") +
+            city.setText(Html.fromHtml(  (Strings.isNullOrEmpty(cityName)?"<font>\ue71b</font> " : "") +
                     cityCurrent,Html.FROM_HTML_MODE_LEGACY));
             type.setText(Html.fromHtml(wtype,Html.FROM_HTML_MODE_LEGACY));
             wendu.setText(current.getString("temperature") + "°");
@@ -286,7 +286,7 @@ public class TodayActivity extends FinalActivity {
 
     protected void renderRecent() throws Exception {
         String cityCurrent;
-        if(StringUtil.isBlank(cityName)){
+        if(Strings.isNullOrEmpty(cityName)){
             JSONObject cityJson  = mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION);
             cityCurrent = cityJson.getString("district");
         }

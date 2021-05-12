@@ -4,43 +4,21 @@ package com.dddpeter.app.rainweather;
 import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
-import androidx.core.app.ActivityCompat;
-
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
 import com.dddpeter.app.rainweather.common.ACache;
-import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
-import com.dddpeter.app.rainweather.enums.CacheKey;
-import com.dddpeter.app.rainweather.po.CityInfo;
+import com.google.common.base.Strings;
 import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
-import net.tsz.afinal.FinalDb;
 import net.tsz.afinal.annotation.view.ViewInject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.internal.StringUtil;
-
-import java.io.IOException;
-import java.util.List;
-
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-import lombok.NonNull;
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /*import android.os.StrictMode;*/
 
@@ -112,7 +90,7 @@ public class IndexActivity extends FinalActivity {
 
         });
         String current = getIntent().getStringExtra("currentTab");
-        if(!StringUtil.isBlank(current)){
+        if(!Strings.isNullOrEmpty(current)){
             tabHost.setCurrentTabByTag(current);
             main.setChecked(true);
         }
