@@ -1,4 +1,4 @@
-package com.dddpeter.app.rainweather;
+package com.dddpeter.app.rainweather.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.dddpeter.app.rainweather.R;
+import com.dddpeter.app.rainweather.TodayActivity;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 
 import org.json.JSONException;
@@ -50,7 +51,7 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
                                  "\t" + item.getString("weather") );
             mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower") ,Html.FROM_HTML_MODE_LEGACY));
             btn.setOnClickListener(e ->{
-                Intent intent = new Intent(view.getContext(),TodayActivity.class);
+                Intent intent = new Intent(view.getContext(), TodayActivity.class);
                 try {
                     intent.putExtra("city",item.getString("city"));
                     view.getContext().startActivity(intent);
