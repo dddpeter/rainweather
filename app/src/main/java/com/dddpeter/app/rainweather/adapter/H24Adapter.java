@@ -1,4 +1,4 @@
-package com.dddpeter.app.rainweather;
+package com.dddpeter.app.rainweather.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.dddpeter.app.rainweather.R;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 
 import org.json.JSONException;

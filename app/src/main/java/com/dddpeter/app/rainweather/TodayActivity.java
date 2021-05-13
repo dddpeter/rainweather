@@ -10,11 +10,16 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +32,8 @@ import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 import com.dddpeter.app.rainweather.common.DataUtil;
 import com.dddpeter.app.rainweather.enums.CacheKey;
+import com.dddpeter.app.rainweather.pojo.LocationVO;
+import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -41,8 +48,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.InputStream;
-import java.time.LocalDateTime;
+
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -50,7 +59,8 @@ import java.time.LocalDateTime;
  */
 @SuppressLint("DefaultLocale")
 public class TodayActivity extends FinalActivity {
-
+    @ViewInject(id=R.id.top_info)
+    LinearLayout topInfo;
     @ViewInject(id = R.id.imageView1)
     ImageView image;
     @ViewInject(id = R.id.city)
@@ -59,21 +69,33 @@ public class TodayActivity extends FinalActivity {
     TextView type;
     @ViewInject(id = R.id.wendu)
     TextView wendu;
-    @ViewInject(id = R.id.wendugd)
-    TextView wendugd;
+    @ViewInject(id = R.id.hpa)
+    TextView hpa;
+
     @ViewInject(id = R.id.wind)
     TextView wind;
     @ViewInject(id = R.id.ganmao)
     TextView ganmao;
+    @ViewInject(id = R.id.shidu)
+    TextView  shidu;
     @ViewInject(id = R.id.recent_today)
     RelativeLayout recent;
     @ViewInject(id = R.id.air_text)
     TextView airText;
+    @ViewInject(id = R.id.airq)
+    TextView airq1;
+    @ViewInject(id = R.id.airq1)
+    TextView airq;
+    @ViewInject(id=R.id.top_pic)
+    LinearLayout topPic;
     @ViewInject(id = R.id.h24_btn)
     Button h24Btn;
     @ViewInject(id = R.id.main_btn)
     Button mainBtn;
+    @ViewInject(id = R.id.back_btn)
+    Button backBtn;
     ACache mCache;
+    String cityName;
 
 
     private BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
@@ -101,26 +123,50 @@ public class TodayActivity extends FinalActivity {
         intent.putExtra("IS_FROM_HOME",true);
         startActivity(intent);
     };
+    View.OnClickListener l3 = v -> {
+        Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
+        ParamApplication application = (ParamApplication) getApplicationContext();
+        intent.putExtra("currentTab",application.getTAB_TAG_RECENT());
+        startActivity(intent);
+    };
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        //注入字体
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_today);
-
-        h24Btn.setOnClickListener(l1);
-        mainBtn.setOnClickListener(l2);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CacheKey.REFRESH);
-        registerReceiver(mRefreshBroadcastReceiver, intentFilter);
-        try {
-            renderContent();
-            renderRecent();
-        } catch (JSONException e) {
-            Log.w("RainWather", "Exception: ", e);
-        } catch (Exception e) {
-            Log.w("RainWather", "Exception: ", e);
+        cityName = getIntent().getStringExtra("city");
+        XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
+        if(cityName==null  || cityName.trim().equals("")){
+            h24Btn.setOnClickListener(l1);
+            mainBtn.setOnClickListener(l2);
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(CacheKey.REFRESH);
+            registerReceiver(mRefreshBroadcastReceiver, intentFilter);
         }
-
+        else{
+            h24Btn.setVisibility(View.GONE);
+            mainBtn.setVisibility(View.GONE);
+            backBtn.setVisibility(View.VISIBLE);
+            backBtn.setOnClickListener(l3);
+        }
+        LinearLayout infoB = findViewById(R.id.info_b);
+        int[]  size = CommonUtil.getScreenSize(this);
+        int x = size[0];
+        int y = size[1];
+        if(y>=1500){
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    (int) (y*0.95/2.0)
+            );
+            topPic.setLayoutParams(params1);
+            infoB.setPadding(0,   (int) (y*0.7/20),0,0);
+        }
     }
 
     @Override
@@ -141,34 +187,58 @@ public class TodayActivity extends FinalActivity {
     }
 
     public void renderContent() throws JSONException {
-        String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
-        JSONObject cityJson = new JSONObject(location);
-        JSONObject weatherJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_DATA);
-        JSONObject wAllJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_ALL);
-        StringBuilder htmlStrBuilder = new StringBuilder();
-        SharedPreferences preferencesWI = getSharedPreferences("weahter_icon", MODE_PRIVATE);
-        htmlStrBuilder.append("<p>");
+        JSONObject wAllJson;
+        String cityCurrent;
+        if(cityName==null  || cityName.trim().equals("")){
+          //  JSONObject cityJson  = mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION);
+            LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+            cityCurrent = locationVO.getDistrict();
+        }
+        else{
+            cityCurrent = cityName;
+        }
+        wAllJson = mCache.getAsJSONObject(cityCurrent + ":" + CacheKey.WEATHER_ALL);
+
         try {
-            JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
-            city.setText(weatherJson.getString("city"));
-            type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            type.setText(Html.fromHtml("<font>"+preferencesWI.getString(today.getString("type"), "\ue73e")
-                    + "</font>\t" + today.getString("type"),Html.FROM_HTML_MODE_LEGACY));
-            wendu.setText(weatherJson.getString("wendu") + "°C");
-            wendugd.setText(today.getString("low") + "  ~  " + today.getString("high"));
-            wind.setText(Html.fromHtml(today.getString("fengxiang") + "   " + today.getString("fengli"),
-                    Html.FROM_HTML_OPTION_USE_CSS_COLORS));
-            ganmao.setText( "1. " + wAllJson.getJSONObject("current").getString("tips") + "\n2. " + weatherJson.getString("ganmao"));
+            //JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
             JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
-            setAirColor(new Integer(airJson.getInt("AQI")));
-            airText.setText("空气指数：" + airJson.getInt("AQI") + "（" + airJson.getString("levelIndex") + "）");
+            JSONObject current = wAllJson.getJSONObject("current").getJSONObject("current");
+            String wtype = current.getString("weather");
+            city.setTypeface(CommonUtil.weatherIconFontFace(this));
+            type.setTypeface(CommonUtil.weatherIconFontFace(this));
+            city.setText(Html.fromHtml(  (cityName==null  || cityName.trim().equals("")?"<font>\ue71b</font> " : "") +
+                    cityCurrent,Html.FROM_HTML_MODE_LEGACY));
+            type.setText(Html.fromHtml(wtype,Html.FROM_HTML_MODE_LEGACY));
+            wendu.setText(current.getString("temperature") + "°");
+            hpa.setText("压强:" +  current.getString("airpressure")+"hpa");
+            wind.setText(Html.fromHtml(current.getString("winddir") + current.getString("windpower"),
+                    Html.FROM_HTML_OPTION_USE_CSS_COLORS));
+            shidu.setText("湿度:"+ current.getString("humidity")+"%");
+            ganmao.setText( wAllJson.getJSONObject("current").getString("tips"));
+            setAirColor(new Integer(airJson.getInt("AQI")), airJson.getString("levelIndex"));
+            airq.setText(airJson.getString("levelIndex"));
+            airq1.setText(airJson.getString("AQI"));
             SharedPreferences preferences;
             if (DataUtil.isDay()) {
                 preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
             } else {
                 preferences = getSharedPreferences("night_picture", MODE_PRIVATE);
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyblue_night,null));
+                topInfo.setBackground(getResources().getDrawable(R.drawable.nbackground,null));
             }
-            String weatherImg = preferences.getString(today.getString("type"), "notclear.png");
+            if(wtype == "阴天" || wtype == "多云" ){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skygrey,null));
+            }
+            if(wtype.indexOf("雨") !=-1 && wtype.indexOf("转") < 0){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyrain,null));
+            }
+            if(wtype.indexOf("雪") !=-1 && wtype.indexOf("转") < 0){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skysnow,null));
+            }
+            if(wtype == "沙尘暴" || wtype == "扬沙"  || wtype == "浮尘"){
+                topPic.setBackgroundColor(getResources().getColor(R.color.skydust,null));
+            }
+            String weatherImg = preferences.getString(current.getString("weather"), "notclear.png");
             AssetManager manager = getAssets();
             InputStream is = manager.open(weatherImg);
             image.setImageDrawable(Drawable.createFromStream(is, weatherImg));
@@ -179,40 +249,66 @@ public class TodayActivity extends FinalActivity {
 
     }
 
-    private void setAirColor(Integer aqi) {
+    private void setAirColor(Integer aqi,String index) {
+        String text ="空气指数：" + aqi + "（" + index+ "）";
+        airText.setText(text);
         if(aqi<=50){
-            airText.setTextColor(getResources().getColor(R.color.color0_,null));
+
+            airText.setTextColor(getResources().getColor(R.color.colorPrimary,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
         }
         else if(aqi<=100){
             airText.setTextColor(getResources().getColor(R.color.color51_,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color51_,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color51_,null));
+            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
+            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
         }
         else if(aqi<=150){
             airText.setTextColor(getResources().getColor(R.color.color100_,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color100_,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color100_,null));
+            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
+            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
         }
         else if(aqi<=200){
             airText.setTextColor(getResources().getColor(R.color.color150_,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color150_,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color150_,null));
         }
         else if(aqi<=300){
             airText.setTextColor(getResources().getColor(R.color.color200_,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color200_,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color200_,null));
         }
         else{
             airText.setTextColor(getResources().getColor(R.color.color300_,null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color300_,null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color300_,null));
         }
     }
 
     protected void renderRecent() throws Exception {
-        String location = mCache.getAsString(CacheKey.CURRENT_LOCATION);
-        JSONObject cityJson = new JSONObject(location);
-        JSONObject weatherJson = mCache.getAsJSONObject(cityJson.getString("district") + ":" + CacheKey.WEATHER_DATA);
-        JSONArray recentArray = weatherJson.getJSONArray("forecast");
+        String cityCurrent;
+        if(cityName==null  || cityName.trim().equals("")){
+            LocationVO locationVO   = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+            cityCurrent = locationVO.getDistrict();
+        }
+        else{
+            cityCurrent = cityName;
+        }
+        JSONObject weatherJson = mCache.getAsJSONObject(cityCurrent+ ":" + CacheKey.WEATHER_ALL);
+        JSONArray recentArray = weatherJson.getJSONArray("forecast15d");
         SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
         int len = recentArray.length();
-        String[] high = new String[len];
-        String[] low = new String[len];
-        int[] highInt = new int[len];
-        int[] lowInt = new int[len];
-        String[] weathers = new String[len];
-        String[] days = new String[len];
+        int l = len -4;
+        String[] high = new String[l];
+        String[] low = new String[l];
+        int[] highInt = new int[l];
+        int[] lowInt = new int[l];
+        String[] weathers = new String[l];
+        String[] days = new String[l];
         // 1, 构造显示用渲染图
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         // 2,进行显示
@@ -220,29 +316,30 @@ public class TodayActivity extends FinalActivity {
         // 2.1, 构建数据
         XYSeries seriesHigh = new XYSeries("最高温度");
         XYSeries seriesLow = new XYSeries("最低温度");
-        for (int i = 0; i < len; i++) {
+        for (int i = 4; i < len; i++) {
+            int j = i-4;
             JSONObject day = recentArray.getJSONObject(i);
-            days[i] = LocalDateTime.now().getMonthValue() + "/" + day.getString("date").split("日")[0];
-            weathers[i] = day.getString("type");
-            low[i] = day.getString("low")
+            days[j] = day.getString("forecasttime");
+            weathers[j] = day.getString("weather_am");
+            low[j] = day.getString("temperature_pm")
                     .replace("低温", "")
                     .replace(" ", "")
                     .replace("℃", "");
-            high[i] = day.getString("high")
+            high[j] = day.getString("temperature_am")
                     .replace("高温", "")
                     .replace(" ", "")
                     .replace("℃", "");
-            lowInt[i] = Integer.parseInt(low[i]);
-            highInt[i] = Integer.parseInt(high[i]);
-            String weather = preferences.getString(weathers[i], "\ue73e");
-            renderer.addXTextLabel(i, days[i] + "\n" + weather);
-            seriesHigh.add(i, highInt[i]);
-            seriesLow.add(i, lowInt[i]);
+            lowInt[j] = Integer.parseInt(low[j]);
+            highInt[j] = Integer.parseInt(high[j]);
+            String weather = preferences.getString(weathers[j], "\ue73e");
+            renderer.addXTextLabel(j, days[j] + "\n" + weather);
+            seriesHigh.add(j, highInt[j]);
+            seriesLow.add(j, lowInt[j]);
 
             //System.out.println(Integer.parseInt(temps[0].trim()));
         }
-        int max = CommonUtil.maxOfAarray(highInt) + 3;
-        int min = CommonUtil.minOfAarray(lowInt) - 2;
+        int max = CommonUtil.maxOfAarray(highInt) + 2;
+        int min = CommonUtil.minOfAarray(lowInt) - 5;
         renderer.setTextTypeface(CommonUtil.weatherIconFontFace(this));
         renderer.setAxesColor(this.getResources().getColor(R.color.myorange, null));
         renderer.setZoomEnabled(true, true);
@@ -252,10 +349,10 @@ public class TodayActivity extends FinalActivity {
         renderer.setAxisTitleTextSize(25);
         renderer.setLegendTextSize(25);
         renderer.setChartTitleTextSize(30);
-        renderer.setMarginsColor(this.getResources().getColor(R.color.myblue, null));
+        renderer.setMarginsColor(this.getResources().getColor(R.color.cardview_light_background, null));
         renderer.setLabelsColor(this.getResources().getColor(R.color.tips, null));
         renderer.setXLabelsColor(this.getResources().getColor(R.color.tips, null));
-        renderer.setGridColor(this.getResources().getColor(R.color.mygrey, null));
+        renderer.setGridColor(this.getResources().getColor(R.color.mybord, null));
         renderer.setYTitle("温度(℃)");
         renderer.setApplyBackgroundColor(true);
         renderer.setFitLegend(true);
@@ -263,12 +360,9 @@ public class TodayActivity extends FinalActivity {
         renderer.setMargins(new int[]{50, 50, 70, 50});//设置图表的外边框(上/左/下/右)
         renderer.setZoomRate(1.1f);
         renderer.setPointSize(10);
-        renderer.setBackgroundColor(this.getResources().getColor(R.color.myblue, null));
         renderer.setLabelsTextSize(25);
         renderer.setAxisTitleTextSize(25);
-        //renderer.setChartTitle("最近天气");
         renderer.setChartTitleTextSize(35);
-
         renderer.setShowGrid(true);
         renderer.setRange(new double[]{-0.36, 4.36, min, max});
         renderer.setYLabelsAlign(Paint.Align.LEFT);
@@ -279,7 +373,7 @@ public class TodayActivity extends FinalActivity {
         XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
         // 3.1设置颜色
 
-        xyRenderer.setColor(this.getResources().getColor(R.color.color51_, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.myblue, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);
@@ -304,14 +398,13 @@ public class TodayActivity extends FinalActivity {
         View view = ChartFactory.getLineChartView(this, dataset, renderer);
         view.setBackgroundColor(Color.WHITE);
 
-
-        @SuppressWarnings("deprecation")
         RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.FILL_PARENT,
-                RelativeLayout.LayoutParams.FILL_PARENT
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
         );
         view.setLayoutParams(params1);
         recent.addView(view, params1);
+        // 通过Activity类中的getWindowManager()方法获取窗口管理，再调用getDefaultDisplay()方法获取获取Display对象
 
     }
 

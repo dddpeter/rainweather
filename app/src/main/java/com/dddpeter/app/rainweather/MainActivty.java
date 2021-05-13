@@ -4,22 +4,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import com.dddpeter.app.rainweather.adapter.MainAdapter;
 import com.dddpeter.app.rainweather.common.ACache;
-import com.dddpeter.app.rainweather.common.CommonUtil;
-import com.dddpeter.app.rainweather.componet.BorderBottomLinearLayout;
-import com.dddpeter.app.rainweather.componet.BorderBottomTextView;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
 import net.tsz.afinal.annotation.view.ViewInject;
@@ -29,6 +25,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class MainActivty extends FinalActivity {
 
@@ -56,19 +54,25 @@ public class MainActivty extends FinalActivity {
         String[] citys = ParamApplication.MAIN_CITY;
         List<JSONObject> items = new ArrayList<>();
         for (String city : citys) {
-            JSONObject weatherJson = mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_DATA);
-            JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
-            today.put("city",city);
-            today.put("wendu",weatherJson.getString("wendu"));
-            items.add(today);
+            JSONObject weatherJson = mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_ALL);
+            JSONObject airJson = weatherJson.getJSONObject("current").getJSONObject("air");
+            JSONObject current = weatherJson.getJSONObject("current").getJSONObject("current");
+            current.put("city",city);
+            current.put("air",airJson);
+            items.add(current);
         }
         ArrayAdapter<JSONObject> adapter = new MainAdapter(this, R.layout.main_list_item, items, getSharedPreferences("weahter_icon", MODE_PRIVATE));
         mainList.setAdapter(adapter);
     }
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        //注入字体
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         mCache = ACache.get(this);
         this.setContentView(R.layout.activity_main);
         boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);

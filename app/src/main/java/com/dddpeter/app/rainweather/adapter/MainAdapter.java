@@ -1,6 +1,7 @@
-package com.dddpeter.app.rainweather;
+package com.dddpeter.app.rainweather.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.Html;
 import android.util.Log;
@@ -8,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.dddpeter.app.rainweather.R;
+import com.dddpeter.app.rainweather.TodayActivity;
 import com.dddpeter.app.rainweather.common.CommonUtil;
 
 import org.json.JSONException;
@@ -38,14 +41,24 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
         TextView mainWeather = view.findViewById(R.id.main_weather);
         TextView mainTemprature = view.findViewById(R.id.main_tempratuare);
         TextView mainfengli = view.findViewById(R.id.main_fengli);
+        Button btn = view.findViewById(R.id.main_detail_btn);
 
         try {
             mainCity.setText(item.getString("city"));
-            mainTemprature.setText(item.getString("wendu") + "°C");
+            mainTemprature.setText(item.getString("temperature") + "°C");
             mainWeather.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
-            mainWeather.setText(preferences.getString(item.getString("type"), "\ue73e") +
-                                 "\t" + item.getString("type") );
-            mainfengli.setText(Html.fromHtml(item.getString("fengxiang") + "("+item.getString("fengli") +")",Html.FROM_HTML_MODE_LEGACY));
+            mainWeather.setText(preferences.getString(item.getString("weather"), "\ue73e") +
+                                 "\t" + item.getString("weather") );
+            mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower") ,Html.FROM_HTML_MODE_LEGACY));
+            btn.setOnClickListener(e ->{
+                Intent intent = new Intent(view.getContext(), TodayActivity.class);
+                try {
+                    intent.putExtra("city",item.getString("city"));
+                    view.getContext().startActivity(intent);
+                } catch (JSONException jsonException) {
+                    jsonException.printStackTrace();
+                }
+            });
         } catch (JSONException e) {
             Log.w("RainWather", "Exception: ", e);
         }

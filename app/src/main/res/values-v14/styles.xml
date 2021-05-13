@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/myblue</item>
+        <item name="android:background">@color/cardview_light_background</item>
         <item name="android:typeface">monospace</item>
     </style>
 
@@ -14,7 +14,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/mygrey</item>
+        <item name="android:textColor">@color/mybord</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/home_btn_bg</item>
     </style>

@@ -12,10 +12,7 @@ import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
-import com.didichuxing.doraemonkit.DoraemonKit;
 import com.xuexiang.xui.XUI;
-
-import net.tsz.afinal.FinalDb;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
@@ -44,22 +43,21 @@ public class ParamApplication extends Application {
     private final String TAB_TAG_ABOUT = "tab_tag_about";
     public boolean isRefreshed = false;
     public String airInfo;
-    String url = CacheKey.API_DOMAIN + CacheKey.API_CITY;
+    String url = CacheKey.DETAIL_API;
     ACache mCache;
-
+    public static Map<String,String> cityIdMap = new ConcurrentHashMap<>();
     @Override
     public void onCreate() {
         XUI.init(this);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate();
-        DoraemonKit.install(this,"RainWeather");
         mCache = ACache.get(this);
         try {
             initDayWeather();
             initNightWeather();
             initWeatherIcon();
             initCityIds();
-            initCommonCities();
+
         } catch (Exception e) {
             Log.w("RainWather", "Exception: ", e);
         }
@@ -71,14 +69,51 @@ public class ParamApplication extends Application {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+    public static CityInfo getCityInfo(String somewhere){
+        CityInfo cityInfo = null;
+        String s0 = somewhere
+                .replace("省", "")
+                .replace("市", "")
+                .replace("自治区", "")
+                .replace("区", "");
+        String s1 = s0
+                .replace("县", "")
+                .replace("自治县", "")
+                .replace("特区", "")
+                .replace("特别行政区", "");
+        String s2 = s0
+                .replace("自治县", "")
+                .replace("特区", "")
+                .replace("特别行政区", "");
+      /*  FinalDb db = FinalDb.create(this, "my.db");
+        List<CityInfo> list = db.findAllByWhere(CityInfo.class, " city ='" + city +
+                "' or  city ='" + shortLocation
+                + "' or city like '" + shortLocation + "%'");*/
+        String r1 = cityIdMap.get(s1);
+        String r2 = cityIdMap.get(s2);
+        if(r1!=null){
+            cityInfo = new CityInfo(r1,somewhere);
+        }
+        else{
+            if(r2!=null){
+                cityInfo = new CityInfo(r1,somewhere);
+            }
+        }
+        return cityInfo;
+    }
     private void initCommonCities() {
         List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-        for (String city : MAIN_CITY) {
+        for (int i = 0; i < MAIN_CITY.length; i++) {
+            String city = MAIN_CITY[i];
+            CityInfo cityInfo = ParamApplication.getCityInfo(city);
+            if (cityInfo == null) {
+                continue;
+            }
             Callable callable = (Callable<JSONObject>) () -> {
                 JSONObject weather = new JSONObject();
                 Request request = new Request.Builder()
-                        .url(url + city)//访问连接
+                        .url(url + cityInfo.getCityid())//访问连接
                         .addHeader("Accept", "application/json")
                         .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
                         .get()
@@ -90,10 +125,7 @@ public class ParamApplication extends Application {
                     response = call.execute();
                     if (response.isSuccessful()) {
                         weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        mCache.put(city + ":" + CacheKey.WEATHER_DATA, weather);
-                        Intent intent = new Intent();
-                        intent.setAction(CacheKey.REFRESH_CITY);
-                        sendBroadcast(intent);
+                        weather.put("city",city);
                     }
                 } catch (IOException | JSONException e) {
                     Log.w("RainWather", "Exception: ", e);
@@ -104,15 +136,26 @@ public class ParamApplication extends Application {
             };
             callables.add(callable);
         }
-        try {
-            List<JSONObject> results = Promise.all(callables);
-            for (JSONObject r : results) {
-                mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_DATA, r);
-            }
+       Runnable runnable =  new Runnable(){
 
-        } catch (Exception e) {
-            Log.w("RainWather", "Exception: ", e);
-        }
+            @Override
+            public void run() {
+                try {
+                    List<JSONObject> results = Promise.all(callables);
+                    for (JSONObject r : results) {
+                        mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
+                    }
+                    Intent intent = new Intent();
+                    intent.setAction(CacheKey.REFRESH_CITY);
+                    sendBroadcast(intent);
+
+                } catch (Exception e) {
+                    Log.w("RainWather", "Exception: ", e);
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     private void initWeatherIcon() {
@@ -246,7 +289,6 @@ public class ParamApplication extends Application {
     }
 
     public void initCityIds() throws IOException, JSONException {
-        FinalDb db = FinalDb.create(this, "my.db");
         AssetManager manager = getAssets();
         InputStream is = manager.open("city.json");
         StringBuffer stringBuffer = new StringBuffer();
@@ -263,13 +305,9 @@ public class ParamApplication extends Application {
         Log.i("cityinfo", "initCityIds: " + citys.length());
         for (int i = 0; i < citys.length(); i++) {
             JSONObject c = citys.getJSONObject(i);
-            CityInfo cityInfo = new CityInfo(c.getString("id"), c.getString("name"));
-            CityInfo cityInfo1 = db.findById(c.getString("id"), CityInfo.class);
-            if (cityInfo1 == null) {
-                db.save(cityInfo);
-            }
-
+            cityIdMap.put(c.getString("name"),c.getString("id"));
         }
+        initCommonCities();
     }
 
 }
