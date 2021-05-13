@@ -99,21 +99,9 @@ public class IndexActivity extends FinalActivity {
         Log.i("Location", "onLocationChanged: " + locationVO.toString());
         mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
         String code= "";
-        String shortLocation = district
-                .replace("省", "")
-                .replace("市", "")
-                .replace("自治区", "")
-                .replace("区", "")
-                .replace("县", "")
-                .replace("自治县", "")
-                .replace("特区", "")
-                .replace("特别行政区", "");
-        FinalDb db = FinalDb.create(this, "my.db");
-        List<CityInfo> cityInfoList = db.findAllByWhere(CityInfo.class, " city ='" + district +
-                "' or  city ='" + shortLocation
-                + "' or city like '" + shortLocation + "%'");
-        if (cityInfoList.size() > 0) {
-            code = cityInfoList.get(0).getCityid();
+        CityInfo cityInfo = ParamApplication.getCityInfo(district);
+        if (cityInfo != null) {
+            code = cityInfo.getCityid();
             cityId = code;
         }
 

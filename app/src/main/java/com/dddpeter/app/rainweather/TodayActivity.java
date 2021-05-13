@@ -10,6 +10,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -152,6 +154,18 @@ public class TodayActivity extends FinalActivity {
             mainBtn.setVisibility(View.GONE);
             backBtn.setVisibility(View.VISIBLE);
             backBtn.setOnClickListener(l3);
+        }
+        LinearLayout infoB = findViewById(R.id.info_b);
+        int[]  size = CommonUtil.getScreenSize(this);
+        int x = size[0];
+        int y = size[1];
+        if(y>=1500){
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    (int) (y*0.95/2.0)
+            );
+            topPic.setLayoutParams(params1);
+            infoB.setPadding(0,   (int) (y*0.7/20),0,0);
         }
     }
 
@@ -384,14 +398,13 @@ public class TodayActivity extends FinalActivity {
         View view = ChartFactory.getLineChartView(this, dataset, renderer);
         view.setBackgroundColor(Color.WHITE);
 
-
-        @SuppressWarnings("deprecation")
         RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.FILL_PARENT,
-                RelativeLayout.LayoutParams.FILL_PARENT
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
         );
         view.setLayoutParams(params1);
         recent.addView(view, params1);
+        // 通过Activity类中的getWindowManager()方法获取窗口管理，再调用getDefaultDisplay()方法获取获取Display对象
 
     }
 

@@ -12,6 +12,7 @@
         android:id="@+id/top_pic"
         android:layout_width="match_parent"
         android:layout_height="340dp"
+        android:minHeight="340dp"
         android:background="@color/skyblue">
         <LinearLayout
             android:id="@+id/top_info"
@@ -30,8 +31,11 @@
                 android:background="@color/xui_transparent"
                 android:textSize="20sp" />
             <LinearLayout
+                android:id="@+id/info_b"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+
                 android:background="@color/xui_transparent"
                 >
                 <LinearLayout
@@ -101,7 +105,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="10"
                     android:background="@color/xui_transparent"
-                    android:paddingTop="20dp"
+                    android:paddingTop="10dp"
                     android:orientation="vertical"
                     >
 
@@ -228,7 +232,9 @@
             android:layout_width="match_parent"
             android:paddingRight="@dimen/view_padding_lr"
             android:paddingLeft="@dimen/view_padding_lr"
-            android:layout_height="160dp">
+            android:minHeight="160dp"
+            android:layout_weight="15"
+          android:layout_height="160dp">
 
         </RelativeLayout>
         <TextView
