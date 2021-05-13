@@ -12,7 +12,6 @@ import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
-import com.didichuxing.doraemonkit.DoraemonKit;
 import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalDb;
@@ -52,14 +51,13 @@ public class ParamApplication extends Application {
         XUI.init(this);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate();
-        DoraemonKit.install(this,"RainWeather");
         mCache = ACache.get(this);
         try {
             initDayWeather();
             initNightWeather();
             initWeatherIcon();
             initCityIds();
-            initCommonCities();
+
         } catch (Exception e) {
             Log.w("RainWather", "Exception: ", e);
         }
@@ -103,10 +101,7 @@ public class ParamApplication extends Application {
                     response = call.execute();
                     if (response.isSuccessful()) {
                         weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        mCache.put(city + ":" + CacheKey.WEATHER_ALL, weather);
-                        Intent intent = new Intent();
-                        intent.setAction(CacheKey.REFRESH_CITY);
-                        sendBroadcast(intent);
+                        weather.put("city",city);
                     }
                 } catch (IOException | JSONException e) {
                     Log.w("RainWather", "Exception: ", e);
@@ -117,15 +112,26 @@ public class ParamApplication extends Application {
             };
             callables.add(callable);
         }
-        try {
-            List<JSONObject> results = Promise.all(callables);
-            for (JSONObject r : results) {
-                mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
-            }
+       Runnable runnable =  new Runnable(){
 
-        } catch (Exception e) {
-            Log.w("RainWather", "Exception: ", e);
-        }
+            @Override
+            public void run() {
+                try {
+                    List<JSONObject> results = Promise.all(callables);
+                    for (JSONObject r : results) {
+                        mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
+                    }
+                    Intent intent = new Intent();
+                    intent.setAction(CacheKey.REFRESH_CITY);
+                    sendBroadcast(intent);
+
+                } catch (Exception e) {
+                    Log.w("RainWather", "Exception: ", e);
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     private void initWeatherIcon() {
@@ -283,6 +289,7 @@ public class ParamApplication extends Application {
             }
 
         }
+        initCommonCities();
     }
 
 }
