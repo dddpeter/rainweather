@@ -22,7 +22,7 @@
             android:layout_width="70dp"
             android:gravity="center"
             android:textColor="@color/tips"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:gravity="center"
             android:layout_weight="5"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp"
+            android:textSize="14sp"
             />
 
         <ImageView
@@ -45,22 +45,22 @@
 
         <TextView
             android:id="@+id/info_w"
-            android:layout_width="70dp"
+            android:layout_width="55dp"
             android:layout_height="match_parent"
             android:gravity="left|center"
             android:text="不确定"
             android:layout_weight="5"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/info_wind"
             android:layout_height="match_parent"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:gravity="left"
             android:layout_weight="10"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp"
+            android:textSize="14sp"
         />
     </LinearLayout>
 </LinearLayout>
