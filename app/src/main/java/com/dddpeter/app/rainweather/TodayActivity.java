@@ -226,7 +226,7 @@ public class TodayActivity extends FinalActivity {
                 topPic.setBackgroundColor(getResources().getColor(R.color.skyblue_night,null));
                 topInfo.setBackground(getResources().getDrawable(R.drawable.nbackground,null));
             }
-            if(wtype == "阴天" || wtype == "多云" ){
+            if(wtype.equals("阴天")  || wtype.equals("多云")|| wtype.equals("阴")){
                 topPic.setBackgroundColor(getResources().getColor(R.color.skygrey,null));
             }
             if(wtype.indexOf("雨") !=-1 && wtype.indexOf("转") < 0){
@@ -235,7 +235,7 @@ public class TodayActivity extends FinalActivity {
             if(wtype.indexOf("雪") !=-1 && wtype.indexOf("转") < 0){
                 topPic.setBackgroundColor(getResources().getColor(R.color.skysnow,null));
             }
-            if(wtype == "沙尘暴" || wtype == "扬沙"  || wtype == "浮尘"){
+            if(wtype.equals("沙尘暴") || wtype.equals("扬沙") || wtype.equals("浮尘")){
                 topPic.setBackgroundColor(getResources().getColor(R.color.skydust,null));
             }
             String weatherImg = preferences.getString(current.getString("weather"), "notclear.png");
@@ -302,7 +302,7 @@ public class TodayActivity extends FinalActivity {
         JSONArray recentArray = weatherJson.getJSONArray("forecast15d");
         SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
         int len = recentArray.length();
-        int l = len -4;
+        int l = len -1;
         String[] high = new String[l];
         String[] low = new String[l];
         int[] highInt = new int[l];
@@ -316,8 +316,8 @@ public class TodayActivity extends FinalActivity {
         // 2.1, 构建数据
         XYSeries seriesHigh = new XYSeries("最高温度");
         XYSeries seriesLow = new XYSeries("最低温度");
-        for (int i = 4; i < len; i++) {
-            int j = i-4;
+        for (int i = 1; i < len; i++) {
+            int j = i-1;
             JSONObject day = recentArray.getJSONObject(i);
             days[j] = day.getString("forecasttime");
             weathers[j] = day.getString("weather_am");

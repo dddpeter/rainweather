@@ -245,8 +245,8 @@
             android:gravity="start|top"
             android:text="今天天气怎么样呢"
             android:padding="15dp"
-            android:textColor="@color/tips"
-            android:textSize="15sp" />
+            android:textColor="@color/myblue"
+            android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/redirect"
