@@ -16,29 +16,34 @@
         android:orientation="horizontal">
         <TextView
             android:id="@+id/main_city"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="20"
-            android:gravity="center"
+            android:layout_width="70dp"
+            android:gravity="left"
             android:textColor="@color/tips"
             android:textSize="16sp"
             android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/info_wimg"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/notclear"
+            android:gravity="left|center" />
+        />
         <TextView
             android:id="@+id/main_weather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="20"
-            android:gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="left"
+            android:text="不清楚"
             android:textColor="@color/black_overlay"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/main_tempratuare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textColor="@color/black_overlay"
-            android:layout_weight="20"
-            android:gravity="center"
+            android:layout_width="30dp"
+            android:gravity="left"
             android:textSize="16sp" />
         <TextView
             android:id="@+id/main_fengli"

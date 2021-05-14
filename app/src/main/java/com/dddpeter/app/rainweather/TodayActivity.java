@@ -239,10 +239,7 @@ public class TodayActivity extends FinalActivity {
                 topPic.setBackgroundColor(getResources().getColor(R.color.skydust,null));
             }
             String weatherImg = preferences.getString(current.getString("weather"), "notclear.png");
-            AssetManager manager = getAssets();
-            InputStream is = manager.open(weatherImg);
-            image.setImageDrawable(Drawable.createFromStream(is, weatherImg));
-            is.close();
+            image.setImageDrawable(CommonUtil.drawableFromAssets(this,weatherImg));
         } catch (Exception e) {
             Log.w("RainWather", "Exception: ", e);
         }
