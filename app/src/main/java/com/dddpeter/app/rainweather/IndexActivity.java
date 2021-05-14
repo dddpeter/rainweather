@@ -62,21 +62,92 @@ public class IndexActivity extends FinalActivity {
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
     LocalActivityManager activityGroup;
-
-
     // 内容Intent
     private Intent todayIntent;
     private Intent recentIntent;
     private Intent airIntent;
     private Intent aboutIntent;
-
     ACache mCache;
+    public LocationClient mLocationClient = null;
+    private   String  cityId = "101010100";
 
+    private void getWeatherData(BDLocation location){
+        String addr = location.getAddrStr();    //获取详细地址信息
+        String country = location.getCountry();    //获取国家
+        String province = location.getProvince();    //获取省份
+        String city = location.getCity();    //获取城市
+        String district = location.getDistrict();    //获取区县
+        String street = location.getStreet();    //获取街道信息
+        String adcode = location.getAdCode();    //获取adcode
+        String town = location.getTown();    //获取乡镇信息
+        Double lat = location.getLatitude(); //纬度坐标
+        Double lng = location.getLongitude();
+        LocationVO locationVO = new LocationVO();
+        locationVO.setAdcode(adcode);
+        locationVO.setAddress(addr);
+        locationVO.setCity(city);
+        locationVO.setCountry(country);
+        locationVO.setDistrict(district);
+        locationVO.setProvince(province);
+        locationVO.setStreet(street);
+        locationVO.setTown(town);
+        locationVO.setLat(lat);
+        locationVO.setLng(lng);
+        Log.i("Location", "onLocationChanged: " + locationVO.toString());
+        mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
+        String code= "";
+        CityInfo cityInfo = ParamApplication.getCityInfo(district);
+        if (cityInfo != null) {
+            code = cityInfo.getCityid();
+            cityId = code;
+        }
 
+        if (code!=null) {
+            if(ParamApplication.isStart){
+                ParamApplication.isStart = false;
+            }
+            else{
+                new Thread(() -> {
+                    OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+                    Request request = new Request.Builder()
+                            .url(CacheKey.DETAIL_API + cityId)//访问连接
+                            .addHeader("Accept", "application/json")
+                            .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                            .get()
+                            .build();
+                    Call call = client.newCall(request);
+                    //通过execute()方法获得请求响应的Response对象
+                    Response response;
+                    try {
+                        response = call.execute();
+                        if (response.isSuccessful()) {
+                            JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
+                            mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
+                            Intent intent = new Intent();
+                            intent.setAction(CacheKey.REFRESH);
+                            sendBroadcast(intent);
+                        }
+                    } catch (IOException | JSONException e) {
+                        Log.w("RainWather", "Exception: ", e);
+                    }
+                }).start();
+            }
+
+        }
+
+    }
+
+    BDAbstractLocationListener locationListener  = new BDAbstractLocationListener() {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            getWeatherData(location);
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("知雨天气", "开始进行定位:");
     }
 
     @Override
@@ -125,6 +196,17 @@ public class IndexActivity extends FinalActivity {
         Intent intent1 = new Intent();
         intent1.setAction(CacheKey.HISTORY);
         sendBroadcast(intent1);
+        mLocationClient = new LocationClient(getApplicationContext());
+        // 声明LocationClient类
+        LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true);
+        option.setNeedNewVersionRgc(true);
+        option.setIsNeedLocationPoiList(true);
+       option.setScanSpan(30*1000);
+        option.setOpenGps(true);
+        mLocationClient.setLocOption(option);
+        mLocationClient.registerLocationListener(locationListener);
+        mLocationClient.start();
     }
 
 
