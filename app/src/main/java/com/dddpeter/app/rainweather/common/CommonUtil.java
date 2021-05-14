@@ -2,11 +2,17 @@ package com.dddpeter.app.rainweather.common;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.Display;
-import android.view.View;
+
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class CommonUtil {
     public static int maxOfAarray(int[] arr) {
@@ -48,5 +54,26 @@ public class CommonUtil {
         int x = outSize.x;
         int y = outSize.y;
         return new int[]{x, y};
+    }
+    public static Drawable drawableFromAssets(Context context, String name){
+        AssetManager manager = context.getAssets();
+        InputStream is = null;
+        try {
+            is = manager.open(name);
+            return  Drawable.createFromStream(is, name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if(is!=null){
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+       return null;
     }
 }

@@ -7,25 +7,16 @@
     android:paddingLeft="@dimen/activity_padding_lr"
     android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".AboutActivity">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:background="@color/cardview_light_background"
-        android:contentDescription="@string/app_name"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:src="@drawable/dddpeter_logo" />
-
     <TextView
         android:id="@+id/historyinfo_title"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:textSize="22dp"
-        android:paddingBottom="6dp"
+        android:layout_height="66dp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="6dp"
+        android:textColor="@color/tips"
         android:text="历史上的今天"/>
     <ListView
         android:id="@+id/lvTrace"
@@ -40,52 +31,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@color/contact"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/info"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/contact"
-                android:gravity="bottom"
-                android:paddingTop="20dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="知雨天气"
-                android:textColor="@color/black_overlay"
-                android:textSize="18sp" />
+            android:background="@color/mybord"
+            android:orientation="vertical"
+
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:src="@drawable/dddpeter_logo"
+                android:background="@color/mybord"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="5dp"
+                >
+            </ImageView>
             <TextView
                 android:id="@+id/contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/contact"
                 android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@color/mybord"
                 android:text="软件作者：烈焰之雨"
-                android:textColor="@color/tips"
-                android:textSize="20sp" />
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/contact_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/contact"
                 android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@color/mybord"
                 android:text="电子邮件：dddpeter@126.com"
-                android:textColor="@color/tips"
-                android:textSize="20sp" />
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp" />
         </LinearLayout>
     <Button
         android:id="@+id/blog_btn"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
+        android:background="@color/myorange"
         android:text="😁去我的博客💯"
-        android:textColor="@color/cardview_light_background"
-        android:textSize="20sp" />
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
 </LinearLayout>

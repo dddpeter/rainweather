@@ -41,6 +41,7 @@ public class ParamApplication extends Application {
     private final String TAB_TAG_RECENT = "tab_tag_recent";
     private final String TAB_TAG_AIR = "tab_tag_air";
     private final String TAB_TAG_ABOUT = "tab_tag_about";
+    public   static boolean isStart = true;
     public boolean isRefreshed = false;
     public String airInfo;
     String url = CacheKey.DETAIL_API;

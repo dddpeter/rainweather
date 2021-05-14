@@ -18,39 +18,49 @@
 
         <TextView
             android:id="@+id/h24_date"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="20"
+            android:layout_width="70dp"
             android:gravity="center"
             android:textColor="@color/tips"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/info_temprature"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="20"
+            android:layout_width="50dp"
+            android:gravity="center"
+            android:layout_weight="5"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="14sp"
+            />
+
+        <ImageView
+            android:id="@+id/info_typeimg"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/notclear"
+            android:gravity="left|center" />
+            />
 
         <TextView
             android:id="@+id/info_w"
-            android:layout_width="wrap_content"
+            android:layout_width="55dp"
             android:layout_height="match_parent"
-            android:layout_weight="30"
+            android:gravity="left|center"
+            android:text="不确定"
+            android:layout_weight="5"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/info_wind"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="30"
+            android:layout_width="55dp"
+            android:gravity="left"
+            android:layout_weight="10"
             android:textColor="@color/black_overlay"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="14sp"
+        />
     </LinearLayout>
 </LinearLayout>

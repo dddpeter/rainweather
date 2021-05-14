@@ -62,16 +62,13 @@ public class IndexActivity extends FinalActivity {
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
     LocalActivityManager activityGroup;
-
-
     // 内容Intent
     private Intent todayIntent;
     private Intent recentIntent;
     private Intent airIntent;
     private Intent aboutIntent;
-    private final int REQUEST_GPS = 1;
-    public LocationClient mLocationClient = null;
     ACache mCache;
+    public LocationClient mLocationClient = null;
     private   String  cityId = "101010100";
 
     private void getWeatherData(BDLocation location){
@@ -106,9 +103,11 @@ public class IndexActivity extends FinalActivity {
         }
 
         if (code!=null) {
-            new Thread(new Runnable(){
-                @Override
-                public void run() {
+            if(ParamApplication.isStart){
+                ParamApplication.isStart = false;
+            }
+            else{
+                new Thread(() -> {
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
                             .url(CacheKey.DETAIL_API + cityId)//访问连接
@@ -131,9 +130,8 @@ public class IndexActivity extends FinalActivity {
                     } catch (IOException | JSONException e) {
                         Log.w("RainWather", "Exception: ", e);
                     }
-                }
-            }).start();
-
+                }).start();
+            }
 
         }
 
@@ -146,10 +144,10 @@ public class IndexActivity extends FinalActivity {
         }
     };
 
-
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("知雨天气", "开始进行定位:");
     }
 
     @Override
@@ -157,30 +155,14 @@ public class IndexActivity extends FinalActivity {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("权限", "onRequestPermissionsResult: " + grantResults.toString());
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
-            if (requestCode == REQUEST_GPS) {
 
-            }
-
-        } else {
-            //Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);
-        ActivityCompat.requestPermissions(this, new String[]{
-                "android.permission.ACCESS_FINE_LOCATION",
-                "android.permission.WRITE_EXTERNAL_STORAGE"}, REQUEST_GPS);
+
         activityGroup = new LocalActivityManager(this,
                 true);
         activityGroup.dispatchCreate(savedInstanceState);
@@ -208,18 +190,23 @@ public class IndexActivity extends FinalActivity {
             main.setChecked(true);
         }
         mCache = ACache.get(this);
-        Log.d("知雨天气", "开始进行定位:");
+        Intent intent = new Intent();
+        intent.setAction(CacheKey.REFRESH);
+        sendBroadcast(intent);
+        Intent intent1 = new Intent();
+        intent1.setAction(CacheKey.HISTORY);
+        sendBroadcast(intent1);
         mLocationClient = new LocationClient(getApplicationContext());
         // 声明LocationClient类
         LocationClientOption option = new LocationClientOption();
         option.setIsNeedAddress(true);
         option.setNeedNewVersionRgc(true);
         option.setIsNeedLocationPoiList(true);
+       option.setScanSpan(30*1000);
         option.setOpenGps(true);
         mLocationClient.setLocOption(option);
         mLocationClient.registerLocationListener(locationListener);
         mLocationClient.start();
-
     }
 
 

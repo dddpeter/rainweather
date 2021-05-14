@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,11 +15,14 @@ import androidx.annotation.NonNull;
 
 import com.dddpeter.app.rainweather.R;
 import com.dddpeter.app.rainweather.common.CommonUtil;
+import com.dddpeter.app.rainweather.common.DataUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class H24Adapter extends ArrayAdapter<JSONObject> {
@@ -38,7 +42,7 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
         TextView h24Date = view.findViewById(R.id.h24_date);
         LinearLayout h24info = view.findViewById(R.id.h24_info);
         TextView infoTemperature = view.findViewById(R.id.info_temprature);
-
+        ImageView imageView  = view.findViewById(R.id.info_typeimg);
         TextView infoW = view.findViewById(R.id.info_w);
         TextView infoWind = view.findViewById(R.id.info_wind);
         try {
@@ -51,7 +55,13 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
              */
             infoTemperature.setText(item.getString("temperature"));
             infoW.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
-            infoW.setText(preferences.getString(item.getString("weather"), "\ue73e") + "\t" + item.getString("weather"));
+            infoW.setText(item.getString("weather"));
+            SharedPreferences p = view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
+            if (!DataUtil.isDay()) {
+                p =   view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
+            }
+            String weatherImg = p.getString(item.getString("weather"), "notclear.png");
+            imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(),weatherImg));
             infoWind.setText(item.getString("windDir") + "(" + item.getString("windPower") + ")");
         } catch (JSONException e) {
             Log.w("RainWather", "Exception: ", e);
