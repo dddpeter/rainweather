@@ -31,7 +31,7 @@
         />
         <TextView
             android:id="@+id/main_weather"
-            android:layout_width="50dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:gravity="left|center"
             android:text="不清楚"
@@ -42,7 +42,7 @@
             android:id="@+id/main_tempratuare"
             android:layout_height="match_parent"
             android:textColor="@color/black_overlay"
-            android:layout_width="40dp"
+            android:layout_width="50dp"
             android:gravity="center"
             android:text="26℃"
             android:textSize="14sp" />

@@ -5,4 +5,5 @@
     <dimen name="activity_vertical_margin">0dp</dimen>
     <dimen name="activity_padding_lr">0dp</dimen>
     <dimen name="view_padding_lr">5dp</dimen>
+    <dimen name="rts_size">16sp</dimen>
 </resources>

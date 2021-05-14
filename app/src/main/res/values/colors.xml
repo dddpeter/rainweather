@@ -24,4 +24,5 @@
     <color name="color300_">#A52504</color>
     <color name="airbg">#E6009688</color>
     <color name="contact">#80EDDAA1</color>
+    <color name="greyfont">#ff999999</color>
 </resources>

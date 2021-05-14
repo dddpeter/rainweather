@@ -6,21 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Display;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,9 +43,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-import java.io.InputStream;
-
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -94,6 +88,8 @@ public class TodayActivity extends FinalActivity {
     Button mainBtn;
     @ViewInject(id = R.id.back_btn)
     Button backBtn;
+    @ViewInject(id= R.id.recent_today_scroll)
+    LinearLayout rtScoll;
     ACache mCache;
     String cityName;
 
@@ -156,7 +152,7 @@ public class TodayActivity extends FinalActivity {
             backBtn.setOnClickListener(l3);
         }
         LinearLayout infoB = findViewById(R.id.info_b);
-        int[]  size = CommonUtil.getScreenSize(this);
+/*        int[]  size = CommonUtil.getScreenSize(this);
         int x = size[0];
         int y = size[1];
         if(y>=1500){
@@ -166,7 +162,7 @@ public class TodayActivity extends FinalActivity {
             );
             topPic.setLayoutParams(params1);
             infoB.setPadding(0,   (int) (y*0.7/20),0,0);
-        }
+        }*/
     }
 
     @Override
@@ -286,6 +282,7 @@ public class TodayActivity extends FinalActivity {
         }
     }
 
+
     protected void renderRecent() throws Exception {
         String cityCurrent;
         if(cityName==null  || cityName.trim().equals("")){
@@ -332,13 +329,62 @@ public class TodayActivity extends FinalActivity {
             renderer.addXTextLabel(j, days[j] + "\n" + weather);
             seriesHigh.add(j, highInt[j]);
             seriesLow.add(j, lowInt[j]);
+            SharedPreferences preferences1 = getSharedPreferences("day_picture", MODE_PRIVATE);
+            String iconw = preferences1.getString(day.getString("weather_am"),"notclear.png");
+            LinearLayout linearLayout = new LinearLayout(this);
+            TextView textView = new TextView(this);
+            TextView textView1 = new TextView(this);
+            TextView textView2 = new TextView(this);
+            ImageView imageView = new ImageView(this);
+            float factor =  getResources().getDisplayMetrics().density;
+            LinearLayout.LayoutParams paramOuter =  new LinearLayout.LayoutParams(
+                    (int)(50 * factor + 0.5),
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            ViewGroup.LayoutParams param1 =  new ViewGroup.LayoutParams(
+                    (int)(50 * factor + 0.5),
+                    (int)(14 * factor + 0.5)
+            );
+            ViewGroup.LayoutParams param2 =  new ViewGroup.LayoutParams(
+                    (int)(50 * factor + 0.5),
+                    (int)(32 * factor + 0.5)
+            );
 
-            //System.out.println(Integer.parseInt(temps[0].trim()));
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearLayout.setLayoutParams(paramOuter);
+            linearLayout.setPadding(0,  (int)(5 * factor + 0.5),0,0);
+            imageView.setLayoutParams(param2);
+            imageView.setImageDrawable(CommonUtil.drawableFromAssets(this,iconw));
+            imageView.setPadding(0,  (int)(5 * factor + 0.5),0,(int)(5 * factor + 0.5));
+            textView.setText(days[j]);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            textView.setTextColor(getResources().getColor(R.color.greyfont,null));
+            textView.setGravity(Gravity.CENTER);
+
+            textView1.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+            textView1.setTextColor(getResources().getColor(R.color.myblue,null));
+            textView1.setText(weathers[j]);
+            textView1.setGravity(Gravity.CENTER);
+
+            textView2.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
+            textView2.setTextColor(getResources().getColor(R.color.myblue,null));
+            textView2.setText(high[j]+"℃");
+            textView2.setGravity(Gravity.CENTER);
+
+            textView.setLayoutParams(param1);
+            textView1.setLayoutParams(param1);
+            textView2.setLayoutParams(param1);
+
+            linearLayout.addView(textView);
+            linearLayout.addView(imageView);
+            linearLayout.addView(textView1);
+            linearLayout.addView(textView2);
+            rtScoll.addView(linearLayout);
         }
         int max = CommonUtil.maxOfAarray(highInt) + 2;
         int min = CommonUtil.minOfAarray(lowInt) - 5;
         renderer.setTextTypeface(CommonUtil.weatherIconFontFace(this));
-        renderer.setAxesColor(this.getResources().getColor(R.color.myorange, null));
+        renderer.setAxesColor(this.getResources().getColor(R.color.colorPrimary, null));
         renderer.setZoomEnabled(true, true);
         renderer.setPanEnabled(false, false);
         renderer.setXLabels(0);
@@ -349,19 +395,22 @@ public class TodayActivity extends FinalActivity {
         renderer.setMarginsColor(this.getResources().getColor(R.color.cardview_light_background, null));
         renderer.setLabelsColor(this.getResources().getColor(R.color.tips, null));
         renderer.setXLabelsColor(this.getResources().getColor(R.color.tips, null));
+        renderer.setShowAxes(false);
         renderer.setGridColor(this.getResources().getColor(R.color.mybord, null));
-        renderer.setYTitle("温度(℃)");
+        //renderer.setYTitle("温度(℃)");
+        renderer.setYTitle("");
         renderer.setApplyBackgroundColor(true);
-        renderer.setFitLegend(true);
+        renderer.setFitLegend(false);
         renderer.setLabelsTextSize(20);
-        renderer.setMargins(new int[]{50, 50, 70, 50});//设置图表的外边框(上/左/下/右)
-        renderer.setZoomRate(1.1f);
-        renderer.setPointSize(10);
+        renderer.setMargins(new int[]{5, 30, 55, 30});//设置图表的外边框(上/左/下/右)
+        renderer.setFitLegend(true);
+        renderer.setZoomRate(0.8f);
+        renderer.setPointSize(8);
         renderer.setLabelsTextSize(25);
         renderer.setAxisTitleTextSize(25);
         renderer.setChartTitleTextSize(35);
         renderer.setShowGrid(true);
-        renderer.setRange(new double[]{-0.36, 4.36, min, max});
+        renderer.setRange(new double[]{-0.36, 10.36, min, max});
         renderer.setYLabelsAlign(Paint.Align.LEFT);
         renderer.setYLabelsColor(0, this.getResources().getColor(R.color.tips, null));
         dataset.addSeries(seriesLow);
@@ -376,12 +425,13 @@ public class TodayActivity extends FinalActivity {
         xyRenderer.setLineWidth(5);
         xyRenderer.setChartValuesTextAlign(Paint.Align.CENTER);
         xyRenderer.setChartValuesTextSize(25);
-        xyRenderer.setChartValuesSpacing(20);
+        xyRenderer.setChartValuesSpacing(-35);
         // 3.2设置点的样式
         xyRenderer.setPointStyle(PointStyle.CIRCLE);
         // 3.3, 将要绘制的点添加到坐标绘制中
         renderer.addSeriesRenderer(xyRenderer);
         // 3.4,重复 1~3的步骤绘制第二个系列点
+
         xyRenderer = new XYSeriesRenderer();
         xyRenderer.setColor(this.getResources().getColor(R.color.myorange, null));
         xyRenderer.setDisplayChartValues(true);
@@ -389,7 +439,7 @@ public class TodayActivity extends FinalActivity {
         xyRenderer.setLineWidth(5);
         xyRenderer.setChartValuesTextAlign(Paint.Align.CENTER);
         xyRenderer.setChartValuesTextSize(25);
-        xyRenderer.setChartValuesSpacing(20);
+        xyRenderer.setChartValuesSpacing(15);
         xyRenderer.setPointStyle(PointStyle.CIRCLE);
         renderer.addSeriesRenderer(xyRenderer);
         View view = ChartFactory.getLineChartView(this, dataset, renderer);

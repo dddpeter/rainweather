@@ -11,8 +11,7 @@
     <LinearLayout
         android:id="@+id/top_pic"
         android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:minHeight="340dp"
+        android:layout_height="280dp"
         android:background="@color/skyblue">
         <LinearLayout
             android:id="@+id/top_info"
@@ -34,8 +33,7 @@
                 android:id="@+id/info_b"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="300dp"
-
+                android:minHeight="240dp"
                 android:background="@color/xui_transparent"
                 >
                 <LinearLayout
@@ -80,7 +78,7 @@
                     <ImageView
                         android:id="@+id/imageView1"
                         android:layout_width="80dp"
-                        android:layout_height="100dp"
+                        android:layout_height="80dp"
                         android:contentDescription="@string/app_name"
                         android:gravity="center_horizontal"
                         android:layout_marginTop="-40dp"
@@ -212,7 +210,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="25dp"
+        android:paddingTop="15dp"
         android:paddingBottom="5dp"
         android:scaleType="centerInside"
         android:src="@drawable/aqi">
@@ -227,24 +225,37 @@
         android:textStyle="bold"
         android:textColor="@color/tips"
         android:textSize="14sp" />
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="82dp"
+        android:orientation="horizontal"
+        android:layoutDirection="rtl"
+        android:scrollbars="none"
+       >
+        <LinearLayout
+            android:id="@+id/recent_today_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="82dp"
+            android:orientation="horizontal">
+        </LinearLayout>
+    </HorizontalScrollView>
         <RelativeLayout
             android:id="@+id/recent_today"
             android:layout_width="match_parent"
-            android:paddingRight="@dimen/view_padding_lr"
-            android:paddingLeft="@dimen/view_padding_lr"
-            android:minHeight="160dp"
-            android:layout_weight="15"
-          android:layout_height="160dp">
-
+            android:paddingRight="1dp"
+            android:paddingLeft="1dp"
+            android:layout_weight="18"
+          android:layout_height="70dp">
         </RelativeLayout>
+
         <TextView
             android:id="@+id/ganmao"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:gravity="start|top"
+            android:layout_weight="6"
+            android:gravity="start|center"
             android:text="今天天气怎么样呢"
-            android:padding="15dp"
+            android:padding="6dp"
             android:textColor="@color/myblue"
             android:textSize="16sp" />
 

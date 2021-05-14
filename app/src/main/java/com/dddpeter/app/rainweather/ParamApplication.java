@@ -197,7 +197,7 @@ public class ParamApplication extends Application {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("大雨", "dby.png");
             editor.putString("暴雨", "dby.png");
-            editor.putString("冻雨", "dy0.png");
+            editor.putString("冻雨", "dongyu.png");
             editor.putString("大雪", "dx0.png");
             editor.putString("暴雪", "bx.png");
             editor.putString("多云", "dy0.png");
@@ -214,7 +214,7 @@ public class ParamApplication extends Application {
             editor.putString("中雨", "zhy.png");
             editor.putString("中雪", "zx.png");
             editor.putString("阵雨", "zy0.png");
-            editor.putString("霾", "scb.png");
+            editor.putString("霾", "wm.png");
             editor.putString("扬沙", "scb.png");
             editor.putString("浮尘", "scb.png");
             editor.putBoolean("init", true);
@@ -231,7 +231,7 @@ public class ParamApplication extends Application {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("大雨", "dby.png");
             editor.putString("暴雨", "dby.png");
-            editor.putString("冻雨", "dy.png");
+            editor.putString("冻雨", "dongyu.png");
             editor.putString("大雪", "dx.png");
             editor.putString("暴雪", "bx.png");
             editor.putString("多云", "dy.png");
@@ -248,7 +248,7 @@ public class ParamApplication extends Application {
             editor.putString("中雨", "zhy.png");
             editor.putString("中雪", "zx.png");
             editor.putString("阵雨", "zy.png");
-            editor.putString("霾", "scb.png");
+            editor.putString("霾", "wm.png");
             editor.putString("扬沙", "scb.png");
             editor.putString("浮尘", "scb.png");
             editor.putBoolean("init", true);
