@@ -122,6 +122,9 @@ public class IndexActivity extends FinalActivity {
         Intent intent = new Intent();
         intent.setAction(CacheKey.REFRESH);
         sendBroadcast(intent);
+        Intent intent1 = new Intent();
+        intent1.setAction(CacheKey.HISTORY);
+        sendBroadcast(intent1);
     }
 
 

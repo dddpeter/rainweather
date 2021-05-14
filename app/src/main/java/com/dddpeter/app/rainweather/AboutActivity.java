@@ -55,33 +55,17 @@ public class AboutActivity extends FinalActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
-    Runnable runnableHistory = new Runnable() {
-        @Override
-        public void run() {
-            OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-            Request request = new Request.Builder()
-                    .url(CacheKey.HISTORY_API)//访问连接
-                    .addHeader("Accept", "application/json")
-                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
-                    .get()
-                    .build();
-            Call call = client.newCall(request);
-            //通过execute()方法获得请求响应的Response对象
-            Response response;
-            try {
-                response = call.execute();
-                if (response.isSuccessful()) {
-                    JSONObject data = new JSONObject(response.body().string());
-                    mCache.put("history:" + CacheKey.HISTORY, data);
-                    Intent intent = new Intent();
-                    intent.setAction(CacheKey.REFRESH);
-                    sendBroadcast(intent);
-                }
-            } catch (IOException | JSONException e) {
-                Log.w("RainWather", "Exception: ", e);
-            }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            update();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-    };
+    }
+
     private void update() throws JSONException {
         JSONObject data = mCache.getAsJSONObject("history:" + CacheKey.HISTORY);
         historyinfoTitle.setText(" 历史上的今天:" +data.getString("today") );
@@ -105,7 +89,7 @@ public class AboutActivity extends FinalActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(CacheKey.REFRESH)) {
+            if (action.equals(CacheKey.HISTORY)) {
 
                 try {
                     update();
@@ -120,21 +104,24 @@ public class AboutActivity extends FinalActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         mCache = ACache.get(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CacheKey.REFRESH);
-
-        registerReceiver(mRefreshBroadcastReceiver, intentFilter);
+        try {
+            update();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+       /* IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CacheKey.HISTORY);
+        registerReceiver(mRefreshBroadcastReceiver, intentFilter);*/
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
-        String html =
+       /* String html =
                 "<div style='line-height:1.5;'>&nbsp;&nbsp;&nbsp;&nbsp;本软件（知雨天气）为个人作品，主要功能是通过定位从网络获取天气信息，"
                         +"个人交流使用，不用于商业用途。</div>" ;
 
-        textAbout.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));
+        textAbout.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY));*/
         blogBtn.setOnClickListener(v->{
             Intent intent = new Intent(this,MyblogActivity.class);
             startActivity(intent);
         });
-        new Thread(runnableHistory).start();
     }
     @Override
     protected void onDestroy() {

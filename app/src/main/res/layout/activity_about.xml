@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".AboutActivity">
 
-    <ImageView
+<!--    <ImageView
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center"
@@ -16,13 +16,15 @@
         android:contentDescription="@string/app_name"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:src="@drawable/dddpeter_logo" />
+        android:src="@drawable/dddpeter_logo" />-->
 
     <TextView
         android:id="@+id/historyinfo_title"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="66dp"
         android:textSize="22dp"
+        android:gravity="center"
+        android:paddingTop="20dp"
         android:paddingBottom="6dp"
         android:textStyle="bold"
         android:textColor="@color/colorPrimary"
@@ -42,7 +44,7 @@
             android:layout_gravity="center_vertical"
             android:background="@color/contact"
             android:orientation="vertical">
-            <TextView
+          <!--  <TextView
                 android:id="@+id/info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -53,7 +55,7 @@
                 android:paddingRight="15dp"
                 android:text="知雨天气"
                 android:textColor="@color/black_overlay"
-                android:textSize="18sp" />
+                android:textSize="18sp" />-->
             <TextView
                 android:id="@+id/contact"
                 android:layout_width="match_parent"

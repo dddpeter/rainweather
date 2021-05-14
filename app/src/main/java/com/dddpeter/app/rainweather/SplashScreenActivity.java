@@ -43,7 +43,33 @@ public class SplashScreenActivity extends Activity {
     public LocationClient mLocationClient = null;
     private   String  cityId = "101010100";
 
-
+    Runnable runnableHistory = new Runnable() {
+        @Override
+        public void run() {
+            OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+            Request request = new Request.Builder()
+                    .url(CacheKey.HISTORY_API)//访问连接
+                    .addHeader("Accept", "application/json")
+                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                    .get()
+                    .build();
+            Call call = client.newCall(request);
+            //通过execute()方法获得请求响应的Response对象
+            Response response;
+            try {
+                response = call.execute();
+                if (response.isSuccessful()) {
+                    JSONObject data = new JSONObject(response.body().string());
+                    mCache.put("history:" + CacheKey.HISTORY, data);
+                    /*Intent intent = new Intent();
+                    intent.setAction(CacheKey.REFRESH);
+                    sendBroadcast(intent);*/
+                }
+            } catch (IOException | JSONException e) {
+                Log.w("RainWather", "Exception: ", e);
+            }
+        }
+    };
 
     private void getWeatherData(BDLocation location){
         String addr = location.getAddrStr();    //获取详细地址信息
@@ -150,6 +176,7 @@ public class SplashScreenActivity extends Activity {
             //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
             if (requestCode == REQUEST_GPS) {
                 mLocationClient.start();
+                new Thread(runnableHistory).start();
             }
 
         } else {
