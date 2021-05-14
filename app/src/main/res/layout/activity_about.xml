@@ -38,9 +38,10 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:paddingTop="1px"
                 android:src="@drawable/dddpeter_logo"
                 android:background="@color/mybord"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="5dp"
                 >
             </ImageView>
             <TextView
@@ -48,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:background="@color/mybord"
                 android:text="软件作者：烈焰之雨"
                 android:textColor="@color/colorPrimaryDark"
@@ -60,8 +61,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:background="@color/mybord"
                 android:text="电子邮件：dddpeter@126.com"
                 android:textColor="@color/colorPrimaryDark"
