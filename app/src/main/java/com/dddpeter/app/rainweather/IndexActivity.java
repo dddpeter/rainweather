@@ -69,82 +69,9 @@ public class IndexActivity extends FinalActivity {
     private Intent recentIntent;
     private Intent airIntent;
     private Intent aboutIntent;
-    private final int REQUEST_GPS = 1;
-    public LocationClient mLocationClient = null;
+
     ACache mCache;
-    private   String  cityId = "101010100";
 
-    private void getWeatherData(BDLocation location){
-        String addr = location.getAddrStr();    //获取详细地址信息
-        String country = location.getCountry();    //获取国家
-        String province = location.getProvince();    //获取省份
-        String city = location.getCity();    //获取城市
-        String district = location.getDistrict();    //获取区县
-        String street = location.getStreet();    //获取街道信息
-        String adcode = location.getAdCode();    //获取adcode
-        String town = location.getTown();    //获取乡镇信息
-        Double lat = location.getLatitude(); //纬度坐标
-        Double lng = location.getLongitude();
-        LocationVO locationVO = new LocationVO();
-        locationVO.setAdcode(adcode);
-        locationVO.setAddress(addr);
-        locationVO.setCity(city);
-        locationVO.setCountry(country);
-        locationVO.setDistrict(district);
-        locationVO.setProvince(province);
-        locationVO.setStreet(street);
-        locationVO.setTown(town);
-        locationVO.setLat(lat);
-        locationVO.setLng(lng);
-        Log.i("Location", "onLocationChanged: " + locationVO.toString());
-        mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
-        String code= "";
-        CityInfo cityInfo = ParamApplication.getCityInfo(district);
-        if (cityInfo != null) {
-            code = cityInfo.getCityid();
-            cityId = code;
-        }
-
-        if (code!=null) {
-            new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-                    Request request = new Request.Builder()
-                            .url(CacheKey.DETAIL_API + cityId)//访问连接
-                            .addHeader("Accept", "application/json")
-                            .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
-                            .get()
-                            .build();
-                    Call call = client.newCall(request);
-                    //通过execute()方法获得请求响应的Response对象
-                    Response response;
-                    try {
-                        response = call.execute();
-                        if (response.isSuccessful()) {
-                            JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                            mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
-                            Intent intent = new Intent();
-                            intent.setAction(CacheKey.REFRESH);
-                            sendBroadcast(intent);
-                        }
-                    } catch (IOException | JSONException e) {
-                        Log.w("RainWather", "Exception: ", e);
-                    }
-                }
-            }).start();
-
-
-        }
-
-    }
-
-    BDAbstractLocationListener locationListener  = new BDAbstractLocationListener() {
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            getWeatherData(location);
-        }
-    };
 
 
     @Override
@@ -157,30 +84,14 @@ public class IndexActivity extends FinalActivity {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("权限", "onRequestPermissionsResult: " + grantResults.toString());
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
-            if (requestCode == REQUEST_GPS) {
 
-            }
-
-        } else {
-            //Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);
-        ActivityCompat.requestPermissions(this, new String[]{
-                "android.permission.ACCESS_FINE_LOCATION",
-                "android.permission.WRITE_EXTERNAL_STORAGE"}, REQUEST_GPS);
+
         activityGroup = new LocalActivityManager(this,
                 true);
         activityGroup.dispatchCreate(savedInstanceState);
@@ -208,18 +119,9 @@ public class IndexActivity extends FinalActivity {
             main.setChecked(true);
         }
         mCache = ACache.get(this);
-        Log.d("知雨天气", "开始进行定位:");
-        mLocationClient = new LocationClient(getApplicationContext());
-        // 声明LocationClient类
-        LocationClientOption option = new LocationClientOption();
-        option.setIsNeedAddress(true);
-        option.setNeedNewVersionRgc(true);
-        option.setIsNeedLocationPoiList(true);
-        option.setOpenGps(true);
-        mLocationClient.setLocOption(option);
-        mLocationClient.registerLocationListener(locationListener);
-        mLocationClient.start();
-
+        Intent intent = new Intent();
+        intent.setAction(CacheKey.REFRESH);
+        sendBroadcast(intent);
     }
 
 
