@@ -262,26 +262,29 @@
     <LinearLayout
         android:id="@+id/redirect"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:gravity="center_horizontal"
         android:layout_gravity="bottom"
         >
 
         <Button
             android:id="@+id/h24_btn"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="20dp"
             android:text="24小时天气"
             android:textSize="18sp"
             android:background="@color/colorPrimary"
-            android:layout_weight="10">
+            >
         </Button>
 
         <Button
             android:id="@+id/main_btn"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
             android:text="主要城市天气"
             android:textSize="18sp"
             android:textColor="@color/colorPrimaryDark"
