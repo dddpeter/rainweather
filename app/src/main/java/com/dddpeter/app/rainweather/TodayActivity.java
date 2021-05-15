@@ -400,7 +400,7 @@ public class TodayActivity extends FinalActivity {
         //renderer.setYTitle("温度(℃)");
         renderer.setYTitle("");
         renderer.setApplyBackgroundColor(true);
-        renderer.setFitLegend(false);
+        renderer.setFitLegend(true);
         renderer.setLabelsTextSize(20);
         renderer.setMargins(new int[]{5, 30, 55, 30});//设置图表的外边框(上/左/下/右)
         renderer.setFitLegend(true);
@@ -439,7 +439,7 @@ public class TodayActivity extends FinalActivity {
         xyRenderer.setLineWidth(5);
         xyRenderer.setChartValuesTextAlign(Paint.Align.CENTER);
         xyRenderer.setChartValuesTextSize(25);
-        xyRenderer.setChartValuesSpacing(15);
+        xyRenderer.setChartValuesSpacing(-35);
         xyRenderer.setPointStyle(PointStyle.CIRCLE);
         renderer.addSeriesRenderer(xyRenderer);
         View view = ChartFactory.getLineChartView(this, dataset, renderer);
