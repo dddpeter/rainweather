@@ -400,17 +400,16 @@ public class TodayActivity extends FinalActivity {
         //renderer.setYTitle("温度(℃)");
         renderer.setYTitle("");
         renderer.setApplyBackgroundColor(true);
-        renderer.setFitLegend(true);
+        //renderer.setFitLegend(true);
         renderer.setLabelsTextSize(20);
         renderer.setMargins(new int[]{5, 30, 55, 30});//设置图表的外边框(上/左/下/右)
-        renderer.setFitLegend(true);
         renderer.setZoomRate(0.8f);
         renderer.setPointSize(8);
         renderer.setLabelsTextSize(25);
         renderer.setAxisTitleTextSize(25);
         renderer.setChartTitleTextSize(35);
         renderer.setShowGrid(true);
-        renderer.setRange(new double[]{-0.36, 10.36, min, max});
+        renderer.setRange(new double[]{-0.36, 6.36, min, max});
         renderer.setYLabelsAlign(Paint.Align.LEFT);
         renderer.setYLabelsColor(0, this.getResources().getColor(R.color.tips, null));
         dataset.addSeries(seriesLow);

@@ -46,6 +46,8 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
         TextView infoW = view.findViewById(R.id.info_w);
         TextView infoWind = view.findViewById(R.id.info_wind);
         try {
+            String time = item.getString("forecasttime");
+            int h = Integer.valueOf(time.substring(0,time.indexOf(":")));
             h24Date.setText(item.getString("forecasttime"));
             /*
             "windPower": "3级",
@@ -57,8 +59,11 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
             infoW.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
             infoW.setText(item.getString("weather"));
             SharedPreferences p = view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
-            if (!DataUtil.isDay()) {
+            if (h<6 || h>=18) {
                 p =   view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
+            }
+            else{
+                p =   view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
             }
             String weatherImg = p.getString(item.getString("weather"), "notclear.png");
             imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(),weatherImg));
