@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".ParamApplication"
@@ -36,12 +36,12 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
         <activity
             android:name=".SplashScreenActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="sensorPortrait"
-            android:launchMode="singleTop">
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -50,30 +50,28 @@
         <activity android:name=".MyblogActivity" />
         <activity
             android:name=".TodayActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleTop" />
         <activity
             android:name=".IndexActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleTop" />
         <activity
             android:name=".MainActivty"
             android:label="@string/title_activity_recent" />
         <activity
             android:name="org.achartengine.GraphicalActivity"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleTop" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleTop" />
         <activity
             android:name=".H24Activity"
             android:label="@string/title_activity_air"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="fullSensor"
             android:launchMode="singleTop" />
     </application>
 
