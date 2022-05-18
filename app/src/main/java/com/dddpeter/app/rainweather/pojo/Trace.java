@@ -1,9 +1,13 @@
 package com.dddpeter.app.rainweather.pojo;
 
 public class Trace {
-    /** 时间 */
+    /**
+     * 时间
+     */
     private String acceptTime;
-    /** 描述 */
+    /**
+     * 描述
+     */
     private String acceptStation;
 
     public Trace() {

@@ -4,11 +4,15 @@ import java.io.Serializable;
 
 public class LocationVO implements Serializable {
     private String address;    //获取详细地址信息
-    private String country ;    //获取国家
+    private String country;    //获取国家
     private String province;    //获取省份
     private String city;    //获取城市
     private String district;    //获取区县
     private String street;    //获取街道信息
+    private String adcode;    //获取邮编
+    private String town;    //获取乡镇信息
+    private Double lat; //纬度坐标
+    private Double lng;
 
     public String getAddress() {
         return address;
@@ -89,9 +93,4 @@ public class LocationVO implements Serializable {
     public void setLng(Double lng) {
         this.lng = lng;
     }
-
-    private String adcode;    //获取邮编
-    private String town;    //获取乡镇信息
-    private Double lat; //纬度坐标
-    private Double lng;
 }

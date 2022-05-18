@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.Display;
-
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -44,7 +43,8 @@ public class CommonUtil {
         Typeface typeface = Typeface.createFromAsset(ctx.getAssets(), "iconfont/iconfont.ttf");
         return typeface;
     }
-    public  static int[] getScreenSize(Activity activity){
+
+    public static int[] getScreenSize(Activity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();
         // 方法一(推荐使用)使用Point来保存屏幕宽、高两个数据
         Point outSize = new Point();
@@ -55,18 +55,18 @@ public class CommonUtil {
         int y = outSize.y;
         return new int[]{x, y};
     }
-    public static Drawable drawableFromAssets(Context context, String name){
+
+    public static Drawable drawableFromAssets(Context context, String name) {
         AssetManager manager = context.getAssets();
         InputStream is = null;
         try {
             is = manager.open(name);
-            return  Drawable.createFromStream(is, name);
+            return Drawable.createFromStream(is, name);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             try {
-                if(is!=null){
+                if (is != null) {
                     is.close();
                 }
             } catch (IOException e) {
@@ -74,6 +74,6 @@ public class CommonUtil {
             }
         }
 
-       return null;
+        return null;
     }
 }

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TraceListAdapter extends ArrayAdapter<Trace> {
+    private static final int TYPE_TOP = 0x0000;
+    private static final int TYPE_NORMAL = 0x0001;
     private int resourceId;
     private int tvAcceptTime;
     private int tvAcceptStation;
@@ -24,8 +26,6 @@ public class TraceListAdapter extends ArrayAdapter<Trace> {
     private SharedPreferences preferences;
     private Context context;
     private List<Trace> traceList = new ArrayList<>(1);
-    private static final int TYPE_TOP = 0x0000;
-    private static final int TYPE_NORMAL= 0x0001;
 
     public TraceListAdapter(Context context, int resource,
                             int tvAcceptTime,
@@ -43,7 +43,7 @@ public class TraceListAdapter extends ArrayAdapter<Trace> {
         this.tvTopLine = tvTopLine;
         this.tvDot = tvDot;
         this.timellineDotFirst = timellineDotFirst;
-        this.timellineDotNormal =timellineDotNormal;
+        this.timellineDotNormal = timellineDotNormal;
         this.traceList = traceList;
     }
 

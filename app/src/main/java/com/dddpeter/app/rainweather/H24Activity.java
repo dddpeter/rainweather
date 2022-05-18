@@ -1,6 +1,7 @@
 package com.dddpeter.app.rainweather;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.dddpeter.app.rainweather.adapter.H24Adapter;
 import com.dddpeter.app.rainweather.common.ACache;
@@ -32,15 +32,13 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class H24Activity extends FinalActivity {
 
+    @SuppressLint("NonConstantResourceId")
     @ViewInject(id = R.id.list_24h)
     ListView content;
 
-    @ViewInject(id = R.id.textViewtitle)
-    TextView textViewtitle;
-
     ACache mCache;
 
-    private BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -55,17 +53,19 @@ public class H24Activity extends FinalActivity {
             }
         }
     };
+
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h24);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
-        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);
+        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME", false);
         mCache = ACache.get(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH);
@@ -76,14 +76,13 @@ public class H24Activity extends FinalActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(isFromHome){
+        if (isFromHome) {
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view -> {
-                Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
+                Intent intent = new Intent(getApplicationContext(), IndexActivity.class);
                 startActivity(intent);
             });
-        }
-        else{
+        } else {
             fab.setVisibility(View.GONE);
         }
     }
@@ -99,8 +98,8 @@ public class H24Activity extends FinalActivity {
     }
 
     private void updateContent() throws Exception {
-       LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
-        JSONObject wAllJson = mCache.getAsJSONObject(locationVO.getDistrict()+ ":" + CacheKey.WEATHER_ALL);
+        LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+        JSONObject wAllJson = mCache.getAsJSONObject(locationVO.getDistrict() + ":" + CacheKey.WEATHER_ALL);
         JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
         List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
         for (int i = 0; i < forecast24h.length(); i++) {

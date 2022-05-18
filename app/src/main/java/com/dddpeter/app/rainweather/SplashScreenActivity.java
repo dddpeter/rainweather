@@ -2,13 +2,10 @@ package com.dddpeter.app.rainweather;
 
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -28,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import lombok.NonNull;
@@ -39,10 +38,8 @@ import okhttp3.Response;
 
 public class SplashScreenActivity extends Activity {
     private final int REQUEST_GPS = 1;
-    ACache mCache;
     public LocationClient mLocationClient = null;
-    private   String  cityId = "101010100";
-
+    ACache mCache;
     Runnable runnableHistory = new Runnable() {
         @Override
         public void run() {
@@ -59,19 +56,23 @@ public class SplashScreenActivity extends Activity {
             try {
                 response = call.execute();
                 if (response.isSuccessful()) {
-                    JSONObject data = new JSONObject(response.body().string());
+                    JSONObject data = new JSONObject(Objects.requireNonNull(response.body()).string());
                     mCache.put("history:" + CacheKey.HISTORY, data);
-                    /*Intent intent = new Intent();
-                    intent.setAction(CacheKey.REFRESH);
-                    sendBroadcast(intent);*/
                 }
             } catch (IOException | JSONException e) {
                 Log.w("RainWather", "Exception: ", e);
             }
         }
     };
+    private String cityId = "101010100";
+    BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            getWeatherData(location);
+        }
+    };
 
-    private void getWeatherData(BDLocation location){
+    private void getWeatherData(BDLocation location) {
         String addr = location.getAddrStr();    //获取详细地址信息
         String country = location.getCountry();    //获取国家
         String province = location.getProvince();    //获取省份
@@ -93,41 +94,38 @@ public class SplashScreenActivity extends Activity {
         locationVO.setTown(town);
         locationVO.setLat(lat);
         locationVO.setLng(lng);
-        Log.i("Location", "onLocationChanged: " + locationVO.toString());
+        Log.i("Location", "onLocationChanged: " + locationVO);
         mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
-        String code= "";
+        String code = "";
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
         if (cityInfo != null) {
             code = cityInfo.getCityid();
             cityId = code;
         }
 
-        if (code!=null) {
-            new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-                    Request request = new Request.Builder()
-                            .url(CacheKey.DETAIL_API + cityId)//访问连接
-                            .addHeader("Accept", "application/json")
-                            .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
-                            .get()
-                            .build();
-                    Call call = client.newCall(request);
-                    //通过execute()方法获得请求响应的Response对象
-                    Response response;
-                    try {
-                        response = call.execute();
-                        if (response.isSuccessful()) {
-                            JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                            mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
-                            mLocationClient.stop();
-                            Intent indexIndent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
-                            startActivity(indexIndent);
-                        }
-                    } catch (IOException | JSONException e) {
-                        Log.w("RainWather", "Exception: ", e);
+        if (code != null) {
+            new Thread(() -> {
+                OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+                Request request = new Request.Builder()
+                        .url(CacheKey.DETAIL_API + cityId)//访问连接
+                        .addHeader("Accept", "application/json")
+                        .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                        .get()
+                        .build();
+                Call call = client.newCall(request);
+                //通过execute()方法获得请求响应的Response对象
+                Response response;
+                try {
+                    response = call.execute();
+                    if (response.isSuccessful()) {
+                        JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
+                        mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
+                        mLocationClient.stop();
+                        Intent indexIndent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
+                        startActivity(indexIndent);
                     }
+                } catch (IOException | JSONException e) {
+                    Log.w("RainWather", "Exception: ", e);
                 }
             }).start();
 
@@ -136,18 +134,12 @@ public class SplashScreenActivity extends Activity {
 
     }
 
-    BDAbstractLocationListener locationListener  = new BDAbstractLocationListener() {
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            getWeatherData(location);
-        }
-    };
-
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
@@ -171,17 +163,15 @@ public class SplashScreenActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("权限", "onRequestPermissionsResult: " + grantResults.toString());
+        Log.d("权限", "onRequestPermissionsResult: " + Arrays.toString(grantResults));
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-            //Toast.makeText(this, "Permission GET", Toast.LENGTH_SHORT).show();
             if (requestCode == REQUEST_GPS) {
                 mLocationClient.start();
                 new Thread(runnableHistory).start();
             }
 
-        } else {
-            //Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
         }
+
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }

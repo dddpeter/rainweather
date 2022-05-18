@@ -1,5 +1,6 @@
 package com.dddpeter.app.rainweather;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.dddpeter.app.rainweather.adapter.MainAdapter;
@@ -30,12 +30,11 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class MainActivty extends FinalActivity {
 
-    @ViewInject(id = R.id.main)
-    LinearLayout my;
+    @SuppressLint("NonConstantResourceId")
     @ViewInject(id = R.id.main_list)
     ListView mainList;
     ACache mCache;
-    private BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -57,25 +56,27 @@ public class MainActivty extends FinalActivity {
             JSONObject weatherJson = mCache.getAsJSONObject(city + ":" + CacheKey.WEATHER_ALL);
             JSONObject airJson = weatherJson.getJSONObject("current").getJSONObject("air");
             JSONObject current = weatherJson.getJSONObject("current").getJSONObject("current");
-            current.put("city",city);
-            current.put("air",airJson);
+            current.put("city", city);
+            current.put("air", airJson);
             items.add(current);
         }
         ArrayAdapter<JSONObject> adapter = new MainAdapter(this, R.layout.main_list_item, items, getSharedPreferences("weahter_icon", MODE_PRIVATE));
         mainList.setAdapter(adapter);
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         mCache = ACache.get(this);
         this.setContentView(R.layout.activity_main);
-        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME",false);
+        boolean isFromHome = getIntent().getBooleanExtra("IS_FROM_HOME", false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CacheKey.REFRESH_CITY);
         registerReceiver(mRefreshBroadcastReceiver, intentFilter);
@@ -85,14 +86,13 @@ public class MainActivty extends FinalActivity {
             Log.w("RainWather", "Exception: ", e);
         }
         FloatingActionButton fab = findViewById(R.id.home1);
-        if(isFromHome){
+        if (isFromHome) {
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view -> {
-                Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
+                Intent intent = new Intent(getApplicationContext(), IndexActivity.class);
                 startActivity(intent);
             });
-        }
-        else{
+        } else {
             fab.setVisibility(View.GONE);
         }
 

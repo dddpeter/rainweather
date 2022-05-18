@@ -6,20 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -48,18 +39,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.io.InputStream;
-
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-@SuppressLint("DefaultLocale")
+@SuppressLint({"DefaultLocale","NonConstantResourceId","UseCompatLoadingForDrawables"})
 public class TodayActivity extends FinalActivity {
-    @ViewInject(id=R.id.top_info)
+    @ViewInject(id = R.id.top_info)
     LinearLayout topInfo;
     @ViewInject(id = R.id.imageView1)
     ImageView image;
@@ -72,12 +60,13 @@ public class TodayActivity extends FinalActivity {
     @ViewInject(id = R.id.hpa)
     TextView hpa;
 
+
     @ViewInject(id = R.id.wind)
     TextView wind;
     @ViewInject(id = R.id.ganmao)
     TextView ganmao;
     @ViewInject(id = R.id.shidu)
-    TextView  shidu;
+    TextView shidu;
     @ViewInject(id = R.id.recent_today)
     RelativeLayout recent;
     @ViewInject(id = R.id.air_text)
@@ -86,7 +75,7 @@ public class TodayActivity extends FinalActivity {
     TextView airq1;
     @ViewInject(id = R.id.airq1)
     TextView airq;
-    @ViewInject(id=R.id.top_pic)
+    @ViewInject(id = R.id.top_pic)
     LinearLayout topPic;
     @ViewInject(id = R.id.h24_btn)
     Button h24Btn;
@@ -96,9 +85,23 @@ public class TodayActivity extends FinalActivity {
     Button backBtn;
     ACache mCache;
     String cityName;
-
-
-    private BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
+    View.OnClickListener l1 = v -> {
+        Intent intent = new Intent(getApplicationContext(), H24Activity.class);
+        intent.putExtra("IS_FROM_HOME", true);
+        startActivity(intent);
+    };
+    View.OnClickListener l2 = v -> {
+        Intent intent = new Intent(getApplicationContext(), MainActivty.class);
+        intent.putExtra("IS_FROM_HOME", true);
+        startActivity(intent);
+    };
+    View.OnClickListener l3 = v -> {
+        Intent intent = new Intent(getApplicationContext(), IndexActivity.class);
+        ParamApplication application = (ParamApplication) getApplicationContext();
+        intent.putExtra("currentTab", application.getTAB_TAG_RECENT());
+        startActivity(intent);
+    };
+    private final BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -113,22 +116,7 @@ public class TodayActivity extends FinalActivity {
             }
         }
     };
-    View.OnClickListener l1 = v -> {
-        Intent intent=new Intent(getApplicationContext(),H24Activity.class);
-        intent.putExtra("IS_FROM_HOME",true);
-        startActivity(intent);
-    };
-    View.OnClickListener l2 = v -> {
-        Intent intent=new Intent(getApplicationContext(),MainActivty.class);
-        intent.putExtra("IS_FROM_HOME",true);
-        startActivity(intent);
-    };
-    View.OnClickListener l3 = v -> {
-        Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
-        ParamApplication application = (ParamApplication) getApplicationContext();
-        intent.putExtra("currentTab",application.getTAB_TAG_RECENT());
-        startActivity(intent);
-    };
+
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体
@@ -142,30 +130,28 @@ public class TodayActivity extends FinalActivity {
         setContentView(R.layout.activity_today);
         cityName = getIntent().getStringExtra("city");
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
-        if(cityName==null  || cityName.trim().equals("")){
+        if (cityName == null || cityName.trim().equals("")) {
             h24Btn.setOnClickListener(l1);
             mainBtn.setOnClickListener(l2);
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(CacheKey.REFRESH);
             registerReceiver(mRefreshBroadcastReceiver, intentFilter);
-        }
-        else{
+        } else {
             h24Btn.setVisibility(View.GONE);
             mainBtn.setVisibility(View.GONE);
             backBtn.setVisibility(View.VISIBLE);
             backBtn.setOnClickListener(l3);
         }
         LinearLayout infoB = findViewById(R.id.info_b);
-        int[]  size = CommonUtil.getScreenSize(this);
-        int x = size[0];
+        int[] size = CommonUtil.getScreenSize(this);
         int y = size[1];
-        if(y>=1500){
+        if (y >= 1500) {
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
-                    (int) (y*0.95/2.0)
+                    (int) (y * 0.95 / 2.0)
             );
             topPic.setLayoutParams(params1);
-            infoB.setPadding(0,   (int) (y*0.7/20),0,0);
+            infoB.setPadding(0, (int) (y * 0.7 / 20), 0, 0);
         }
     }
 
@@ -186,15 +172,14 @@ public class TodayActivity extends FinalActivity {
 
     }
 
-    public void renderContent() throws JSONException {
+    public void renderContent() {
         JSONObject wAllJson;
         String cityCurrent;
-        if(cityName==null  || cityName.trim().equals("")){
-          //  JSONObject cityJson  = mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION);
+        if (cityName == null || cityName.trim().equals("")) {
+            //  JSONObject cityJson  = mCache.getAsJSONObject(CacheKey.CURRENT_LOCATION);
             LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
             cityCurrent = locationVO.getDistrict();
-        }
-        else{
+        } else {
             cityCurrent = cityName;
         }
         wAllJson = mCache.getAsJSONObject(cityCurrent + ":" + CacheKey.WEATHER_ALL);
@@ -203,19 +188,24 @@ public class TodayActivity extends FinalActivity {
             //JSONObject today = ((JSONObject) weatherJson.getJSONArray("forecast").get(0));
             JSONObject airJson = wAllJson.getJSONObject("current").getJSONObject("air");
             JSONObject current = wAllJson.getJSONObject("current").getJSONObject("current");
+            String tempratureStr = current.getString("temperature") + "°";
+            String pressureStr = "压强:" + current.getString("airpressure") + "hpa";
+            String humidityStr = "湿度:" + current.getString("humidity") + "%";
+
             String wtype = current.getString("weather");
             city.setTypeface(CommonUtil.weatherIconFontFace(this));
             type.setTypeface(CommonUtil.weatherIconFontFace(this));
-            city.setText(Html.fromHtml(  (cityName==null  || cityName.trim().equals("")?"<font>\ue71b</font> " : "") +
-                    cityCurrent,Html.FROM_HTML_MODE_LEGACY));
-            type.setText(Html.fromHtml(wtype,Html.FROM_HTML_MODE_LEGACY));
-            wendu.setText(current.getString("temperature") + "°");
-            hpa.setText("压强:" +  current.getString("airpressure")+"hpa");
+            city.setText(Html.fromHtml((cityName == null || cityName.trim().equals("") ? "<font>\ue71b</font> " : "") +
+                    cityCurrent, Html.FROM_HTML_MODE_LEGACY));
+            type.setText(Html.fromHtml(wtype, Html.FROM_HTML_MODE_LEGACY));
+
+            wendu.setText(tempratureStr);
+            hpa.setText(pressureStr);
             wind.setText(Html.fromHtml(current.getString("winddir") + current.getString("windpower"),
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
-            shidu.setText("湿度:"+ current.getString("humidity")+"%");
-            ganmao.setText( wAllJson.getJSONObject("current").getString("tips"));
-            setAirColor(new Integer(airJson.getInt("AQI")), airJson.getString("levelIndex"));
+            shidu.setText(humidityStr);
+            ganmao.setText(wAllJson.getJSONObject("current").getString("tips"));
+            setAirColor(airJson.getInt("AQI"), airJson.getString("levelIndex"));
             airq.setText(airJson.getString("levelIndex"));
             airq1.setText(airJson.getString("AQI"));
             SharedPreferences preferences;
@@ -223,83 +213,77 @@ public class TodayActivity extends FinalActivity {
                 preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
             } else {
                 preferences = getSharedPreferences("night_picture", MODE_PRIVATE);
-                topPic.setBackgroundColor(getResources().getColor(R.color.skyblue_night,null));
-                topInfo.setBackground(getResources().getDrawable(R.drawable.nbackground,null));
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyblue_night, null));
+                topInfo.setBackground(getResources().getDrawable(R.drawable.nbackground, null));
             }
-            if(wtype.equals("阴天")  || wtype.equals("多云")|| wtype.equals("阴")){
-                topPic.setBackgroundColor(getResources().getColor(R.color.skygrey,null));
+            if (wtype.equals("阴天") || wtype.equals("多云") || wtype.equals("阴")) {
+                topPic.setBackgroundColor(getResources().getColor(R.color.skygrey, null));
             }
-            if(wtype.indexOf("雨") !=-1 && wtype.indexOf("转") < 0){
-                topPic.setBackgroundColor(getResources().getColor(R.color.skyrain,null));
+            if (wtype.contains("雨") && !wtype.contains("转")) {
+                topPic.setBackgroundColor(getResources().getColor(R.color.skyrain, null));
             }
-            if(wtype.indexOf("雪") !=-1 && wtype.indexOf("转") < 0){
-                topPic.setBackgroundColor(getResources().getColor(R.color.skysnow,null));
+            if (wtype.contains("雪") && !wtype.contains("转")) {
+                topPic.setBackgroundColor(getResources().getColor(R.color.skysnow, null));
             }
-            if(wtype.equals("沙尘暴") || wtype.equals("扬沙") || wtype.equals("浮尘")){
-                topPic.setBackgroundColor(getResources().getColor(R.color.skydust,null));
+            if (wtype.equals("沙尘暴") || wtype.equals("扬沙") || wtype.equals("浮尘")) {
+                topPic.setBackgroundColor(getResources().getColor(R.color.skydust, null));
             }
             String weatherImg = preferences.getString(current.getString("weather"), "notclear.png");
-            image.setImageDrawable(CommonUtil.drawableFromAssets(this,weatherImg));
+            image.setImageDrawable(CommonUtil.drawableFromAssets(this, weatherImg));
         } catch (Exception e) {
             Log.w("RainWather", "Exception: ", e);
         }
 
     }
 
-    private void setAirColor(Integer aqi,String index) {
-        String text ="空气指数：" + aqi + "（" + index+ "）";
+    private void setAirColor(Integer aqi, String index) {
+        String text = "空气指数：" + aqi + "（" + index + "）";
         airText.setText(text);
-        if(aqi<=50){
+        if (aqi <= 50) {
 
-            airText.setTextColor(getResources().getColor(R.color.colorPrimary,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.colorPrimary,null));
-        }
-        else if(aqi<=100){
-            airText.setTextColor(getResources().getColor(R.color.color51_,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color51_,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color51_,null));
-            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
-            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
-        }
-        else if(aqi<=150){
-            airText.setTextColor(getResources().getColor(R.color.color100_,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color100_,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color100_,null));
-            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
-            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark,null));
-        }
-        else if(aqi<=200){
-            airText.setTextColor(getResources().getColor(R.color.color150_,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color150_,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color150_,null));
-        }
-        else if(aqi<=300){
-            airText.setTextColor(getResources().getColor(R.color.color200_,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color200_,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color200_,null));
-        }
-        else{
-            airText.setTextColor(getResources().getColor(R.color.color300_,null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color300_,null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color300_,null));
+            airText.setTextColor(getResources().getColor(R.color.colorPrimary, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
+        } else if (aqi <= 100) {
+            airText.setTextColor(getResources().getColor(R.color.color51_, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color51_, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color51_, null));
+            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+        } else if (aqi <= 150) {
+            airText.setTextColor(getResources().getColor(R.color.color100_, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color100_, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color100_, null));
+            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
+        } else if (aqi <= 200) {
+            airText.setTextColor(getResources().getColor(R.color.color150_, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color150_, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color150_, null));
+        } else if (aqi <= 300) {
+            airText.setTextColor(getResources().getColor(R.color.color200_, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color200_, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color200_, null));
+        } else {
+            airText.setTextColor(getResources().getColor(R.color.color300_, null));
+            airq.setBackgroundColor(getResources().getColor(R.color.color300_, null));
+            airq1.setBackgroundColor(getResources().getColor(R.color.color300_, null));
         }
     }
 
     protected void renderRecent() throws Exception {
         String cityCurrent;
-        if(cityName==null  || cityName.trim().equals("")){
-            LocationVO locationVO   = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+        if (cityName == null || cityName.trim().equals("")) {
+            LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
             cityCurrent = locationVO.getDistrict();
-        }
-        else{
+        } else {
             cityCurrent = cityName;
         }
-        JSONObject weatherJson = mCache.getAsJSONObject(cityCurrent+ ":" + CacheKey.WEATHER_ALL);
+        JSONObject weatherJson = mCache.getAsJSONObject(cityCurrent + ":" + CacheKey.WEATHER_ALL);
         JSONArray recentArray = weatherJson.getJSONArray("forecast15d");
         SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
         int len = recentArray.length();
-        int l = len -1;
+        int l = len - 1;
         String[] high = new String[l];
         String[] low = new String[l];
         int[] highInt = new int[l];
@@ -314,7 +298,7 @@ public class TodayActivity extends FinalActivity {
         XYSeries seriesHigh = new XYSeries("最高温度");
         XYSeries seriesLow = new XYSeries("最低温度");
         for (int i = 1; i < len; i++) {
-            int j = i-1;
+            int j = i - 1;
             JSONObject day = recentArray.getJSONObject(i);
             days[j] = day.getString("forecasttime");
             weathers[j] = day.getString("weather_am");

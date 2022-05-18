@@ -17,4 +17,5 @@
     <string name="title_activity_air">空气指数</string>
     <string name="reset">清除缓存</string>
     <string name="blank_string"></string>
+    <string name="defaultCity">北京</string>
 </resources>

@@ -1,12 +1,12 @@
 package com.dddpeter.app.rainweather;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.xuexiang.xui.XUI;
@@ -19,6 +19,7 @@ public class MyblogActivity extends AppCompatActivity {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +30,8 @@ public class MyblogActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.home);
         fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(view -> {
-                Intent intent=new Intent(getApplicationContext(),IndexActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(getApplicationContext(), IndexActivity.class);
+            startActivity(intent);
         });
     }
 }

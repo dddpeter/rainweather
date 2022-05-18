@@ -27,7 +27,7 @@
                 android:padding="10dp"
                 android:gravity="center"
                 android:textColor="@color/fontWhite"
-                android:text="北京"
+                android:text="@string/defaultCity"
                 android:background="@color/xui_transparent"
                 android:textSize="20sp" />
             <LinearLayout
@@ -37,7 +37,7 @@
                 android:minHeight="300dp"
 
                 android:background="@color/xui_transparent"
-                >
+                android:baselineAligned="false">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -49,14 +49,14 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
+                        android:layout_gravity="start"
                         android:layout_marginLeft="5dp"
                         app:cardCornerRadius="9dp"
                         app:cardElevation="9dp"
                         >
                         <TextView
                             android:id="@+id/airq"
-                            android:layout_width="32dp"
+                            android:layout_width="48dp"
                             android:layout_height="21dp"
                             android:gravity="center"
                             android:text="10"
@@ -67,8 +67,8 @@
                         <TextView
                             android:layout_marginTop="16dp"
                             android:id="@+id/airq1"
-                            android:layout_width="32dp"
-                            android:layout_height="21dp"
+                            android:layout_width="48dp"
+                            android:layout_height="22dp"
                             android:gravity="center"
                             android:text="优"
                             android:paddingBottom="1dp"
@@ -112,7 +112,7 @@
                         <TextView
                             android:id="@+id/wendu"
                             android:layout_width="match_parent"
-                            android:gravity="top|left"
+                            android:gravity="top|start"
                             android:paddingLeft="35dp"
                             android:text="10°"
                             android:textColor="@color/fontWhite"

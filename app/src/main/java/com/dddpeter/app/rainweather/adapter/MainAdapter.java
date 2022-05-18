@@ -1,5 +1,7 @@
 package com.dddpeter.app.rainweather.adapter;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,8 +27,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class MainAdapter extends ArrayAdapter<JSONObject> {
     private int resourceId;
     private SharedPreferences preferences;
@@ -46,23 +46,23 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
         TextView mainTemprature = view.findViewById(R.id.main_tempratuare);
         TextView mainfengli = view.findViewById(R.id.main_fengli);
         Button btn = view.findViewById(R.id.main_detail_btn);
-        ImageView imageView  = view.findViewById(R.id.info_wimg);
+        ImageView imageView = view.findViewById(R.id.info_wimg);
         try {
             mainCity.setText(item.getString("city"));
             mainTemprature.setText(item.getString("temperature") + "°C");
             mainWeather.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
-            mainWeather.setText(item.getString("weather") );
+            mainWeather.setText(item.getString("weather"));
             SharedPreferences p = view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
             if (!DataUtil.isDay()) {
-                p =   view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
+                p = view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
             }
             String weatherImg = p.getString(item.getString("weather"), "notclear.png");
-            imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(),weatherImg));
-            mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower") ,Html.FROM_HTML_MODE_LEGACY));
-            btn.setOnClickListener(e ->{
+            imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(), weatherImg));
+            mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower"), Html.FROM_HTML_MODE_LEGACY));
+            btn.setOnClickListener(e -> {
                 Intent intent = new Intent(view.getContext(), TodayActivity.class);
                 try {
-                    intent.putExtra("city",item.getString("city"));
+                    intent.putExtra("city", item.getString("city"));
                     view.getContext().startActivity(intent);
                 } catch (JSONException jsonException) {
                     jsonException.printStackTrace();

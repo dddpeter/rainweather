@@ -1,11 +1,10 @@
 package com.dddpeter.app.rainweather;
 
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
-
-import androidx.core.app.ActivityCompat;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -28,17 +25,14 @@ import com.dddpeter.app.rainweather.pojo.LocationVO;
 import com.xuexiang.xui.XUI;
 
 import net.tsz.afinal.FinalActivity;
-import net.tsz.afinal.FinalDb;
 import net.tsz.afinal.annotation.view.ViewInject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-import lombok.NonNull;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,9 +40,10 @@ import okhttp3.Response;
 
 /*import android.os.StrictMode;*/
 
-
+@SuppressLint("NonConstantResourceId")
 public class IndexActivity extends FinalActivity {
     public final static int TAB_ICON_SIZE = 90;
+    public LocationClient mLocationClient = null;
     @ViewInject(id = R.id.radioGroup1)
     RadioGroup rg;
     @ViewInject(id = R.id.home)
@@ -62,16 +57,16 @@ public class IndexActivity extends FinalActivity {
     @ViewInject(id = android.R.id.tabhost)
     TabHost tabHost;
     LocalActivityManager activityGroup;
-    // 内容Intent
-    private Intent todayIntent;
-    private Intent recentIntent;
-    private Intent airIntent;
-    private Intent aboutIntent;
     ACache mCache;
-    public LocationClient mLocationClient = null;
-    private   String  cityId = "101010100";
+    private String cityId = "101010100";
+    BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            getWeatherData(location);
+        }
+    };
 
-    private void getWeatherData(BDLocation location){
+    private void getWeatherData(BDLocation location) {
         String addr = location.getAddrStr();    //获取详细地址信息
         String country = location.getCountry();    //获取国家
         String province = location.getProvince();    //获取省份
@@ -95,18 +90,17 @@ public class IndexActivity extends FinalActivity {
         locationVO.setLng(lng);
         Log.i("Location", "onLocationChanged: " + locationVO.toString());
         mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
-        String code= "";
+        String code = "";
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
         if (cityInfo != null) {
             code = cityInfo.getCityid();
             cityId = code;
         }
 
-        if (code!=null) {
-            if(ParamApplication.isStart){
+        if (code != null) {
+            if (ParamApplication.isStart) {
                 ParamApplication.isStart = false;
-            }
-            else{
+            } else {
                 new Thread(() -> {
                     OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
                     Request request = new Request.Builder()
@@ -136,13 +130,6 @@ public class IndexActivity extends FinalActivity {
         }
 
     }
-
-    BDAbstractLocationListener locationListener  = new BDAbstractLocationListener() {
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            getWeatherData(location);
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -185,7 +172,7 @@ public class IndexActivity extends FinalActivity {
 
         });
         String current = getIntent().getStringExtra("currentTab");
-        if(current!=null && !current.trim().equals("")){
+        if (current != null && !current.trim().equals("")) {
             tabHost.setCurrentTabByTag(current);
             main.setChecked(true);
         }
@@ -202,7 +189,7 @@ public class IndexActivity extends FinalActivity {
         option.setIsNeedAddress(true);
         option.setNeedNewVersionRgc(true);
         option.setIsNeedLocationPoiList(true);
-       option.setScanSpan(30*1000);
+        option.setScanSpan(30 * 1000);
         option.setOpenGps(true);
         mLocationClient.setLocOption(option);
         mLocationClient.registerLocationListener(locationListener);
@@ -211,10 +198,11 @@ public class IndexActivity extends FinalActivity {
 
 
     private void prepareIntent() {
-        todayIntent = new Intent(this, TodayActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        recentIntent = new Intent(this, MainActivty.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        airIntent = new Intent(this, H24Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        aboutIntent = new Intent(this, AboutActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // 内容Intent
+        Intent todayIntent = new Intent(this, TodayActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent recentIntent = new Intent(this, MainActivty.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent airIntent = new Intent(this, H24Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent aboutIntent = new Intent(this, AboutActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
         TabHost localTabHost = this.tabHost;
         localTabHost.addTab(buildTabSpec(application.getTAB_TAG_TODAY(), R.string.tab1, R.drawable.home, todayIntent));
@@ -224,12 +212,13 @@ public class IndexActivity extends FinalActivity {
 
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private TabSpec buildTabSpec(String tabTag, int titleResourceID, int iconResourceID,
                                  Intent intent) {
         TabHost.TabSpec spec = this.tabHost.newTabSpec(tabTag);
         spec.setContent(intent);
         spec.setIndicator(getResources().getString(titleResourceID),
-                getResources().getDrawable(iconResourceID,null));
+                getResources().getDrawable(iconResourceID, null));
         return spec;
     }
 

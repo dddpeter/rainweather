@@ -36,17 +36,41 @@ import okhttp3.Response;
 
 
 public class ParamApplication extends Application {
-    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津","杭州","南京","澳门"};
-    private final String TAB_TAG_TODAY = "tab_tag_today";
-    private final String TAB_TAG_RECENT = "tab_tag_recent";
-    private final String TAB_TAG_AIR = "tab_tag_air";
-    private final String TAB_TAG_ABOUT = "tab_tag_about";
-    public   static boolean isStart = true;
+    public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津", "杭州", "南京", "澳门"};
+    public static boolean isStart = true;
+    public static Map<String, String> cityIdMap = new ConcurrentHashMap<>();
     public boolean isRefreshed = false;
-    public String airInfo;
     String url = CacheKey.DETAIL_API;
     ACache mCache;
-    public static Map<String,String> cityIdMap = new ConcurrentHashMap<>();
+
+    public static CityInfo getCityInfo(String somewhere) {
+        CityInfo cityInfo = null;
+        String s0 = somewhere
+                .replace("省", "")
+                .replace("市", "")
+                .replace("自治区", "")
+                .replace("区", "");
+        String s1 = s0
+                .replace("县", "")
+                .replace("自治县", "")
+                .replace("特区", "")
+                .replace("特别行政区", "");
+        String s2 = s0
+                .replace("自治县", "")
+                .replace("特区", "")
+                .replace("特别行政区", "");
+        String r1 = cityIdMap.get(s1);
+        String r2 = cityIdMap.get(s2);
+        if (r1 != null) {
+            cityInfo = new CityInfo(r1, somewhere);
+        } else {
+            if (r2 != null) {
+                cityInfo = new CityInfo(null, somewhere);
+            }
+        }
+        return cityInfo;
+    }
+
     @Override
     public void onCreate() {
         XUI.init(this);
@@ -70,48 +94,16 @@ public class ParamApplication extends Application {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
-    public static CityInfo getCityInfo(String somewhere){
-        CityInfo cityInfo = null;
-        String s0 = somewhere
-                .replace("省", "")
-                .replace("市", "")
-                .replace("自治区", "")
-                .replace("区", "");
-        String s1 = s0
-                .replace("县", "")
-                .replace("自治县", "")
-                .replace("特区", "")
-                .replace("特别行政区", "");
-        String s2 = s0
-                .replace("自治县", "")
-                .replace("特区", "")
-                .replace("特别行政区", "");
-      /*  FinalDb db = FinalDb.create(this, "my.db");
-        List<CityInfo> list = db.findAllByWhere(CityInfo.class, " city ='" + city +
-                "' or  city ='" + shortLocation
-                + "' or city like '" + shortLocation + "%'");*/
-        String r1 = cityIdMap.get(s1);
-        String r2 = cityIdMap.get(s2);
-        if(r1!=null){
-            cityInfo = new CityInfo(r1,somewhere);
-        }
-        else{
-            if(r2!=null){
-                cityInfo = new CityInfo(r1,somewhere);
-            }
-        }
-        return cityInfo;
-    }
+
     private void initCommonCities() {
         List<Callable<JSONObject>> callables = new ArrayList<>();
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-        for (int i = 0; i < MAIN_CITY.length; i++) {
-            String city = MAIN_CITY[i];
+        for (String city : MAIN_CITY) {
             CityInfo cityInfo = ParamApplication.getCityInfo(city);
             if (cityInfo == null) {
                 continue;
             }
-            Callable callable = (Callable<JSONObject>) () -> {
+            Callable<JSONObject> callable = (Callable<JSONObject>) () -> {
                 JSONObject weather = new JSONObject();
                 Request request = new Request.Builder()
                         .url(url + cityInfo.getCityid())//访问连接
@@ -121,38 +113,33 @@ public class ParamApplication extends Application {
                         .build();
                 Call call = client.newCall(request);
                 //通过execute()方法获得请求响应的Response对象
-                Response response = null;
+                Response response;
                 try {
                     response = call.execute();
                     if (response.isSuccessful()) {
+                        assert response.body() != null;
                         weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        weather.put("city",city);
+                        weather.put("city", city);
                     }
                 } catch (IOException | JSONException e) {
                     Log.w("RainWather", "Exception: ", e);
-                } finally {
-
-                    return weather;
                 }
+                return weather;
             };
             callables.add(callable);
         }
-       Runnable runnable =  new Runnable(){
-
-            @Override
-            public void run() {
-                try {
-                    List<JSONObject> results = Promise.all(callables);
-                    for (JSONObject r : results) {
-                        mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
-                    }
-                    Intent intent = new Intent();
-                    intent.setAction(CacheKey.REFRESH_CITY);
-                    sendBroadcast(intent);
-
-                } catch (Exception e) {
-                    Log.w("RainWather", "Exception: ", e);
+        Runnable runnable = () -> {
+            try {
+                List<JSONObject> results = Promise.all(callables);
+                for (JSONObject r : results) {
+                    mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
                 }
+                Intent intent = new Intent();
+                intent.setAction(CacheKey.REFRESH_CITY);
+                sendBroadcast(intent);
+
+            } catch (Exception e) {
+                Log.w("RainWather", "Exception: ", e);
             }
         };
         Thread thread = new Thread(runnable);
@@ -186,7 +173,7 @@ public class ParamApplication extends Application {
         editor.putString("扬沙", "\ue72e");
         editor.putString("浮尘", "\ue732");
         editor.putBoolean("init", true);
-        editor.commit();
+        editor.apply();
     }
 
     private void initNightWeather() {
@@ -218,7 +205,7 @@ public class ParamApplication extends Application {
             editor.putString("扬沙", "scb.png");
             editor.putString("浮尘", "scb.png");
             editor.putBoolean("init", true);
-            editor.commit();
+            editor.apply();
         }
 
     }
@@ -252,7 +239,7 @@ public class ParamApplication extends Application {
             editor.putString("扬沙", "scb.png");
             editor.putString("浮尘", "scb.png");
             editor.putBoolean("init", true);
-            editor.commit();
+            editor.apply();
         }
 
     }
@@ -267,32 +254,26 @@ public class ParamApplication extends Application {
         return isRefreshed;
     }
 
-
-    public String getAirInfo() {
-        return airInfo;
-    }
-
-
     public String getTAB_TAG_TODAY() {
-        return TAB_TAG_TODAY;
+        return "tab_tag_today";
     }
 
     public String getTAB_TAG_RECENT() {
-        return TAB_TAG_RECENT;
+        return "tab_tag_recent";
     }
 
     public String getTAB_TAG_AIR() {
-        return TAB_TAG_AIR;
+        return "tab_tag_air";
     }
 
     public String getTAB_TAG_ABOUT() {
-        return TAB_TAG_ABOUT;
+        return "tab_tag_about";
     }
 
     public void initCityIds() throws IOException, JSONException {
         AssetManager manager = getAssets();
         InputStream is = manager.open("city.json");
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
             String line;
@@ -306,7 +287,7 @@ public class ParamApplication extends Application {
         Log.i("cityinfo", "initCityIds: " + citys.length());
         for (int i = 0; i < citys.length(); i++) {
             JSONObject c = citys.getJSONObject(i);
-            cityIdMap.put(c.getString("name"),c.getString("id"));
+            cityIdMap.put(c.getString("name"), c.getString("id"));
         }
         initCommonCities();
     }
