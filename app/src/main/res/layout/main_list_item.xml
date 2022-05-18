@@ -18,7 +18,7 @@
             android:id="@+id/main_city"
             android:layout_height="wrap_content"
             android:layout_width="70dp"
-            android:gravity="left"
+            android:gravity="start"
             android:textColor="@color/tips"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -27,13 +27,13 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:src="@drawable/notclear"
-            android:gravity="left|center" />
-        />
+            android:gravity="start|center"
+            android:contentDescription="@string/imgTodoStr" />
         <TextView
             android:id="@+id/main_weather"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:gravity="left|center"
+            android:gravity="start|center"
             android:text="不清楚"
             android:textColor="@color/black_overlay"
             android:textSize="14sp" />
@@ -48,11 +48,11 @@
             android:textSize="14sp" />
         <TextView
             android:id="@+id/main_fengli"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black_overlay"
             android:layout_weight="20"
-            android:gravity="left"
+            android:gravity="start"
             android:textSize="14sp" />
         <Button
             android:id="@+id/main_detail_btn"

@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:gravity="top|center"
         android:layout_marginBottom="100dp"
-        android:layout_below="@id/imageView1"
         android:layout_gravity="center"
         android:textColor="@color/cardview_light_background"
         android:text="@string/copyright"

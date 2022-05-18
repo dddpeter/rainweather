@@ -30,7 +30,6 @@
         android:textStyle="bold"
         android:divider="@drawable/list_view_style"
         android:dividerHeight="0.5px">
-        >
     </ListView>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/home"

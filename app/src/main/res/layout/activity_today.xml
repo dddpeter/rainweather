@@ -113,7 +113,7 @@
                             android:id="@+id/wendu"
                             android:layout_width="match_parent"
                             android:gravity="top|start"
-                            android:paddingLeft="35dp"
+                            android:paddingStart="35dp"
                             android:text="10°"
                             android:textColor="@color/fontWhite"
                             android:layout_height="60dp"

@@ -18,4 +18,7 @@
     <string name="reset">清除缓存</string>
     <string name="blank_string"></string>
     <string name="defaultCity">北京</string>
+    <string name="returnStr">返回</string>
+    <string name="initInfo">不确定</string>
+    <string name="imgTodoStr">TODO</string>
 </resources>

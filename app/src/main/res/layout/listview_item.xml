@@ -40,15 +40,15 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:src="@drawable/notclear"
-            android:gravity="left|center" />
-            />
+            android:gravity="start|center"
+            android:contentDescription="TODO" />
 
         <TextView
             android:id="@+id/info_w"
             android:layout_width="55dp"
             android:layout_height="match_parent"
-            android:gravity="left|center"
-            android:text="不确定"
+            android:gravity="start|center"
+            android:text="@string/initInfo"
             android:layout_weight="5"
             android:textColor="@color/black_overlay"
             android:textSize="14sp" />
@@ -57,7 +57,7 @@
             android:id="@+id/info_wind"
             android:layout_height="match_parent"
             android:layout_width="55dp"
-            android:gravity="left"
+            android:gravity="start"
             android:layout_weight="10"
             android:textColor="@color/black_overlay"
             android:textSize="14sp"

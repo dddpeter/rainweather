@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:src="@drawable/exit"
-            android:contentDescription="返回"
+            android:contentDescription="@string/returnStr"
             android:layout_margin="20dp" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
