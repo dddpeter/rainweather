@@ -16,9 +16,9 @@ import java.io.InputStream;
 public class CommonUtil {
     public static int maxOfAarray(int[] arr) {
         int max = -100;
-        for (int i = 0; i < arr.length; i++) {      //遍历
-            if (arr[i] >= max) {     //判断当前获取到的值与max值相比较
-                max = arr[i];    //max记录最大值
+        for (int j : arr) {      //遍历
+            if (j >= max) {     //判断当前获取到的值与max值相比较
+                max = j;    //max记录最大值
             }
         }
         return max == -100 ? 0 : max;
@@ -26,9 +26,9 @@ public class CommonUtil {
 
     public static int minOfAarray(int[] arr) {
         int min = 100;
-        for (int i = 0; i < arr.length; i++) {      //遍历
-            if (arr[i] <= min) {     //判断当前获取到的值与max值相比较
-                min = arr[i];    //max记录最大值
+        for (int j : arr) {      //遍历
+            if (j <= min) {     //判断当前获取到的值与max值相比较
+                min = j;    //max记录最大值
             }
         }
         return min == 100 ? 48 : min;
@@ -40,8 +40,7 @@ public class CommonUtil {
     }
 
     public static Typeface weatherIconFontFace(Context ctx) {
-        Typeface typeface = Typeface.createFromAsset(ctx.getAssets(), "iconfont/iconfont.ttf");
-        return typeface;
+        return Typeface.createFromAsset(ctx.getAssets(), "iconfont/iconfont.ttf");
     }
 
     public static int[] getScreenSize(Activity activity) {

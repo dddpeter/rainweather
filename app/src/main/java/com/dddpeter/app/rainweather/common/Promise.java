@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Promise {
-    private static ExecutorService executorService = Executors.newScheduledThreadPool(20);
+    private static final ExecutorService executorService = Executors.newScheduledThreadPool(20);
 
     private Promise() {
         throw new AssertionError();
@@ -63,7 +63,7 @@ public class Promise {
         start.countDown();
         done.await();
         long cause = System.nanoTime() - startnano;
-        System.out.println(String.format("Promise all done,cause time millSecond: %s", cause / 1000000));
+        System.out.printf("Promise all done,cause time millSecond: %s%n", cause / 1000000);
         return result;
     }
 
