@@ -126,6 +126,9 @@ public class H24Fragment extends Fragment {
     private void getData( LocationVO location){
         String code = "";
         String district = location.getDistrict();
+        if(district == null){
+            district = "东城区";
+        }
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
         if (cityInfo != null) {
             code = cityInfo.getCityid();

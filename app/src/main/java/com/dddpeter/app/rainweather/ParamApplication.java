@@ -1,17 +1,23 @@
 package com.dddpeter.app.rainweather;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.dddpeter.app.rainweather.adapter.H24Adapter;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
+import com.dddpeter.app.rainweather.pojo.LocationVO;
 import com.xuexiang.xui.XUI;
 
 import org.json.JSONArray;
@@ -42,6 +48,11 @@ public class ParamApplication extends Application {
     public static Map<String, String> cityIdMap = new ConcurrentHashMap<>();
     String url = CacheKey.DETAIL_API;
     ACache mCache;
+    private int countActivity = 0;
+    //是否进入后台
+    private boolean isBackground = false;
+    private String cityId = "101010100";
+
 
     public static CityInfo getCityInfo(String somewhere) {
         CityInfo cityInfo = null;
@@ -86,7 +97,119 @@ public class ParamApplication extends Application {
         } catch (Exception e) {
             Log.w("RainWather", "Exception: ", e);
         }
+        initBackgroundCallBack();
+    }
+    private void getData( LocationVO location){
+        String code = "";
+        String district = location.getDistrict();
+        if(district == null){
+            district = "东城区";
+        }
+        CityInfo cityInfo = ParamApplication.getCityInfo(district);
+        if (cityInfo != null) {
+            code = cityInfo.getCityid();
+            cityId = code;
+        }
+        if (code != null) {
+            OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+            Request request = new Request.Builder()
+                    .url(CacheKey.DETAIL_API + cityId)//访问连接
+                    .addHeader("Accept", "application/json")
+                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                    .get()
+                    .build();
+            Call call = client.newCall(request);
+            //通过execute()方法获得请求响应的Response对象
+            Response response;
+            try {
+                response = call.execute();
+                if (response.isSuccessful()) {
+                    JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
+                    mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
+                    JSONObject wAllJson = weather;
+                    JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
+                    List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
+                    for (int i = 0; i < forecast24h.length(); i++) {
+                        forcasts.add(forecast24h.getJSONObject(i));
+                    }
+                    ArrayAdapter<JSONObject> adapter = new H24Adapter(getApplicationContext(), R.layout.listview_item,
+                            forcasts, getApplicationContext().getSharedPreferences("weahter_icon", Context.MODE_PRIVATE));
+                }
+            } catch (IOException | JSONException e) {
+                Log.w("RainWather", "Exception: ", e);
+            }
+        }
+    }
+    private void initBackgroundCallBack() {
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle bundle) {
 
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                countActivity++;
+                if (countActivity == 1 && isBackground) {
+                    Log.e("MyApplication", "onActivityStarted: 应用进入前台");
+                    isBackground = false;
+                    //说明应用重新进入了前台
+                    LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+                    try {
+                        try {
+                            JSONObject wAllJson = mCache.getAsJSONObject(locationVO.getDistrict() + ":" + CacheKey.WEATHER_ALL);
+                            JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
+                            List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
+                            for (int i = 0; i < forecast24h.length(); i++) {
+                                forcasts.add(forecast24h.getJSONObject(i));
+                            }
+                            ArrayAdapter<JSONObject> adapter = new H24Adapter(getApplicationContext(), R.layout.listview_item,
+                                    forcasts, getApplicationContext().getSharedPreferences("weahter_icon", Context.MODE_PRIVATE));
+
+                        }catch (Exception e){
+                            Toast.makeText(getApplicationContext(), "数据正在更新", Toast.LENGTH_SHORT).show();
+                            getData(locationVO);
+                        }
+                    } catch (Exception e) {
+                        Log.w("RainWather", "Exception: ", e);
+                    }
+                    Toast.makeText(getApplicationContext() ,"数据正在更新", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+                countActivity--;
+                if (countActivity <= 0 && !isBackground) {
+                  //  Log.e("MyApplication", "onActivityStarted: 应用进入后台");
+                    isBackground = true;
+                    //说明应用进入了后台
+                   // Toast.makeText(getApplicationContext(), "应用进入后台", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
     }
 
     @Override
