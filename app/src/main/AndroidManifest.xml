@@ -39,9 +39,8 @@
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -53,29 +52,29 @@
             android:exported="false"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TodayActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".H24Activity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
         <activity android:name=".MyBlogActivity" />
 
         <activity
             android:name=".IndexActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="org.achartengine.GraphicalActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
