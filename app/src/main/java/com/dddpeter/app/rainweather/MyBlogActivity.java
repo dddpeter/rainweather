@@ -13,7 +13,7 @@ import com.xuexiang.xui.XUI;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
-public class MyblogActivity extends AppCompatActivity {
+public class MyBlogActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         //注入字体

@@ -2,16 +2,14 @@ package com.dddpeter.app.rainweather;
 
 
 import android.annotation.SuppressLint;
-import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -22,15 +20,16 @@ import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
 import com.dddpeter.app.rainweather.pojo.LocationVO;
+import com.dddpeter.app.rainweather.view.CustomBotTabItem;
+import com.dddpeter.app.rainweather.view.TabsAdapter;
+import com.google.android.material.tabs.TabLayout;
 import com.xuexiang.xui.XUI;
-
-import net.tsz.afinal.FinalActivity;
-import net.tsz.afinal.annotation.view.ViewInject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
@@ -41,23 +40,12 @@ import okhttp3.Response;
 /*import android.os.StrictMode;*/
 
 @SuppressLint("NonConstantResourceId")
-public class IndexActivity extends FinalActivity {
-    public final static int TAB_ICON_SIZE = 90;
+public class IndexActivity extends AppCompatActivity {
     public LocationClient mLocationClient = null;
-    @ViewInject(id = R.id.radioGroup1)
-    RadioGroup rg;
-    @ViewInject(id = R.id.home)
-    RadioButton home;
-    @ViewInject(id = R.id.main)
-    RadioButton main;
-    @ViewInject(id = R.id.h24)
-    RadioButton air;
-    @ViewInject(id = R.id.about)
-    RadioButton about;
-    @ViewInject(id = android.R.id.tabhost)
-    TabHost tabHost;
-    LocalActivityManager activityGroup;
     ACache mCache;
+    private List<Fragment> mFragmentList;
+    private TabLayout mTabLayout;
+    private ViewPager2 mViewPager;
     private String cityId = "101010100";
     BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
         @Override
@@ -149,33 +137,18 @@ public class IndexActivity extends FinalActivity {
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
         setContentView(R.layout.activity_index);
+        mTabLayout = (TabLayout) findViewById(R.id.id_tab_layout);
+        mViewPager = (ViewPager2) findViewById(R.id.id_vp);
 
-        activityGroup = new LocalActivityManager(this,
-                true);
-        activityGroup.dispatchCreate(savedInstanceState);
-        this.tabHost.setup(activityGroup);
-        //初始化
-        prepareIntent();
-        initView();
-        rg.setOnCheckedChangeListener((rg, id) -> {
-            ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
-            if (id == home.getId()) {
-                tabHost.setCurrentTabByTag(application.getTAB_TAG_TODAY());
-
-            } else if (id == main.getId()) {
-                tabHost.setCurrentTabByTag(application.getTAB_TAG_RECENT());
-            } else if (id == air.getId()) {
-                tabHost.setCurrentTabByTag(application.getTAB_TAG_AIR());
-            } else if (id == about.getId()) {
-                tabHost.setCurrentTabByTag(application.getTAB_TAG_ABOUT());
-            }
-
-        });
-        String current = getIntent().getStringExtra("currentTab");
-        if (current != null && !current.trim().equals("")) {
-            tabHost.setCurrentTabByTag(current);
-            main.setChecked(true);
-        }
+        CustomBotTabItem item = CustomBotTabItem.create();
+        item.setContext(this)
+                .setViewPager(mViewPager)
+                .setTabLayout(mTabLayout)
+                .build();
+        mViewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), getLifecycle(), 4));
+        int current = getIntent().getIntExtra("currentTab", 0);
+        mViewPager.setCurrentItem(current);
+        mViewPager.setUserInputEnabled(false);
         mCache = ACache.get(this);
         Intent intent = new Intent();
         intent.setAction(CacheKey.REFRESH);
@@ -194,62 +167,6 @@ public class IndexActivity extends FinalActivity {
         mLocationClient.setLocOption(option);
         mLocationClient.registerLocationListener(locationListener);
         mLocationClient.start();
-    }
-
-
-    private void prepareIntent() {
-        // 内容Intent
-        Intent todayIntent = new Intent(this, TodayActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent recentIntent = new Intent(this, MainActivty.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent airIntent = new Intent(this, H24Activity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent aboutIntent = new Intent(this, AboutActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ParamApplication application = (ParamApplication) IndexActivity.this.getApplicationContext();
-        TabHost localTabHost = this.tabHost;
-        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_TODAY(), R.string.tab1, R.drawable.home, todayIntent));
-        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_RECENT(), R.string.tab2, R.drawable.main, recentIntent));
-        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_AIR(), R.string.tab3, R.drawable.air, airIntent));
-        localTabHost.addTab(buildTabSpec(application.getTAB_TAG_ABOUT(), R.string.tab4, R.drawable.about, aboutIntent));
-
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private TabSpec buildTabSpec(String tabTag, int titleResourceID, int iconResourceID,
-                                 Intent intent) {
-        TabHost.TabSpec spec = this.tabHost.newTabSpec(tabTag);
-        spec.setContent(intent);
-        spec.setIndicator(getResources().getString(titleResourceID),
-                getResources().getDrawable(iconResourceID, null));
-        return spec;
-    }
-
-    private void initView() {
-        //定义底部标签图片大小和位置
-        Drawable drawableHome = getResources().getDrawable(R.drawable.home);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        drawableHome.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
-        //设置图片在文字的哪个方向
-        home.setCompoundDrawables(null, drawableHome, null, null);
-
-        //定义底部标签图片大小和位置
-        Drawable drawableMain = getResources().getDrawable(R.drawable.main);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        drawableMain.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
-        //设置图片在文字的哪个方向
-        main.setCompoundDrawables(null, drawableMain, null, null);
-
-        //定义底部标签图片大小和位置
-        Drawable drawableAir = getResources().getDrawable(R.drawable.air);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        drawableAir.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
-        //设置图片在文字的哪个方向
-        air.setCompoundDrawables(null, drawableAir, null, null);
-
-        //定义底部标签图片大小和位置
-        Drawable drawableAbout = getResources().getDrawable(R.drawable.about);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        drawableAbout.setBounds(0, 0, TAB_ICON_SIZE, TAB_ICON_SIZE);
-        //设置图片在文字的哪个方向
-        about.setCompoundDrawables(null, drawableAbout, null, null);
     }
 
 

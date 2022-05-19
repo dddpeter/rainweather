@@ -214,6 +214,9 @@ public class ACache {
     public JSONObject getAsJSONObject(String key) {
         String JSONString = getAsString(key);
         try {
+            if(JSONString == null){
+               return null;
+            }
             JSONObject obj = new JSONObject(JSONString);
             return obj;
         } catch (Exception e) {

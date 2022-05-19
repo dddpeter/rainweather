@@ -7,7 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.xuexiang.xui.XUI;
 
-public class TodayActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity {
     ACache mCache;
 
     @Override
@@ -15,6 +16,7 @@ public class TodayActivity extends AppCompatActivity {
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
-        setContentView(R.layout.activity_today);
+        setContentView(R.layout.activity_main);
     }
 }
+

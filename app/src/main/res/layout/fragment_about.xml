@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_padding_lr"
     android:paddingRight="@dimen/activity_padding_lr"
-    tools:context=".AboutActivity">
+    tools:context=".view.AboutFragment">
     <TextView
         android:id="@+id/historyinfo_title"
         android:layout_width="match_parent"

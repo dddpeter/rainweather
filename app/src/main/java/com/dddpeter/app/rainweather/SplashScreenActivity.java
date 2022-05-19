@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -27,9 +28,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-import lombok.NonNull;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -68,7 +69,7 @@ public class SplashScreenActivity extends Activity {
     BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
         @Override
         public void onReceiveLocation(BDLocation location) {
-            getWeatherData(location);
+                getWeatherData(location);
         }
     };
 
@@ -78,6 +79,9 @@ public class SplashScreenActivity extends Activity {
         String province = location.getProvince();    //获取省份
         String city = location.getCity();    //获取城市
         String district = location.getDistrict();    //获取区县
+        if(district == null){
+            district = "东城区";
+        }
         String street = location.getStreet();    //获取街道信息
         String adcode = location.getAdCode();    //获取adcode
         String town = location.getTown();    //获取乡镇信息
@@ -97,6 +101,7 @@ public class SplashScreenActivity extends Activity {
         Log.i("Location", "onLocationChanged: " + locationVO);
         mCache.put(CacheKey.CURRENT_LOCATION, locationVO);
         String code = "";
+
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
         if (cityInfo != null) {
             code = cityInfo.getCityid();
@@ -104,32 +109,31 @@ public class SplashScreenActivity extends Activity {
         }
 
         if (code != null) {
+            String finalDistrict = district;
             new Thread(() -> {
-                OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
-                Request request = new Request.Builder()
-                        .url(CacheKey.DETAIL_API + cityId)//访问连接
-                        .addHeader("Accept", "application/json")
-                        .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
-                        .get()
-                        .build();
-                Call call = client.newCall(request);
-                //通过execute()方法获得请求响应的Response对象
-                Response response;
-                try {
-                    response = call.execute();
-                    if (response.isSuccessful()) {
-                        JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                        mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
-                        mLocationClient.stop();
-                        Intent indexIndent = new Intent(SplashScreenActivity.this, IndexActivity.class);  //从启动动画ui跳转到主ui
-                        startActivity(indexIndent);
+                    OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
+                    Request request = new Request.Builder()
+                            .url(CacheKey.DETAIL_API + cityId)//访问连接
+                            .addHeader("Accept", "application/json")
+                            .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49")
+                            .get()
+                            .build();
+                    Call call = client.newCall(request);
+                    //通过execute()方法获得请求响应的Response对象
+                    Response response;
+                    try {
+                        response = call.execute();
+                        if (response.isSuccessful()) {
+                            JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
+                            mCache.put(finalDistrict + ":" + CacheKey.WEATHER_ALL, weather);
+                            mLocationClient.stop();
+                            Intent indexIndent = new Intent(getApplicationContext(), IndexActivity.class);  //从启动动画ui跳转到主ui
+                            startActivity(indexIndent);
+                        }
+                    } catch (IOException | JSONException e) {
+                        Log.w("RainWather", "Exception: ", e);
                     }
-                } catch (IOException | JSONException e) {
-                    Log.w("RainWather", "Exception: ", e);
-                }
-            }).start();
-
-
+                }).start();
         }
 
     }

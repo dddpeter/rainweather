@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,7 +40,6 @@ public class ParamApplication extends Application {
     public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津", "杭州", "南京", "澳门"};
     public static boolean isStart = true;
     public static Map<String, String> cityIdMap = new ConcurrentHashMap<>();
-    public boolean isRefreshed = false;
     String url = CacheKey.DETAIL_API;
     ACache mCache;
 
@@ -118,7 +118,7 @@ public class ParamApplication extends Application {
                     response = call.execute();
                     if (response.isSuccessful()) {
                         assert response.body() != null;
-                        weather = new JSONObject(response.body().string()).getJSONObject("data");
+                        weather = new JSONObject(Objects.requireNonNull(response.body()).string()).getJSONObject("data");
                         weather.put("city", city);
                     }
                 } catch (IOException | JSONException e) {
@@ -249,25 +249,8 @@ public class ParamApplication extends Application {
         super.onLowMemory();
     }
 
-
-    public boolean isRefreshed() {
-        return isRefreshed;
-    }
-
-    public String getTAB_TAG_TODAY() {
-        return "tab_tag_today";
-    }
-
-    public String getTAB_TAG_RECENT() {
-        return "tab_tag_recent";
-    }
-
-    public String getTAB_TAG_AIR() {
-        return "tab_tag_air";
-    }
-
-    public String getTAB_TAG_ABOUT() {
-        return "tab_tag_about";
+    public int getTAB_TAG_RECENT() {
+        return 0;
     }
 
     public void initCityIds() throws IOException, JSONException {

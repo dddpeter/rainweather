@@ -1,4 +1,4 @@
-package com.dddpeter.app.rainweather;
+package com.dddpeter.app.rainweather.view;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -6,19 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
+import com.dddpeter.app.rainweather.MyBlogActivity;
+import com.dddpeter.app.rainweather.R;
 import com.dddpeter.app.rainweather.adapter.TraceListAdapter;
 import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.pojo.Trace;
 import com.xuexiang.xui.XUI;
-
-import net.tsz.afinal.FinalActivity;
-import net.tsz.afinal.annotation.view.ViewInject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,18 +31,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.inflationx.viewpump.ViewPumpContextWrapper;
-
 @SuppressLint("NonConstantResourceId")
-public class AboutActivity extends FinalActivity {
+public class AboutFragment extends Fragment {
 
     private final List<Trace> traceList = new ArrayList<>(10);
-    @ViewInject(id = R.id.historyinfo_title)
     TextView historyinfoTitle;
-    @ViewInject(id = R.id.blog_btn)
     Button blogBtn;
     ACache mCache;
-    @ViewInject(id = R.id.lvTrace)
     private ListView lvTrace;
     private final BroadcastReceiver mRefreshBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -55,13 +54,9 @@ public class AboutActivity extends FinalActivity {
         }
     };
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
-    }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         try {
             update();
@@ -79,7 +74,7 @@ public class AboutActivity extends FinalActivity {
         for (int j = array.length() - 2; j >= 0; j--) {
             traceList.add(new Trace(array.getJSONObject(j).getString("year") + "年", array.getJSONObject(j).getString("title")));
         }
-        ArrayAdapter<Trace> adapter = new TraceListAdapter(this, R.layout.history_list,
+        ArrayAdapter<Trace> adapter = new TraceListAdapter(getActivity(), R.layout.history_list,
                 R.id.tvAcceptTime,
                 R.id.tvAcceptStation,
                 R.id.tvTopLine,
@@ -92,10 +87,12 @@ public class AboutActivity extends FinalActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
-        mCache = ACache.get(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_about, viewGroup, false);
+        historyinfoTitle = view.findViewById(R.id.historyinfo_title);
+        blogBtn = view.findViewById(R.id.blog_btn);
+        lvTrace = view.findViewById(R.id.lvTrace);
+        mCache = ACache.get(getContext());
         try {
             update();
         } catch (JSONException e) {
@@ -103,14 +100,20 @@ public class AboutActivity extends FinalActivity {
         }
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         blogBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MyblogActivity.class);
+            Intent intent = new Intent(getContext(), MyBlogActivity.class);
             startActivity(intent);
         });
+        return view;
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mRefreshBroadcastReceiver);
+        try {
+            requireContext().unregisterReceiver(mRefreshBroadcastReceiver);
+        } catch (Exception e) {
+
+        }
+
     }
 }

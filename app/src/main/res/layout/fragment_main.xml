@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.MainFragment"
+    android:paddingLeft="@dimen/activity_padding_lr"
+    android:paddingRight="@dimen/activity_padding_lr"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_main"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="主要城市天气预报"
+        android:textColor="@color/tips"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
+        android:layout_height="wrap_content" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/main_list"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:textColor="@color/ba_1"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:divider="@drawable/list_view_style"
+        android:dividerHeight="0.5px"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/home1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/back"
+            android:contentDescription="返回"
+            android:layout_margin="20dp" />
+    </FrameLayout>
+</LinearLayout>
