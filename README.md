@@ -7,7 +7,8 @@
 1. 通过高德地图定位获取当前的地理信息，通过地理信息获取天气信息和PM2.5信息
 1. 主要功能，当日天气，近期天气预报，当日空气质量，24小时天气预报
 
-
+#### 个人技术博客
+[https://blog.dddpeter.top/](https://blog.dddpeter.top/)
 #### 下载
 [https://gitee.com/dddpeter/rainweather/apks
 ](https://gitee.com/dddpeter/rainweather/apks)
