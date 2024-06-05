@@ -570,7 +570,9 @@ public class ACache {
         }
 
         private static String newStringWithDateInfo(int second, String strInfo) {
-            return createDateInfo(second) + strInfo;
+            StringBuilder sb  =new StringBuilder();
+            sb.append(createDateInfo(second)).append(strInfo);
+            return sb.toString();
         }
 
         private static byte[] newByteArrayWithDateInfo(int second, byte[] data2) {
