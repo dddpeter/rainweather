@@ -80,7 +80,7 @@ android {
     defaultConfig {
         applicationId "com.dddpeter.app.rainweather"
         minSdkVersion 28
-        targetSdkVersion 34
+        targetSdkVersion 30
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
@@ -93,7 +93,7 @@ android {
     }
     compileOptions {
         sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        targetCompatibility = 11
     }
     dependenciesInfo {
         includeInApk true
