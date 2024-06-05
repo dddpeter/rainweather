@@ -36,6 +36,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import com.dddpeter.app.jacoco.JacocoHelper;
 
 /*import android.os.StrictMode;*/
 
@@ -47,6 +48,8 @@ public class IndexActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager2 mViewPager;
     private String cityId = "101010100";
+    private final static String PROJECT_PATH = "/media/lijinde/work/work/rainweather";
+
     BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -136,9 +139,10 @@ public class IndexActivity extends AppCompatActivity {
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         super.onCreate(savedInstanceState);
         mCache = ACache.get(this);
+        JacocoHelper.init(PROJECT_PATH,true);
         setContentView(R.layout.activity_index);
-        mTabLayout = (TabLayout) findViewById(R.id.id_tab_layout);
-        mViewPager = (ViewPager2) findViewById(R.id.id_vp);
+        mTabLayout = findViewById(R.id.id_tab_layout);
+        mViewPager = findViewById(R.id.id_vp);
 
         CustomBotTabItem item = CustomBotTabItem.create();
         item.setContext(this)

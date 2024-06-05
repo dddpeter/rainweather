@@ -1,6 +1,67 @@
 apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
+//源代码路径，有多少个module，就在这里写多少个路径，如果你只有app一个module，那么就写一个就可以
+def coverageSourceDirs = [
+        '../app/src/main/java',
+]
+
+//class文件路径，如果你只有app一个module，那么就写一个就可以
+def coverageClassDirs = [
+        './build/intermediates/javac/debug/classes',
+]
+
+//Jacoco 版本，建议用这个版本兼容性比较好
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+//生成报告task
+tasks.register('jacocoTestReport', JacocoReport) {
+    group = "JacocoReport"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.getRequired().set(true)
+        html.getRequired().set(true)
+    }
+    classDirectories.from = files(files(coverageClassDirs).files.collect {
+        println("$rootDir" + it)
+        fileTree(dir: "$rootDir" + it,
+                // 过滤不需要统计的class文件
+                excludes: ['**/R*.class',
+                           '**/*$InjectAdapter.class',
+                           '**/*$ModuleAdapter.class',
+                           '**/*$ViewInjector*.class'
+                ])
+    })
+    sourceDirectories.from = files(coverageSourceDirs)
+    executionData.from = files("$buildDir/outputs/code-coverage/coverage.ec")
+
+    doFirst {
+        coverageClassDirs.each { path ->
+            println("$rootDir" + path)
+            new File("$rootDir" + path).eachFileRecurse { file ->
+                if (file.name.contains('$$')) {
+                    file.renameTo(file.path.replace('$$', '$'))
+                }
+            }
+        }
+    }
+}
+
+//初始化Jacoco Task
+tasks.register('jacocoInit') {
+    group = "JacocoReport"
+    doFirst {
+        File file = new File("$buildDir/outputs/code-coverage/")
+        if (!file.exists()) {
+            file.mkdir();
+        }
+    }
+}
 
 android {
+    namespace = "com.dddpeter.app.rainweather"
     signingConfigs {
         debug {
             storeFile file('rainweather.p12')
@@ -8,14 +69,18 @@ android {
             keyAlias 'lijinde'
             keyPassword 'picc1234'
         }
+        release {
+            storeFile file('rainweather.p12')
+            storePassword 'picc1234'
+            keyAlias 'lijinde'
+            keyPassword 'picc1234'
+        }
     }
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
-
+    compileSdk 34
     defaultConfig {
         applicationId "com.dddpeter.app.rainweather"
         minSdkVersion 28
-        targetSdkVersion 32
+        targetSdkVersion 34
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
@@ -40,16 +105,36 @@ android {
             jni.srcDirs = []    //disable automatic ndk-build
         }
     }
+
+    defaultPublishConfig "debug"
+    buildTypes {
+        release {
+            // 压缩
+            minifyEnabled true
+            // 混淆
+            shrinkResources true
+            // 压缩混淆规则
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 签名
+            signingConfig signingConfigs.release
+        }
+        debug {
+            /**打开覆盖率统计开关**/
+            testCoverageEnabled = true
+        }
+    }
 }
 
 
 dependencies {
     /* 引入所有libs目录的jar包*/
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':library')
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.20"))
     implementation 'com.github.xuexiangjys:XUI:1.1.7'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation files('libs/achartengine-1.2.0.jar')
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
@@ -57,9 +142,12 @@ dependencies {
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'org.projectlombok:lombok:1.18.22'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.navigation:navigation-fragment:2.6.0'
+    implementation 'androidx.navigation:navigation-ui:2.6.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    androidTestImplementation 'org.jacoco:org.jacoco.agent:0.8.8'
+    // 如果需要在单元测试中使用JaCoCo，也可以添加如下依赖
+    testImplementation 'org.jacoco:org.jacoco.agent:0.8.8'
 
 
     configurations.all {

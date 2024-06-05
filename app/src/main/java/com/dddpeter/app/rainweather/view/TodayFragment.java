@@ -333,7 +333,7 @@ public class TodayFragment extends Fragment {
         renderer.setAxisTitleTextSize(25);
         renderer.setLegendTextSize(25);
         renderer.setChartTitleTextSize(30);
-        renderer.setMarginsColor(this.getResources().getColor(R.color.cardview_light_background, null));
+        renderer.setMarginsColor(this.getResources().getColor(com.xuexiang.xui.R.color.cardview_light_background, null));
         renderer.setLabelsColor(this.getResources().getColor(R.color.tips, null));
         renderer.setXLabelsColor(this.getResources().getColor(R.color.tips, null));
         renderer.setGridColor(this.getResources().getColor(R.color.mybord, null));
