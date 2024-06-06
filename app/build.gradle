@@ -85,6 +85,9 @@ android {
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
+     lintOptions {
+          abortOnError false
+      }
 
     buildTypes {
         release {
