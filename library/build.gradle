@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 
 android {
     compileSdk 34
-    namespace = "com.dddpeter.app.rainweather"
+    namespace = "com.dddpeter.app.rainweather.utils"
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
