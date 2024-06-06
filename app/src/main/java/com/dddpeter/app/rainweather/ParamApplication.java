@@ -151,7 +151,7 @@ public class ParamApplication extends Application {
             public void onActivityStarted(Activity activity) {
                 countActivity++;
                 if (countActivity == 1 && isBackground) {
-                    Log.e("MyApplication", "onActivityStarted: 应用进入前台");
+                    Log.i("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
                     LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
@@ -226,7 +226,7 @@ public class ParamApplication extends Application {
             if (cityInfo == null) {
                 continue;
             }
-            Callable<JSONObject> callable = (Callable<JSONObject>) () -> {
+            Callable<JSONObject> callable = () -> {
                 JSONObject weather = new JSONObject();
                 Request request = new Request.Builder()
                         .url(url + cityInfo.getCityid())//访问连接
