@@ -96,7 +96,7 @@ android {
     }
     compileOptions {
         sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        targetCompatibility = 11
     }
     dependenciesInfo {
         includeInApk true
