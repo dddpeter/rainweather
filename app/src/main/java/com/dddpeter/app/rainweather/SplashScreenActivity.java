@@ -20,11 +20,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.dddpeter.app.rainweather.common.LocationManager;
+import com.dddpeter.app.rainweather.common.LocationService;
 import com.dddpeter.app.rainweather.database.DatabaseManager;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.enums.CacheKey;
@@ -37,11 +33,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import okhttp3.Call;
@@ -55,7 +48,7 @@ public class SplashScreenActivity extends Activity {
     private static final int LOCATION_TIMEOUT = 8000; // 8秒定位超时
     
     private DatabaseManager databaseManager;
-    private LocationManager locationManager;
+    private LocationService locationService;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private boolean mIsLocationReceived = false;
     private boolean mIsActivityFinished = false;
@@ -130,7 +123,7 @@ public class SplashScreenActivity extends Activity {
     /**
      * 带重试机制的天气数据请求
      */
-    private void executeWeatherRequestWithRetry(String url, String district, int maxRetries) {
+    private boolean executeWeatherRequestWithRetry(String url, String district, int maxRetries) {
         OkHttpClient client = OKHttpClientBuilder.buildOKHttpClient().build();
         Request request = new Request.Builder()
                 .url(url)
@@ -148,7 +141,7 @@ public class SplashScreenActivity extends Activity {
                     JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
                     databaseManager.putCacheData(district + ":" + CacheKey.WEATHER_ALL, weather.toString(), "JSONObject");
                     Log.i("知雨天气", "天气数据获取成功，尝试: " + attempt);
-                    return; // 成功则退出重试循环
+                    return true; // 成功则返回true
                 } else {
                     Log.w("知雨天气", "天气数据获取失败，状态码: " + response.code() + ", 尝试: " + attempt);
                 }
@@ -159,7 +152,7 @@ public class SplashScreenActivity extends Activity {
                 }
             } catch (JSONException e) {
                 Log.e("RainWather", "天气数据JSON解析失败: " + url, e);
-                return; // JSON解析失败不需要重试
+                return false; // JSON解析失败返回false
             }
             
             // 如果不是最后一次尝试，等待一段时间后重试
@@ -168,10 +161,11 @@ public class SplashScreenActivity extends Activity {
                     Thread.sleep(1000 * attempt); // 递增等待时间
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    return;
+                    return false;
                 }
             }
         }
+        return false; // 所有重试都失败
     }
     
     private String cityId = "101010100";
@@ -190,22 +184,33 @@ public class SplashScreenActivity extends Activity {
             district = "东城区";
         }
         
-        String code = "";
+        String code;
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
         if (cityInfo != null) {
             code = cityInfo.getCityid();
             cityId = code;
+        } else {
+            code = "";
         }
 
-        if (code != null) {
+        if (code != null && !code.isEmpty()) {
             String finalDistrict = district;
+            Log.d("知雨天气", "开始获取天气数据，城市代码: " + code);
             new Thread(() -> {
-                executeWeatherRequestWithRetry(CacheKey.DETAIL_API + cityId, finalDistrict, 3);
-                // 无论成功失败都进入主页面
-                mHandler.post(() -> proceedToMainActivity());
+                boolean success = executeWeatherRequestWithRetry(CacheKey.DETAIL_API + code, finalDistrict, 3);
+                // 只有成功获取天气数据后才进入主页面
+                mHandler.post(() -> {
+                    if (success) {
+                        Log.i("知雨天气", "天气数据获取成功，进入主页面");
+                        proceedToMainActivity();
+                    } else {
+                        Log.w("知雨天气", "天气数据获取失败，使用默认数据进入主页面");
+                        proceedToMainActivity();
+                    }
+                });
             }).start();
         } else {
-            // 没有找到城市代码，直接进入主页面
+            // 没有找到城市代码，使用默认数据进入主页面
             Log.w("知雨天气", "未找到城市代码，使用默认位置");
             proceedToMainActivity();
         }
@@ -225,15 +230,13 @@ public class SplashScreenActivity extends Activity {
         setContentView(R.layout.activity_splash_screen);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
         databaseManager = DatabaseManager.getInstance(this);
-        locationManager = LocationManager.getInstance(this);
-        
         // 设置超时机制
         setupTimeout();
         
         // 检查权限，权限通过后才能进入主页面
         if (checkPermissions()) {
-            Log.d("知雨天气", "权限已授予，跳转到主页面");
-            proceedToMainActivity();
+            Log.d("知雨天气", "权限已授予，开始定位");
+            startLocationAndProceed();
         } else {
             Log.d("知雨天气", "权限未授予，请求权限");
             requestPermissions();
@@ -263,9 +266,19 @@ public class SplashScreenActivity extends Activity {
         View decorView = getWindow().getDecorView();
         decorView.setOnApplyWindowInsetsListener((v, insets) -> {
             // 获取系统窗口插入
-            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            int navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-            
+            int statusBarHeight = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                }
+            }
+            int navigationBarHeight = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+                }
+            }
+
             // 设置内容区域的padding，避开安全区
             View contentView = findViewById(android.R.id.content);
             if (contentView != null) {
@@ -400,10 +413,12 @@ public class SplashScreenActivity extends Activity {
             }
             
             if (allGranted) {
-                Log.d("知雨天气", "所有权限已授予，跳转到主页面");
-                proceedToMainActivity();
+                Log.d("知雨天气", "所有权限已授予，开始定位");
+                startLocationAndProceed();
             } else {
                 Log.w("知雨天气", "权限被拒绝，显示提示并退出应用");
+                // 标记Activity已完成，防止其他方法强制跳转
+                mIsActivityFinished = true;
                 Toast.makeText(this, "需要相关权限才能正常使用应用，请重新启动应用并授予权限", Toast.LENGTH_LONG).show();
                 // 延迟退出应用
                 mHandler.postDelayed(() -> {
@@ -425,6 +440,53 @@ public class SplashScreenActivity extends Activity {
     }
     
     /**
+     * 开始定位并获取天气数据
+     */
+    private void startLocationAndProceed() {
+        Log.d("知雨天气", "开始定位服务");
+        locationService = LocationService.getInstance(this);
+        
+        locationService.startLocation(new LocationService.LocationCallback() {
+            @Override
+            public void onLocationSuccess(LocationVO location) {
+                Log.i("知雨天气", "========== 定位成功 ==========");
+                Log.i("知雨天气", "区县: " + location.getDistrict());
+                Log.i("知雨天气", "城市: " + location.getCity());
+                Log.i("知雨天气", "省份: " + location.getProvince());
+                Log.i("知雨天气", "经度: " + location.getLng());
+                Log.i("知雨天气", "纬度: " + location.getLat());
+                Log.i("知雨天气", "=============================");
+                
+                mIsLocationReceived = true;
+                getWeatherData(location);
+            }
+            
+            @Override
+            public void onLocationFailed(String error) {
+                Log.e("知雨天气", "========== 定位失败 ==========");
+                Log.e("知雨天气", "错误信息: " + error);
+                Log.e("知雨天气", "=============================");
+                
+                // 定位失败时，尝试使用缓存的位置信息
+                LocationVO cachedLocation = locationService.getCachedLocation();
+                if (cachedLocation != null) {
+                    Log.i("知雨天气", "使用缓存的位置信息: " + cachedLocation.getDistrict());
+                    getWeatherData(cachedLocation);
+                } else {
+                    Log.w("知雨天气", "没有缓存的位置信息，使用默认位置");
+                    // 创建默认位置
+                    LocationVO defaultLocation = new LocationVO();
+                    defaultLocation.setDistrict("东城区");
+                    defaultLocation.setCity("北京市");
+                    defaultLocation.setProvince("北京市");
+                    getWeatherData(defaultLocation);
+                }
+            }
+        });
+    }
+    
+    
+    /**
      * 进入主页面
      */
     private void proceedToMainActivity() {
@@ -434,8 +496,8 @@ public class SplashScreenActivity extends Activity {
         mIsActivityFinished = true;
         
         // 停止定位服务
-        if (locationManager != null) {
-            locationManager.stopLocation();
+        if (locationService != null) {
+            locationService.stop();
         }
         
         // 跳转到主页面
@@ -452,17 +514,17 @@ public class SplashScreenActivity extends Activity {
         mHandler.removeCallbacksAndMessages(null);
         
         // 停止定位服务
-        if (locationManager != null) {
-            locationManager.cleanup();
+        if (locationService != null) {
+
         }
     }
     
     @Override
     protected void onPause() {
         super.onPause();
-        // 如果Activity被暂停且未完成，强制进入主页面
-        if (!mIsActivityFinished) {
-            Log.w("知雨天气", "Activity被暂停，强制进入主页面");
+        // 如果Activity被暂停且未完成，且权限已授予，才强制进入主页面
+        if (!mIsActivityFinished && checkPermissions()) {
+            Log.w("知雨天气", "Activity被暂停，权限已授予，强制进入主页面");
             proceedToMainActivity();
         }
     }

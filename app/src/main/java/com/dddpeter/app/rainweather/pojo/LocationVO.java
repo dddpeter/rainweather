@@ -14,7 +14,10 @@ public class LocationVO implements Serializable {
     private String adcode;    //获取邮编
     private String town;    //获取乡镇信息
     private Double lat; //纬度坐标
-    private Double lng;
+    private Double lng; //经度坐标
+    private Long time; //定位时间
+    private String addr; //详细地址信息（与address相同，为了兼容性）
+
 
     public String getAddress() {
         return address;
@@ -94,5 +97,21 @@ public class LocationVO implements Serializable {
 
     public void setLng(Double lng) {
         this.lng = lng;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public String getAddr() {
+        return addr;
+    }
+
+    public void setAddr(String addr) {
+        this.addr = addr;
     }
 }

@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -64,13 +65,22 @@ public class TodayFragment extends Fragment {
     TextView ganmao;
     TextView shidu;
     RelativeLayout recent;
-    TextView airText;
-    TextView airq1;
-    TextView airq;
     LinearLayout topPic;
     Button h24Btn;
     Button mainBtn;
     Button backBtn;
+    ImageView refreshIcon;
+    
+    // 流式布局中的新UI元素
+    TextView airq;
+    TextView airq1;
+    TextView currentTemp;
+    TextView humidityValue;
+    TextView windSpeed;
+    TextView windDirection;
+    TextView pressureValue;
+    TextView uvIndex;
+    TextView uvLevel;
 
     private DatabaseManager databaseManager;
     String cityName;
@@ -79,12 +89,23 @@ public class TodayFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(CacheKey.REFRESH)) {
-
+                Log.d("TodayFragment", "收到刷新广播");
                 try {
                     renderContent();
                     renderRecent();
+                    Log.d("TodayFragment", "刷新完成");
+                    
+                    // 显示刷新成功Toast
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "天气数据刷新成功！", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (Exception e) {
-                    Log.w("RainWather", "Exception: ", e);
+                    Log.w("TodayFragment", "刷新异常: ", e);
+                    
+                    // 显示刷新失败Toast
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "刷新失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
@@ -117,13 +138,14 @@ public class TodayFragment extends Fragment {
         ganmao = me.findViewById(R.id.ganmao);
         shidu = me.findViewById(R.id.shidu);
         recent = me.findViewById(R.id.recent_today);
-        airText = me.findViewById(R.id.air_text);
-        airq1 = me.findViewById(R.id.airq);
-        airq = me.findViewById(R.id.airq1);
         topPic = me.findViewById(R.id.top_pic);
         h24Btn = me.findViewById(R.id.h24_btn);
         mainBtn = me.findViewById(R.id.main_btn);
         backBtn = me.findViewById(R.id.back_btn);
+        refreshIcon = me.findViewById(R.id.refresh_icon);
+        
+        // 流式布局中的新UI元素
+
     }
 
     @Override
@@ -134,6 +156,14 @@ public class TodayFragment extends Fragment {
         databaseManager = DatabaseManager.getInstance(getContext());
         cityName = requireActivity().getIntent().getStringExtra("city");
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
+        // 设置刷新图标点击事件
+        if (refreshIcon != null) {
+            refreshIcon.setOnClickListener(v -> {
+                Log.d("TodayFragment", "用户点击刷新图标");
+                refreshWeatherData();
+            });
+        }
+        
         if (cityName == null || cityName.trim().equals("")) {
             h24Btn.setOnClickListener(l1);
             mainBtn.setOnClickListener(l2);
@@ -162,6 +192,26 @@ public class TodayFragment extends Fragment {
             topPic.setLayoutParams(params1);
             infoB.setPadding(0, (int) (y * 0.7 / 20), 0, 0);
         }
+        
+        // 立即尝试渲染内容
+        try {
+            renderContent();
+            renderRecent();
+        } catch (Exception e) {
+            Log.w("TodayFragment", "onCreateView渲染失败: ", e);
+        }
+        
+        // 延迟刷新，确保数据已加载
+        view.postDelayed(() -> {
+            try {
+                renderContent();
+                renderRecent();
+                Log.d("TodayFragment", "延迟刷新完成");
+            } catch (Exception e) {
+                Log.w("TodayFragment", "延迟刷新失败: ", e);
+            }
+        }, 500); // 延迟500ms
+        
         return view;
     }
 
@@ -179,7 +229,172 @@ public class TodayFragment extends Fragment {
 
     }
 
+    /**
+     * 刷新天气数据
+     */
+    private void refreshWeatherData() {
+        Log.d("TodayFragment", "开始刷新天气数据");
+        
+        // 显示刷新状态
+        if (refreshIcon != null) {
+            refreshIcon.setEnabled(false);
+            refreshIcon.setAlpha(0.5f);
+            startRefreshAnimation();
+        }
+        
+        // 显示Toast提示
+        if (getContext() != null) {
+            Toast.makeText(getContext(), "正在刷新天气数据...", Toast.LENGTH_SHORT).show();
+        }
+        
+        // 启动后台定位服务进行刷新
+        if (getActivity() != null) {
+            Intent serviceIntent = new Intent(getActivity(), com.dddpeter.app.rainweather.service.BackgroundLocationService.class);
+            getActivity().startService(serviceIntent);
+        }
+        
+        // 延迟恢复刷新图标状态
+        if (refreshIcon != null) {
+            refreshIcon.postDelayed(() -> {
+                refreshIcon.setEnabled(true);
+                refreshIcon.setAlpha(1.0f);
+                stopRefreshAnimation();
+                Log.d("TodayFragment", "刷新图标状态已恢复");
+            }, 3000); // 3秒后恢复
+        }
+    }
+    
+    /**
+     * 开始刷新动画
+     */
+    private void startRefreshAnimation() {
+        if (refreshIcon != null && getContext() != null) {
+            android.view.animation.RotateAnimation rotateAnimation = new android.view.animation.RotateAnimation(
+                0f, 360f,
+                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
+                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
+            );
+            rotateAnimation.setDuration(1000);
+            rotateAnimation.setRepeatCount(android.view.animation.Animation.INFINITE);
+            rotateAnimation.setRepeatMode(android.view.animation.Animation.RESTART);
+            refreshIcon.startAnimation(rotateAnimation);
+        }
+    }
+    
+    /**
+     * 停止刷新动画
+     */
+    private void stopRefreshAnimation() {
+        if (refreshIcon != null) {
+            refreshIcon.clearAnimation();
+        }
+    }
+    
+    /**
+     * 根据AQI值设置空气指数颜色
+     */
+    private void setAirQualityColor(int aqiValue) {
+        if (airq == null || airq1 == null) return;
+        
+        int colorRes;
+        String level;
+        
+        if (aqiValue <= 50) {
+            colorRes = R.color.air_quality_excellent;
+            level = "优";
+        } else if (aqiValue <= 100) {
+            colorRes = R.color.air_quality_good;
+            level = "良";
+        } else if (aqiValue <= 150) {
+            colorRes = R.color.air_quality_moderate;
+            level = "轻度污染";
+        } else if (aqiValue <= 200) {
+            colorRes = R.color.air_quality_unhealthy;
+            level = "中度污染";
+        } else if (aqiValue <= 300) {
+            colorRes = R.color.air_quality_hazardous;
+            level = "重度污染";
+        } else {
+            colorRes = R.color.air_quality_hazardous;
+            level = "严重污染";
+        }
+        
+        if (getContext() != null) {
+            int color = getContext().getResources().getColor(colorRes, null);
+            airq.setTextColor(color);
+            airq1.setTextColor(color);
+            airq1.setText(level);
+        }
+    }
+
+    /**
+     * 显示默认内容
+     */
+    private void showDefaultContent(String cityName) {
+        Log.d("TodayFragment", "显示默认内容，城市: " + cityName);
+        
+        // 设置城市名称
+        if (city != null) {
+            city.setText(cityName);
+        }
+        
+        // 设置默认天气信息
+        if (type != null) {
+            type.setText("获取中...");
+        }
+        
+        if (wendu != null) {
+            wendu.setText("--°");
+        }
+        
+        if (wind != null) {
+            wind.setText("风力: --");
+        }
+        
+        if (shidu != null) {
+            shidu.setText("湿度: --%");
+        }
+        
+        if (hpa != null) {
+            hpa.setText("压强: --hpa");
+        }
+        
+        // 设置流式布局的默认值
+        if (airq != null) {
+            airq.setText("--");
+        }
+        if (airq1 != null) {
+            airq1.setText("--");
+        }
+        if (currentTemp != null) {
+            currentTemp.setText("--°");
+        }
+        if (humidityValue != null) {
+            humidityValue.setText("--%");
+        }
+        if (windSpeed != null) {
+            windSpeed.setText("--");
+        }
+        if (windDirection != null) {
+            windDirection.setText("--");
+        }
+        if (pressureValue != null) {
+            pressureValue.setText("--");
+        }
+        if (uvIndex != null) {
+            uvIndex.setText("--");
+        }
+        if (uvLevel != null) {
+            uvLevel.setText("--");
+        }
+        
+        if (ganmao != null) {
+            ganmao.setText("正在获取天气数据，请稍候...");
+        }
+    }
+
     public void renderContent() {
+        Log.d("TodayFragment", "开始渲染内容");
         JSONObject wAllJson;
         String cityCurrent;
         if (cityName == null || cityName.trim().equals("")) {
@@ -187,19 +402,23 @@ public class TodayFragment extends Fragment {
             LocationVO locationVO = databaseManager.getLocationVO(CacheKey.CURRENT_LOCATION);
             if (locationVO != null) {
                 cityCurrent = locationVO.getDistrict();
+                Log.d("TodayFragment", "使用定位信息，城市: " + cityCurrent);
             } else {
                 Log.w("TodayFragment", "定位信息为空，使用默认位置");
                 cityCurrent = "东城区";
             }
         } else {
             cityCurrent = cityName;
+            Log.d("TodayFragment", "使用传入城市名: " + cityCurrent);
         }
         String weatherJsonString = databaseManager.getCacheData(cityCurrent + ":" + CacheKey.WEATHER_ALL);
+        Log.d("TodayFragment", "获取天气数据，城市: " + cityCurrent + ", 数据长度: " + (weatherJsonString != null ? weatherJsonString.length() : 0));
         
         try {
             // 检查weatherJsonString是否为null
             if (weatherJsonString == null) {
-                Log.w("TodayFragment", "天气数据为空，无法渲染内容");
+                Log.w("TodayFragment", "天气数据为空，显示默认内容");
+                showDefaultContent(cityCurrent);
                 return;
             }
             
@@ -207,7 +426,8 @@ public class TodayFragment extends Fragment {
             
             // 检查wAllJson是否为null
             if (wAllJson == null) {
-                Log.w("TodayFragment", "天气数据解析失败，无法渲染内容");
+                Log.w("TodayFragment", "天气数据解析失败，显示默认内容");
+                showDefaultContent(cityCurrent);
                 return;
             }
             
@@ -218,11 +438,7 @@ public class TodayFragment extends Fragment {
                 return;
             }
             
-            JSONObject airJson = currentObj.optJSONObject("air");
-            if (airJson == null) {
-                Log.w("TodayFragment", "air对象为空");
-                return;
-            }
+            // 空气质量指数相关UI已移除，不再需要airJson
             
             JSONObject current = currentObj.optJSONObject("current");
             if (current == null) {
@@ -246,9 +462,9 @@ public class TodayFragment extends Fragment {
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS));
             shidu.setText(humidityStr);
             ganmao.setText(wAllJson.getJSONObject("current").getString("tips"));
-            setAirColor(airJson.getInt("AQI"), airJson.getString("levelIndex"));
-            airq.setText(airJson.getString("levelIndex"));
-            airq1.setText(airJson.getString("AQI"));
+            
+            // 设置流式布局中的新UI元素
+            updateFlowLayoutData(current, wAllJson);
             // 使用数据库管理器替代SharedPreferences
             if (DataUtil.isDay()) {
                 getContext();
@@ -286,39 +502,61 @@ public class TodayFragment extends Fragment {
 
     }
 
-    private void setAirColor(Integer aqi, String index) {
-        String text = "空气指数：" + aqi + "（" + index + "）";
-        airText.setText(text);
-        if (aqi <= 50) {
-
-            airText.setTextColor(getResources().getColor(R.color.colorPrimary, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
-        } else if (aqi <= 100) {
-            airText.setTextColor(getResources().getColor(R.color.color51_, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color51_, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color51_, null));
-            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
-            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
-        } else if (aqi <= 150) {
-            airText.setTextColor(getResources().getColor(R.color.color100_, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color100_, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color100_, null));
-            airq.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
-            airq1.setTextColor(getResources().getColor(R.color.colorPrimaryDark, null));
-        } else if (aqi <= 200) {
-            airText.setTextColor(getResources().getColor(R.color.color150_, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color150_, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color150_, null));
-        } else if (aqi <= 300) {
-            airText.setTextColor(getResources().getColor(R.color.color200_, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color200_, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color200_, null));
-        } else {
-            airText.setTextColor(getResources().getColor(R.color.color300_, null));
-            airq.setBackgroundColor(getResources().getColor(R.color.color300_, null));
-            airq1.setBackgroundColor(getResources().getColor(R.color.color300_, null));
+    /**
+     * 更新流式布局中的数据
+     */
+    private void updateFlowLayoutData(JSONObject current, JSONObject wAllJson) {
+        try {
+            // 设置空气质量指数
+            if (wAllJson.has("air")) {
+                JSONObject airJson = wAllJson.getJSONObject("air");
+                if (airJson != null && airJson.has("AQI")) {
+                    int aqiValue = airJson.getInt("AQI");
+                    if (airq != null) {
+                        airq.setText(String.valueOf(aqiValue));
+                    }
+                    setAirQualityColor(aqiValue);
+                }
+            }
+            
+            // 设置当前温度
+            if (currentTemp != null && current.has("temperature")) {
+                currentTemp.setText(current.getString("temperature") + "°");
+            }
+            
+            // 设置湿度
+            if (humidityValue != null && current.has("humidity")) {
+                humidityValue.setText(current.getString("humidity") + "%");
+            }
+            
+            // 设置风速和风向
+            if (windSpeed != null && current.has("windpower")) {
+                windSpeed.setText(current.getString("windpower"));
+            }
+            if (windDirection != null && current.has("winddir")) {
+                windDirection.setText(current.getString("winddir"));
+            }
+            
+            // 设置气压
+            if (pressureValue != null && current.has("airpressure")) {
+                pressureValue.setText(current.getString("airpressure"));
+            }
+            
+            // 设置紫外线指数（如果有的话）
+            if (uvIndex != null) {
+                uvIndex.setText("5"); // 默认值，实际应该从API获取
+            }
+            if (uvLevel != null) {
+                uvLevel.setText("中等"); // 默认值，实际应该根据UV指数计算
+            }
+            
+        } catch (JSONException e) {
+            Log.w("TodayFragment", "更新流式布局数据时发生JSON异常: ", e);
         }
+    }
+
+    private void setAirColor(Integer aqi, String index) {
+        // 空气质量指数相关UI已移除
     }
 
     public void renderRecent() {
@@ -398,18 +636,18 @@ public class TodayFragment extends Fragment {
         int max = CommonUtil.maxOfAarray(highInt) + 5;
         int min = CommonUtil.minOfAarray(lowInt) - 5;
         renderer.setTextTypeface(CommonUtil.weatherIconFontFace(getContext()));
-        renderer.setAxesColor(this.getResources().getColor(R.color.myorange, null));
+        renderer.setAxesColor(this.getResources().getColor(R.color.weather_chart_title, null));
         renderer.setZoomEnabled(true, true);
         renderer.setPanEnabled(false, false);
         renderer.setXLabels(0);
         renderer.setExternalZoomEnabled(true);
-        renderer.setAxisTitleTextSize(25);
-        renderer.setLegendTextSize(25);
-        renderer.setChartTitleTextSize(30);
-        renderer.setMarginsColor(this.getResources().getColor(com.xuexiang.xui.R.color.cardview_light_background, null));
-        renderer.setLabelsColor(this.getResources().getColor(R.color.tips, null));
-        renderer.setXLabelsColor(this.getResources().getColor(R.color.tips, null));
-        renderer.setGridColor(this.getResources().getColor(R.color.mybord, null));
+        renderer.setAxisTitleTextSize(20);
+        renderer.setLegendTextSize(16);
+        renderer.setChartTitleTextSize(18);
+        renderer.setMarginsColor(this.getResources().getColor(R.color.weather_chart_card_bg, null));
+        renderer.setLabelsColor(this.getResources().getColor(R.color.weather_chart_legend, null));
+        renderer.setXLabelsColor(this.getResources().getColor(R.color.weather_chart_legend, null));
+        renderer.setGridColor(this.getResources().getColor(R.color.weather_chart_grid, null));
         renderer.setYTitle("温度(℃)");
         renderer.setApplyBackgroundColor(true);
         renderer.setFitLegend(true);
@@ -430,7 +668,7 @@ public class TodayFragment extends Fragment {
         XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
         // 3.1设置颜色
 
-        xyRenderer.setColor(this.getResources().getColor(R.color.myblue, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.weather_chart_low_temp, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);
@@ -443,7 +681,7 @@ public class TodayFragment extends Fragment {
         renderer.addSeriesRenderer(xyRenderer);
         // 3.4,重复 1~3的步骤绘制第二个系列点
         xyRenderer = new XYSeriesRenderer();
-        xyRenderer.setColor(this.getResources().getColor(R.color.myorange, null));
+        xyRenderer.setColor(this.getResources().getColor(R.color.weather_chart_high_temp, null));
         xyRenderer.setDisplayChartValues(true);
         xyRenderer.setFillPoints(true);
         xyRenderer.setLineWidth(5);
@@ -453,7 +691,7 @@ public class TodayFragment extends Fragment {
         xyRenderer.setPointStyle(PointStyle.CIRCLE);
         renderer.addSeriesRenderer(xyRenderer);
         View view = ChartFactory.getLineChartView(getContext(), dataset, renderer);
-        view.setBackgroundColor(Color.WHITE);
+        view.setBackgroundColor(getResources().getColor(R.color.weather_chart_card_bg, null));
 
         RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,

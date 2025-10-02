@@ -1,12 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".view.AboutFragment">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_padding_lr"
-    android:paddingRight="@dimen/activity_padding_lr"
-    tools:context=".view.AboutFragment">
+    android:paddingRight="@dimen/activity_padding_lr">
     <TextView
         android:id="@+id/historyinfo_title"
         android:layout_width="match_parent"
@@ -79,3 +84,5 @@
         android:textSize="18sp" />
 
 </LinearLayout>
+
+</ScrollView>

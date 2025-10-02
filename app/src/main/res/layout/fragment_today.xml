@@ -1,291 +1,380 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/today"
-    android:paddingLeft="@dimen/activity_padding_lr"
-    android:paddingRight="@dimen/activity_padding_lr"
     tools:context=".view.TodayFragment">
-    <LinearLayout
-        android:id="@+id/top_pic"
-        android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:minHeight="340dp"
-        android:background="@color/skyblue">
-        <LinearLayout
-            android:id="@+id/top_info"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/backgroud"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/city"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:gravity="center"
-                android:textColor="@color/fontWhite"
-                android:text="@string/defaultCity"
-                android:background="@color/xui_transparent"
-                android:textSize="20sp" />
-            <LinearLayout
-                android:id="@+id/info_b"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="300dp"
 
-                android:background="@color/xui_transparent"
-                android:baselineAligned="false">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/today"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_padding_lr"
+        android:paddingTop="0dp"
+        android:paddingRight="@dimen/activity_padding_lr">
+
+        <!-- 流式布局容器 -->
+        <!-- 顶部天气区域，延伸到状态栏下方 -->
+        <LinearLayout
+            android:id="@+id/top_pic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/skyblue"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:id="@+id/top_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/backgroud"
+                android:orientation="vertical">
+
+                <!-- 城市名称和刷新按钮 -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="40"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@color/xui_transparent"
-                    >
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="20dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="6dp">
+
+                    <TextView
+                        android:id="@+id/city"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginLeft="5dp"
-                        app:cardCornerRadius="9dp"
-                        app:cardElevation="9dp"
-                        >
-                        <TextView
-                            android:id="@+id/airq"
-                            android:layout_width="48dp"
-                            android:layout_height="21dp"
-                            android:gravity="center"
-                            android:text="10"
-                            android:paddingTop="1dp"
-                            android:textColor="@color/fontWhite"
-                            android:background="@color/colorPrimary"
-                            android:textSize="10sp" />
-                        <TextView
-                            android:layout_marginTop="16dp"
-                            android:id="@+id/airq1"
-                            android:layout_width="48dp"
-                            android:layout_height="22dp"
-                            android:gravity="center"
-                            android:text="优"
-                            android:paddingBottom="1dp"
-                            android:textColor="@color/fontWhite"
-                            android:background="@color/colorPrimary"
-                            android:textSize="10sp" />
-                    </androidx.cardview.widget.CardView>
+                        android:layout_weight="1"
+                        android:background="@color/xui_transparent"
+                        android:gravity="center"
+                        android:text="@string/defaultCity"
+                        android:textColor="@color/fontWhite"
+                        android:textSize="20sp" />
 
                     <ImageView
-                        android:id="@+id/imageView1"
-                        android:layout_width="80dp"
-                        android:layout_height="100dp"
-                        android:contentDescription="@string/app_name"
-                        android:gravity="center_horizontal"
-                        android:layout_marginTop="-40dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/xui_transparent"
-                        android:src="@drawable/notclear" />
-                    <TextView
-                        android:id="@+id/type"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:gravity="center"
-                        android:layout_marginTop="-10dp"
-                        android:text="晴"
-                        android:textColor="@color/fontWhite"
-                        android:background="@color/xui_transparent"
-                        android:textSize="25sp" />
-
+                        android:id="@+id/refresh_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/refresh_button_background"
+                        android:clickable="true"
+                        android:contentDescription="刷新天气数据"
+                        android:focusable="true"
+                        android:padding="6dp"
+                        android:src="@android:drawable/ic_popup_sync" />
                 </LinearLayout>
 
+                <!-- 主要天气信息 -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="10"
+                    android:id="@+id/info_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@color/xui_transparent"
-                    android:paddingTop="10dp"
-                    android:orientation="vertical"
-                    >
+                    android:baselineAligned="false"
+                    android:minHeight="180dp">
+
+                    <!-- 天气图标和类型 -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="40"
+                        android:background="@color/xui_transparent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/imageView1"
+                            android:layout_width="70dp"
+                            android:layout_height="80dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="2dp"
+                            android:background="@color/xui_transparent"
+                            android:contentDescription="@string/app_name"
+                            android:gravity="center_horizontal"
+                            android:src="@drawable/notclear" />
+
+                        <TextView
+                            android:id="@+id/type"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="-5dp"
+                            android:background="@color/xui_transparent"
+                            android:gravity="center"
+                            android:text="晴"
+                            android:textColor="@color/fontWhite"
+                            android:textSize="22sp" />
+                    </LinearLayout>
+
+                    <!-- 温度和详细信息 -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="10"
+                        android:background="@color/xui_transparent"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp">
 
                         <TextView
                             android:id="@+id/wendu"
                             android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@color/xui_transparent"
                             android:gravity="top|start"
-                            android:paddingStart="35dp"
+                            android:paddingStart="30dp"
                             android:text="10°"
                             android:textColor="@color/fontWhite"
-                            android:layout_height="60dp"
-                            android:background="@color/xui_transparent"
-                            android:textSize="35sp" />
+                            android:textSize="32sp" />
 
-
-
-
-                     <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/xui_transparent"
-                         android:layout_marginBottom="3dp"
-                    >
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
-                        android:src="@drawable/sk_fx"
-                        android:background="@color/xui_transparent"
-                        >
-
-                    </ImageView>
-                    <TextView
-                        android:id="@+id/wind"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:layout_marginBottom="3dp"
-                        android:textColor="@color/fontWhite"
-                        android:text="南风1级"
-                        android:background="@color/xui_transparent"
-                        android:textSize="18sp" />
-                     </LinearLayout>
-                     <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/xui_transparent"
-                         android:layout_marginBottom="3dp"
-                    >
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
-                        android:src="@drawable/sk_sd"
-                        android:background="@color/xui_transparent"
-                        >
-
-                    </ImageView>
-                    <TextView
-                        android:id="@+id/shidu"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="湿度:40%"
-                        android:textColor="@color/fontWhite"
-                        android:background="@color/xui_transparent"
-                        android:textSize="18sp" />
-                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/xui_transparent"
-                        android:layout_marginBottom="3dp"
-                        >
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="3dp"
-                            android:src="@drawable/sk_yq"
-                            android:background="@color/xui_transparent"
-                            >
-
-                        </ImageView>
-                        <TextView
-                            android:id="@+id/hpa"
-                            android:layout_width="fill_parent"
+                        <!-- 风向 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="left"
-                            android:text="压强:1000hpa"
-                            android:textColor="@color/fontWhite"
-                            android:background="@color/xui_transparent"
-                            android:textSize="18sp" />
+                            android:layout_marginBottom="3dp"
+                            android:background="@color/xui_transparent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/xui_transparent"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="2dp"
+                                android:src="@drawable/sk_fx" />
+
+                            <TextView
+                                android:id="@+id/wind"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="3dp"
+                                android:background="@color/xui_transparent"
+                                android:gravity="left"
+                                android:text="南风1级"
+                                android:textColor="@color/fontWhite"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <!-- 湿度 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="@color/xui_transparent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/xui_transparent"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="2dp"
+                                android:src="@drawable/sk_sd" />
+
+                            <TextView
+                                android:id="@+id/shidu"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/xui_transparent"
+                                android:gravity="left"
+                                android:text="湿度:40%"
+                                android:textColor="@color/fontWhite"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <!-- 气压 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="@color/xui_transparent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/xui_transparent"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="3dp"
+                                android:src="@drawable/sk_yq" />
+
+                            <TextView
+                                android:id="@+id/hpa"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/xui_transparent"
+                                android:gravity="left"
+                                android:text="压强:1000hpa"
+                                android:textColor="@color/fontWhite"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 7日天气趋势图表 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/weather_chart_card_bg"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="2dp">
+
+                <!-- 图表标题 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_trending_up" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="7日天气趋势"
+                        android:textColor="@color/weather_chart_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 图表容器 -->
+                <RelativeLayout
+                    android:id="@+id/recent_today"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/chart_background"
+                    android:padding="8dp"></RelativeLayout>
+
+                <!-- 图表说明 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/chart_legend_high" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="最高温度"
+                            android:textColor="@color/weather_chart_legend"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/chart_legend_low" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="最低温度"
+                            android:textColor="@color/weather_chart_legend"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="25dp"
-        android:paddingBottom="5dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/aqi">
-    </ImageView>
-    <TextView
-        android:id="@+id/air_text"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:gravity="center|top"
-        android:layout_gravity="center"
-        android:text="良好"
-        android:textStyle="bold"
-        android:textColor="@color/tips"
-        android:textSize="14sp" />
-        <RelativeLayout
-            android:id="@+id/recent_today"
-            android:layout_width="match_parent"
-            android:paddingRight="@dimen/view_padding_lr"
-            android:paddingLeft="@dimen/view_padding_lr"
-            android:minHeight="160dp"
-            android:layout_weight="15"
-          android:layout_height="160dp">
-
-        </RelativeLayout>
+        <!-- 生活建议 -->
         <TextView
             android:id="@+id/ganmao"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:gravity="start|top"
+            android:paddingLeft="15dp"
+            android:paddingTop="8dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="8dp"
             android:text="今天天气怎么样呢"
-            android:padding="15dp"
             android:textColor="@color/myblue"
             android:textSize="16sp" />
 
+        <Button
+            android:id="@+id/back_btn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/colorPrimary"
+            android:text="返回"
+            android:textSize="18sp"
+            android:visibility="gone"></Button>
+
+    </LinearLayout>
+</ScrollView>
+
+    <!-- 固定在底部的按钮区域 -->
     <LinearLayout
         android:id="@+id/redirect"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@color/cardview_light_background"
+        android:elevation="4dp"
         android:gravity="center_horizontal"
-        android:layout_gravity="bottom"
-        >
+        android:padding="8dp">
 
         <Button
             android:id="@+id/h24_btn"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="24小时天气"
-            android:textSize="18sp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:layout_weight="10">
-        </Button>
+            android:text="24小时天气"
+            android:textColor="@color/fontWhite"
+            android:textSize="16sp"></Button>
 
         <Button
             android:id="@+id/main_btn"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
-            android:text="主要城市天气"
-            android:textSize="18sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
             android:background="@color/myorange"
-            >
-        </Button>
+            android:text="主要城市天气"
+            android:textColor="@color/fontWhite"
+            android:textSize="16sp"></Button>
     </LinearLayout>
-    <Button
-        android:id="@+id/back_btn"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:textSize="18sp"
-        android:visibility="gone"
-        android:background="@color/colorPrimary"
-        android:text="返回">
-    </Button>
 
 </LinearLayout>

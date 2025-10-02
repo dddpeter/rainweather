@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,7 +20,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.dddpeter.app.rainweather.common.LocationManager;
+import com.dddpeter.app.rainweather.common.LocationService;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.PermissionManager;
 import com.dddpeter.app.rainweather.database.DatabaseManager;
@@ -65,8 +67,8 @@ public class IndexActivity extends AppCompatActivity {
     // 线程池管理
     private ExecutorService executorService;
     
-    // 定位管理器
-    private LocationManager locationManager;
+    // 后台服务相关
+    private Intent backgroundServiceIntent;
 
     private void getWeatherData(LocationVO locationVO) {
         if (locationVO == null) {
@@ -204,10 +206,10 @@ public class IndexActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("IndexActivity", "onResume - 重新启动定位服务");
+        Log.d("IndexActivity", "onResume - 页面恢复");
         
-        // 重新启动定位服务，获取最新位置
-        startLocationService();
+        // 发送广播刷新UI
+        sendRefreshBroadcast();
     }
 
     @Override
@@ -234,11 +236,17 @@ public class IndexActivity extends AppCompatActivity {
         // 初始化数据库管理器
         databaseManager = DatabaseManager.getInstance(this);
         
-        // 初始化定位管理器
-        locationManager = LocationManager.getInstance(this);
-        
         // 设置布局
         setContentView(R.layout.activity_index);
+        
+        // 启动后台定位服务
+        startBackgroundLocationService();
+        
+        // 延迟发送刷新广播，确保Fragment已完全初始化
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            sendRefreshBroadcast();
+            Log.d("IndexActivity", "延迟发送刷新广播");
+        }, 1000); // 延迟1秒
         
         // 初始化UI组件
         initViews();
@@ -254,63 +262,45 @@ public class IndexActivity extends AppCompatActivity {
         
         // 设置底部导航
         setupBottomNavigation();
-        
-        // 启动定位服务
-        startLocationService();
+
     }
     
     /**
-     * 启动定位服务
+     * 手动停止定位服务
      */
-    private void startLocationService() {
-        Log.d("IndexActivity", "启动定位服务");
-        
-        // 权限已在SplashScreenActivity中检查，这里直接启动定位
-        locationManager.startLocation(new LocationManager.LocationCallback() {
-            @Override
-            public void onLocationSuccess(LocationVO location) {
-                Log.i("IndexActivity", "========== 定位成功 ==========");
-                Log.i("IndexActivity", "区县: " + location.getDistrict());
-                Log.i("IndexActivity", "城市: " + location.getCity());
-                Log.i("IndexActivity", "省份: " + location.getProvince());
-                Log.i("IndexActivity", "国家: " + location.getCountry());
-                Log.i("IndexActivity", "经度: " + location.getLng());
-                Log.i("IndexActivity", "纬度: " + location.getLat());
-                Log.i("IndexActivity", "街道: " + location.getStreet());
-                Log.i("IndexActivity", "乡镇: " + location.getTown());
-                Log.i("IndexActivity", "定位时间: " + System.currentTimeMillis());
-                Log.i("IndexActivity", "=============================");
-                getWeatherData(location);
-                get7DayWeatherData(location);
-            }
-            
-            @Override
-            public void onLocationFailed(String error) {
-                Log.e("IndexActivity", "========== 定位失败 ==========");
-                Log.e("IndexActivity", "错误信息: " + error);
-                Log.e("IndexActivity", "时间: " + System.currentTimeMillis());
-                Log.e("IndexActivity", "线程: " + Thread.currentThread().getName());
-                Log.e("IndexActivity", "=============================");
-                
-                // 定位失败时，尝试使用缓存的位置信息
-                LocationVO cachedLocation = locationManager.getCachedLocation();
-                if (cachedLocation != null) {
-                    Log.i("IndexActivity", "使用缓存的位置信息: " + cachedLocation.getDistrict());
-                    getWeatherData(cachedLocation);
-                    get7DayWeatherData(cachedLocation);
-                } else {
-                    Log.w("IndexActivity", "没有缓存的位置信息，使用默认位置");
-                    // 创建默认位置
-                    LocationVO defaultLocation = new LocationVO();
-                    defaultLocation.setDistrict("东城区");
-                    defaultLocation.setCity("北京市");
-                    defaultLocation.setProvince("北京市");
-                    getWeatherData(defaultLocation);
-                    get7DayWeatherData(defaultLocation);
-                }
-            }
-        });
+    public void stopLocationService() {
+        Log.d("IndexActivity", "手动停止定位服务");
     }
+    
+    /**
+     * 启动后台定位服务
+     */
+    private void startBackgroundLocationService() {
+        Log.d("IndexActivity", "启动后台定位服务");
+        backgroundServiceIntent = new Intent(this, com.dddpeter.app.rainweather.service.BackgroundLocationService.class);
+        startService(backgroundServiceIntent);
+    }
+    
+    /**
+     * 停止后台定位服务
+     */
+    private void stopBackgroundLocationService() {
+        Log.d("IndexActivity", "停止后台定位服务");
+        if (backgroundServiceIntent != null) {
+            stopService(backgroundServiceIntent);
+        }
+    }
+    
+    /**
+     * 发送刷新广播
+     */
+    private void sendRefreshBroadcast() {
+        Log.d("IndexActivity", "发送刷新广播");
+        Intent intent = new Intent();
+        intent.setAction(CacheKey.REFRESH);
+        sendBroadcast(intent);
+    }
+    
     
     /**
      * 设置系统栏（状态栏和导航栏）
@@ -332,7 +322,7 @@ public class IndexActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
         
-        // 处理系统窗口插入，确保内容避开安全区
+        // 处理系统窗口插入，让天气区域延伸到状态栏下方
         View decorView = getWindow().getDecorView();
         decorView.setOnApplyWindowInsetsListener((v, insets) -> {
             // 获取系统窗口插入
@@ -344,10 +334,12 @@ public class IndexActivity extends AppCompatActivity {
             }
             int navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
             
-            // 设置内容区域的padding，避开安全区
-            View contentView = findViewById(android.R.id.content);
-            if (contentView != null) {
-                contentView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+
+            
+            // 设置底部按钮区域的padding，避开导航栏
+            View bottomButtons = findViewById(R.id.redirect);
+            if (bottomButtons != null) {
+                bottomButtons.setPadding(0, 0, 0, navigationBarHeight);
             }
             
             return insets;
@@ -410,10 +402,8 @@ public class IndexActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         
-        // 清理定位资源
-        if (locationManager != null) {
-            locationManager.cleanup();
-        }
+        // 停止后台定位服务
+        stopBackgroundLocationService();
         
         // 清理资源
         if (onBackPressedCallback != null) {
@@ -423,6 +413,18 @@ public class IndexActivity extends AppCompatActivity {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
+    }
+    
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("IndexActivity", "Activity停止");
+    }
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("IndexActivity", "Activity启动");
     }
     
     @Override

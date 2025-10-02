@@ -24,4 +24,27 @@
     <color name="color300_">#A52504</color>
     <color name="airbg">#E6009688</color>
     <color name="contact">#80EDDAA1</color>
+    
+    <!-- 空气指数相关颜色 -->
+    <color name="air_quality_card_bg">#F8F9FA</color>
+    <color name="air_quality_excellent">#00C851</color>
+    <color name="air_quality_good">#FFBB33</color>
+    <color name="air_quality_moderate">#FF8800</color>
+    <color name="air_quality_unhealthy">#FF4444</color>
+    <color name="air_quality_hazardous">#CC0000</color>
+    <color name="air_quality_label">#6C757D</color>
+    
+    <!-- 天气图表相关颜色 -->
+    <color name="weather_chart_card_bg">#FFFFFF</color>
+    <color name="weather_chart_title">#2C3E50</color>
+    <color name="weather_chart_legend">#7F8C8D</color>
+    <color name="weather_chart_high_temp">#E74C3C</color>
+    <color name="weather_chart_low_temp">#3498DB</color>
+    <color name="weather_chart_grid">#ECF0F1</color>
+    
+    <!-- 流式布局卡片颜色 -->
+    <color name="weather_card_bg">#FFFFFF</color>
+    <color name="weather_primary">#2C3E50</color>
+    <color name="weather_secondary">#7F8C8D</color>
+    <color name="cardview_light_background">#F5F5F5</color>
 </resources>
