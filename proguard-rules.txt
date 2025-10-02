@@ -1,8 +1,0 @@
-#  排除okhttp
- -dontwarn com.squareup.**
- -dontwarn okio.**
- -keep public class org.codehaus.* { *; }
- -keep public class java.nio.* { *; }
-
-#
- -keep class com.xuexiang.xui.widget.edittext.materialedittext.** { *; }

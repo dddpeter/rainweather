@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -143,7 +145,6 @@ public class SplashScreenActivity extends Activity {
         //注入字体
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
@@ -152,6 +153,7 @@ public class SplashScreenActivity extends Activity {
         ActivityCompat.requestPermissions(this, new String[]{
                 "android.permission.ACCESS_FINE_LOCATION",
                 "android.permission.WRITE_EXTERNAL_STORAGE"}, REQUEST_GPS);
+
         Log.d("知雨天气", "开始进行定位:");
         mLocationClient = new LocationClient(getApplicationContext());
         // 声明LocationClient类
