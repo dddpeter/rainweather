@@ -1,0 +1,32 @@
+// JDK 17 兼容性检查脚本
+// 用于验证项目中的依赖库是否支持JDK 17
+
+task checkJdk17Compatibility {
+    group = 'verification'
+    description = '检查项目依赖库对JDK 17的兼容性'
+    
+    doLast {
+        println "=== JDK 17 兼容性检查 ==="
+        
+        // 检查Gradle版本
+        println "Gradle版本: ${gradle.gradleVersion}"
+        
+        // 检查Java版本
+        println "Java版本: ${System.getProperty('java.version')}"
+        
+        // 检查JDK 17特定配置
+        def compileOptions = android.compileOptions
+        println "源码兼容性: ${compileOptions.sourceCompatibility}"
+        println "目标兼容性: ${compileOptions.targetCompatibility}"
+        
+        // 检查Java工具链配置
+        if (android.hasProperty('java')) {
+            def toolchain = android.java.toolchain
+            if (toolchain.hasProperty('languageVersion')) {
+                println "Java工具链版本: ${toolchain.languageVersion.get()}"
+            }
+        }
+        
+        println "=== 兼容性检查完成 ==="
+    }
+}

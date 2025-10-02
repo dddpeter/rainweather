@@ -76,12 +76,12 @@ android {
             keyPassword 'picc1234'
         }
     }
-    compileSdk 34
+    compileSdk 36
     defaultConfig {
         applicationId "com.dddpeter.app.rainweather"
         minSdkVersion 28
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 30
+        targetSdkVersion 35
         signingConfig signingConfigs.debug
         multiDexEnabled true
     }
@@ -96,8 +96,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = 11
-        targetCompatibility = 11
+        sourceCompatibility = 17
+        targetCompatibility = 17
     }
     dependenciesInfo {
         includeInApk true
@@ -153,6 +153,27 @@ dependencies {
     androidTestImplementation 'org.jacoco:org.jacoco.agent:0.8.8'
     // 如果需要在单元测试中使用JaCoCo，也可以添加如下依赖
     testImplementation 'org.jacoco:org.jacoco.agent:0.8.8'
+    
+    // 添加JDK 17兼容性检查
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
+    
+    // Android 15+ 现代UI组件
+    implementation 'androidx.activity:activity:1.8.2'
+    implementation 'androidx.fragment:fragment:1.6.2'
+    implementation 'androidx.window:window:1.2.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+    
+    // 现代权限处理
+    implementation 'androidx.activity:activity-compose:1.8.2'
+
+    // 现代线程和协程支持
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
+    
+    // ViewBinding 支持
+    implementation 'androidx.databinding:viewbinding:8.1.4'
 
 
     configurations.all {

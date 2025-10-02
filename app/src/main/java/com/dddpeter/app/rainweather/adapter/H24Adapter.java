@@ -3,7 +3,7 @@ package com.dddpeter.app.rainweather.adapter;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import com.dddpeter.app.rainweather.database.DatabaseManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +27,12 @@ import java.util.List;
 
 public class H24Adapter extends ArrayAdapter<JSONObject> {
     private int resourceId;
-    private SharedPreferences preferences;
+    private DatabaseManager databaseManager;
 
-    public H24Adapter(@NonNull Context context, int resource, @NonNull List<JSONObject> objects, SharedPreferences preferencesWI) {
+    public H24Adapter(@NonNull Context context, int resource, @NonNull List<JSONObject> objects, DatabaseManager databaseManager) {
         super(context, resource, objects);
         resourceId = resource;
-        preferences = preferencesWI;
+        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -56,11 +56,12 @@ public class H24Adapter extends ArrayAdapter<JSONObject> {
             infoTemperature.setText(item.getString("temperature"));
             infoW.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
             infoW.setText(item.getString("weather"));
-            SharedPreferences p = view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
-            if (!DataUtil.isDay()) {
-                p = view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
+            String weatherImg;
+            if (DataUtil.isDay()) {
+                weatherImg = databaseManager.getString("day_picture:" + item.getString("weather"), "notclear.png");
+            } else {
+                weatherImg = databaseManager.getString("night_picture:" + item.getString("weather"), "notclear.png");
             }
-            String weatherImg = p.getString(item.getString("weather"), "notclear.png");
             imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(), weatherImg));
             infoWind.setText(item.getString("windDir") + "(" + item.getString("windPower") + ")");
         } catch (JSONException e) {

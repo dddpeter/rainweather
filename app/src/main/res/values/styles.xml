@@ -7,6 +7,13 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:background">@color/cardview_light_background</item>
         <item name="android:typeface">monospace</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="tabs_bottom">

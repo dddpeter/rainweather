@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -23,10 +24,25 @@ public class OKHttpClientBuilder {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier((hostname, session) -> true);
+            
+            // 设置超时时间
+            builder.connectTimeout(15, TimeUnit.SECONDS);      // 连接超时
+            builder.readTimeout(30, TimeUnit.SECONDS);         // 读取超时
+            builder.writeTimeout(30, TimeUnit.SECONDS);        // 写入超时
+            
+            // 设置重试机制
+            builder.retryOnConnectionFailure(true);
+            
             return builder;
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             Log.w("OkHttp", "Exception: ", e);
-            return new OkHttpClient.Builder();
+            // 即使SSL配置失败，也要设置超时时间
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.connectTimeout(15, TimeUnit.SECONDS);
+            builder.readTimeout(30, TimeUnit.SECONDS);
+            builder.writeTimeout(30, TimeUnit.SECONDS);
+            builder.retryOnConnectionFailure(true);
+            return builder;
         }
     }
 

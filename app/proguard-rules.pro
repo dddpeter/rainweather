@@ -9,6 +9,51 @@
 
 # Add any project specific keep options here:
 
+# Keep AndroidX classes
+-keep class androidx.** { *; }
+-keep class android.support.** { *; }
+
+# Keep Gson classes
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# Keep OkHttp classes
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+
+# Keep Glide classes
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+# Keep GlideAppModule
+-keep class com.dddpeter.app.rainweather.GlideAppModule { *; }
+
+# Keep Lombok generated classes
+-keep class * extends lombok.ast.ecj.EcjTree$* { *; }
+-keep class lombok.ast.ecj.EcjTree$* { *; }
+
+# Keep Lombok service classes
+-keep class lombok.** { *; }
+-dontwarn lombok.**
+
+# Keep META-INF services
+-keep class META-INF.services.** { *; }
+
+# JDK 17 兼容性规则
+-keep class java.lang.** { *; }
+-keep class java.util.** { *; }
+-dontwarn java.lang.**
+-dontwarn java.util.**
+
+# 保持模块系统相关类
+-keep class module-info { *; }
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

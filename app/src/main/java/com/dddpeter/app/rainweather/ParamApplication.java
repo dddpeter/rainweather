@@ -12,13 +12,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.dddpeter.app.rainweather.adapter.H24Adapter;
-import com.dddpeter.app.rainweather.common.ACache;
 import com.dddpeter.app.rainweather.common.OKHttpClientBuilder;
 import com.dddpeter.app.rainweather.common.Promise;
+import com.dddpeter.app.rainweather.database.DatabaseManager;
 import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.po.CityInfo;
 import com.dddpeter.app.rainweather.pojo.LocationVO;
 import com.xuexiang.xui.XUI;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+// 注意：此项目使用的是百度定位SDK，不是地图SDK
+// 百度定位SDK不需要在Application中初始化
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,8 +50,8 @@ public class ParamApplication extends Application {
     public final static String[] MAIN_CITY = {"北京", "上海", "香港", "成都", "广州", "深圳", "天津", "杭州", "南京", "澳门"};
     public static boolean isStart = true;
     public static Map<String, String> cityIdMap = new ConcurrentHashMap<>();
+    public static DatabaseManager databaseManager;
     String url = CacheKey.DETAIL_API;
-    ACache mCache;
     private int countActivity = 0;
     //是否进入后台
     private boolean isBackground = false;
@@ -84,10 +88,21 @@ public class ParamApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
+        
+        // 初始化数据库管理器
+        databaseManager = DatabaseManager.getInstance(this);
+        
         XUI.init(this);
         XUI.initFontStyle("fonts/JetBrainsMono-Medium.ttf");
-        super.onCreate();
-        mCache = ACache.get(this);
+        // 数据库管理器已在onCreate中初始化
+        
+        // 清理可能存在的旧缓存数据以避免序列化冲突
+        clearOldCacheData();
+        
+        // 清理过期数据库数据
+        databaseManager.cleanExpiredData();
+        
         try {
             initDayWeather();
             initNightWeather();
@@ -99,10 +114,37 @@ public class ParamApplication extends Application {
         }
         initBackgroundCallBack();
     }
+    
+    /**
+     * 清理旧的缓存数据以避免序列化冲突
+     */
+    private void clearOldCacheData() {
+        try {
+            // 尝试获取旧的LocationVO数据，如果序列化失败则清理
+            LocationVO oldLocation = databaseManager.getLocationVO(CacheKey.CURRENT_LOCATION);
+            if (oldLocation == null) {
+                Log.i("RainWather", "No old location data found, cache is clean");
+            } else {
+                Log.i("RainWather", "Old location data found and loaded successfully");
+            }
+        } catch (Exception e) {
+            Log.w("RainWather", "Old cache data incompatible, clearing cache", e);
+            // 清理可能不兼容的缓存数据
+            databaseManager.deleteCacheData(CacheKey.CURRENT_LOCATION);
+            // 可以添加更多需要清理的缓存键
+            Toast.makeText(this, "缓存数据已更新", Toast.LENGTH_SHORT).show();
+        }
+    }
     private void getData( LocationVO location){
+        // 检查location参数是否为null
+        if (location == null) {
+            Log.w("RainWather", "LocationVO is null in getData method");
+            return;
+        }
+        
         String code = "";
         String district = location.getDistrict();
-        if(district == null){
+        if(district == null || district.isEmpty()){
             district = "东城区";
         }
         CityInfo cityInfo = ParamApplication.getCityInfo(district);
@@ -125,7 +167,7 @@ public class ParamApplication extends Application {
                 response = call.execute();
                 if (response.isSuccessful()) {
                     JSONObject weather = new JSONObject(response.body().string()).getJSONObject("data");
-                    mCache.put(district + ":" + CacheKey.WEATHER_ALL, weather);
+                    databaseManager.putCacheData(district + ":" + CacheKey.WEATHER_ALL, weather.toString(), "JSONObject");
                     JSONObject wAllJson = weather;
                     JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
                     List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
@@ -133,7 +175,7 @@ public class ParamApplication extends Application {
                         forcasts.add(forecast24h.getJSONObject(i));
                     }
                     ArrayAdapter<JSONObject> adapter = new H24Adapter(getApplicationContext(), R.layout.listview_item,
-                            forcasts, getApplicationContext().getSharedPreferences("weahter_icon", Context.MODE_PRIVATE));
+                            forcasts, databaseManager);
                 }
             } catch (IOException | JSONException e) {
                 Log.w("RainWather", "Exception: ", e);
@@ -154,17 +196,32 @@ public class ParamApplication extends Application {
                     Log.i("MyApplication", "onActivityStarted: 应用进入前台");
                     isBackground = false;
                     //说明应用重新进入了前台
-                    LocationVO locationVO = (LocationVO) mCache.getAsObject(CacheKey.CURRENT_LOCATION);
+                    LocationVO locationVO = databaseManager.getLocationVO(CacheKey.CURRENT_LOCATION);
                     try {
+                        // 检查locationVO是否为null
+                        if (locationVO == null) {
+                            Log.w("RainWather", "LocationVO is null, skipping data update");
+                            Toast.makeText(getApplicationContext(), "位置信息不可用，请重新定位", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        
+                        // 检查district是否为null
+                        String district = locationVO.getDistrict();
+                        if (district == null || district.isEmpty()) {
+                            Log.w("RainWather", "District is null or empty, using default");
+                            district = "东城区";
+                        }
+                        
                         try {
-                            JSONObject wAllJson = mCache.getAsJSONObject(locationVO.getDistrict() + ":" + CacheKey.WEATHER_ALL);
+                            String weatherJsonString = databaseManager.getCacheData(district + ":" + CacheKey.WEATHER_ALL);
+                            JSONObject wAllJson = new JSONObject(weatherJsonString);
                             JSONArray forecast24h = wAllJson.getJSONArray("forecast24h");
                             List<JSONObject> forcasts = new ArrayList<>(forecast24h.length());
                             for (int i = 0; i < forecast24h.length(); i++) {
                                 forcasts.add(forecast24h.getJSONObject(i));
                             }
                             ArrayAdapter<JSONObject> adapter = new H24Adapter(getApplicationContext(), R.layout.listview_item,
-                                    forcasts, getApplicationContext().getSharedPreferences("weahter_icon", Context.MODE_PRIVATE));
+                                    forcasts, databaseManager);
 
                         }catch (Exception e){
                             Toast.makeText(getApplicationContext(), "数据正在更新", Toast.LENGTH_SHORT).show();
@@ -255,7 +312,7 @@ public class ParamApplication extends Application {
             try {
                 List<JSONObject> results = Promise.all(callables);
                 for (JSONObject r : results) {
-                    mCache.put(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r);
+                    databaseManager.putCacheData(r.getString("city") + ":" + CacheKey.WEATHER_ALL, r.toString(), "JSONObject");
                 }
                 Intent intent = new Intent();
                 intent.setAction(CacheKey.REFRESH_CITY);
@@ -270,106 +327,115 @@ public class ParamApplication extends Application {
     }
 
     private void initWeatherIcon() {
-        SharedPreferences preferences = getSharedPreferences("weahter_icon", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("大雨", "\ue723");
-        editor.putString("暴雨", "\ue725");
-        editor.putString("冻雨", "\ue731");
-        editor.putString("大雪", "\ue72c");
-        editor.putString("暴雪", "\ue72b");
-        editor.putString("多云", "\ue716");
-        editor.putString("雷阵雨", "\ue726");
-        editor.putString("沙尘暴", "\ue733");
-        editor.putString("多云转晴", "\ue716");
-        editor.putString("晴转多云", "\ue716");
-        editor.putString("雾", "\ue72f");
-        editor.putString("小雪", "\ue729");
-        editor.putString("小雨", "\ue717");
-        editor.putString("阴", "\ue721");
-        editor.putString("晴", "\ue719");
-        editor.putString("雨夹雪", "\ue727");
-        editor.putString("中雨", "\ue720");
-        editor.putString("中雪", "\ue72a");
-        editor.putString("阵雨", "\ue71f");
-        editor.putString("雷阵雨", "\ue726");
-        editor.putString("霾", "\ue730");
-        editor.putString("扬沙", "\ue72e");
-        editor.putString("浮尘", "\ue732");
-        editor.putBoolean("init", true);
-        editor.apply();
+        // 使用数据库管理器替代SharedPreferences
+        databaseManager.putString("weahter_icon:大雨", "\ue723");
+        databaseManager.putString("weahter_icon:暴雨", "\ue725");
+        databaseManager.putString("weahter_icon:冻雨", "\ue731");
+        databaseManager.putString("weahter_icon:大雪", "\ue72c");
+        databaseManager.putString("weahter_icon:暴雪", "\ue72b");
+        databaseManager.putString("weahter_icon:多云", "\ue716");
+        databaseManager.putString("weahter_icon:雷阵雨", "\ue726");
+        databaseManager.putString("weahter_icon:沙尘暴", "\ue733");
+        databaseManager.putString("weahter_icon:多云转晴", "\ue716");
+        databaseManager.putString("weahter_icon:晴转多云", "\ue716");
+        databaseManager.putString("weahter_icon:雾", "\ue72f");
+        databaseManager.putString("weahter_icon:小雪", "\ue729");
+        databaseManager.putString("weahter_icon:小雨", "\ue717");
+        databaseManager.putString("weahter_icon:阴", "\ue721");
+        databaseManager.putString("weahter_icon:晴", "\ue719");
+        databaseManager.putString("weahter_icon:雨夹雪", "\ue727");
+        databaseManager.putString("weahter_icon:中雨", "\ue720");
+        databaseManager.putString("weahter_icon:中雪", "\ue72a");
+        databaseManager.putString("weahter_icon:阵雨", "\ue71f");
+        databaseManager.putString("weahter_icon:雷阵雨", "\ue726");
+        databaseManager.putString("weahter_icon:霾", "\ue730");
+        databaseManager.putString("weahter_icon:扬沙", "\ue72e");
+        databaseManager.putString("weahter_icon:浮尘", "\ue732");
+        databaseManager.putBoolean("weahter_icon:init", true);
+        
+        Log.d("ParamApplication", "天气图标数据已保存到数据库");
     }
 
     private void initNightWeather() {
-        SharedPreferences preferences = getSharedPreferences("night_picture", MODE_PRIVATE);
-        boolean isInited = preferences.getBoolean("init", false);
+        boolean isInited = databaseManager.getBoolean("night_picture:init", false);
         //isInited=false;
         if (!isInited) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("大雨", "dby.png");
-            editor.putString("暴雨", "dby.png");
-            editor.putString("冻雨", "dy0.png");
-            editor.putString("大雪", "dx0.png");
-            editor.putString("暴雪", "bx.png");
-            editor.putString("多云", "dy0.png");
-            editor.putString("雷阵雨", "lzy0.png");
-            editor.putString("沙尘暴", "scb.png");
-            editor.putString("多云转晴", "dyq0.png");
-            editor.putString("晴转多云", "dyq0.png");
-            editor.putString("雾", "w.png");
-            editor.putString("小雪", "xx.png");
-            editor.putString("小雨", "xy.png");
-            editor.putString("阴", "y.png");
-            editor.putString("晴", "q0.png");
-            editor.putString("雨夹雪", "yjx.png");
-            editor.putString("中雨", "zhy.png");
-            editor.putString("中雪", "zx.png");
-            editor.putString("阵雨", "zy0.png");
-            editor.putString("霾", "scb.png");
-            editor.putString("扬沙", "scb.png");
-            editor.putString("浮尘", "scb.png");
-            editor.putBoolean("init", true);
-            editor.apply();
+            // 使用数据库管理器替代SharedPreferences
+            databaseManager.putString("night_picture:大雨", "dby.png");
+            databaseManager.putString("night_picture:暴雨", "dby.png");
+            databaseManager.putString("night_picture:冻雨", "dy0.png");
+            databaseManager.putString("night_picture:大雪", "dx0.png");
+            databaseManager.putString("night_picture:暴雪", "bx.png");
+            databaseManager.putString("night_picture:多云", "dy0.png");
+            databaseManager.putString("night_picture:雷阵雨", "lzy0.png");
+            databaseManager.putString("night_picture:沙尘暴", "scb.png");
+            databaseManager.putString("night_picture:多云转晴", "dyq0.png");
+            databaseManager.putString("night_picture:晴转多云", "dyq0.png");
+            databaseManager.putString("night_picture:雾", "w.png");
+            databaseManager.putString("night_picture:小雪", "xx.png");
+            databaseManager.putString("night_picture:小雨", "xy.png");
+            databaseManager.putString("night_picture:阴", "y.png");
+            databaseManager.putString("night_picture:晴", "q0.png");
+            databaseManager.putString("night_picture:雨夹雪", "yjx.png");
+            databaseManager.putString("night_picture:中雨", "zhy.png");
+            databaseManager.putString("night_picture:中雪", "zx.png");
+            databaseManager.putString("night_picture:阵雨", "zy0.png");
+            databaseManager.putString("night_picture:霾", "scb.png");
+            databaseManager.putString("night_picture:扬沙", "scb.png");
+            databaseManager.putString("night_picture:浮尘", "scb.png");
+            databaseManager.putBoolean("night_picture:init", true);
+            
+            Log.d("ParamApplication", "夜间天气图片数据已保存到数据库");
         }
-
     }
 
     private void initDayWeather() {
-        SharedPreferences preferences = getSharedPreferences("day_picture", MODE_PRIVATE);
-        boolean isInited = preferences.getBoolean("init", false);
+        boolean isInited = databaseManager.getBoolean("day_picture:init", false);
         //isInited=false;
         if (!isInited) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("大雨", "dby.png");
-            editor.putString("暴雨", "dby.png");
-            editor.putString("冻雨", "dy.png");
-            editor.putString("大雪", "dx.png");
-            editor.putString("暴雪", "bx.png");
-            editor.putString("多云", "dy.png");
-            editor.putString("多云转晴", "dyq.png");
-            editor.putString("晴转多云", "dyq.png");
-            editor.putString("雷阵雨", "lzy.png");
-            editor.putString("沙尘暴", "scb.png");
-            editor.putString("雾", "w.png");
-            editor.putString("小雪", "xx.png");
-            editor.putString("小雨", "xy.png");
-            editor.putString("阴", "y.png");
-            editor.putString("晴", "q.png");
-            editor.putString("雨夹雪", "yjx.png");
-            editor.putString("中雨", "zhy.png");
-            editor.putString("中雪", "zx.png");
-            editor.putString("阵雨", "zy.png");
-            editor.putString("霾", "scb.png");
-            editor.putString("扬沙", "scb.png");
-            editor.putString("浮尘", "scb.png");
-            editor.putBoolean("init", true);
-            editor.apply();
+            // 使用数据库管理器替代SharedPreferences
+            databaseManager.putString("day_picture:大雨", "dby.png");
+            databaseManager.putString("day_picture:暴雨", "dby.png");
+            databaseManager.putString("day_picture:冻雨", "dy.png");
+            databaseManager.putString("day_picture:大雪", "dx.png");
+            databaseManager.putString("day_picture:暴雪", "bx.png");
+            databaseManager.putString("day_picture:多云", "dy.png");
+            databaseManager.putString("day_picture:多云转晴", "dyq.png");
+            databaseManager.putString("day_picture:晴转多云", "dyq.png");
+            databaseManager.putString("day_picture:雷阵雨", "lzy.png");
+            databaseManager.putString("day_picture:沙尘暴", "scb.png");
+            databaseManager.putString("day_picture:雾", "w.png");
+            databaseManager.putString("day_picture:小雪", "xx.png");
+            databaseManager.putString("day_picture:小雨", "xy.png");
+            databaseManager.putString("day_picture:阴", "y.png");
+            databaseManager.putString("day_picture:晴", "q.png");
+            databaseManager.putString("day_picture:雨夹雪", "yjx.png");
+            databaseManager.putString("day_picture:中雨", "zhy.png");
+            databaseManager.putString("day_picture:中雪", "zx.png");
+            databaseManager.putString("day_picture:阵雨", "zy.png");
+            databaseManager.putString("day_picture:霾", "scb.png");
+            databaseManager.putString("day_picture:扬沙", "scb.png");
+            databaseManager.putString("day_picture:浮尘", "scb.png");
+            databaseManager.putBoolean("day_picture:init", true);
+            
+            Log.d("ParamApplication", "白天天气图片数据已保存到数据库");
         }
-
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
+        // 清理Glide缓存以释放内存
+        Glide.get(this).clearMemory();
+    }
+    
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        // 根据内存压力级别清理Glide缓存
+        if (level >= TRIM_MEMORY_MODERATE) {
+            Glide.get(this).clearMemory();
+        }
     }
 
     public int getTAB_TAG_RECENT() {

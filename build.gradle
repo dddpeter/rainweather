@@ -7,9 +7,10 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin'}
         maven { url "https://jitpack.io" }
         google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.13.0'
     }
 }
 
@@ -21,5 +22,15 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin'}
         maven { url "https://jitpack.io" }
         google()
+        mavenCentral()
+    }
+    
+    // 确保所有子项目使用JDK 17
+    tasks.withType(JavaCompile) {
+        // 只在JDK 17+时添加这些参数
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+            options.compilerArgs += ['--add-opens', 'java.base/java.lang=ALL-UNNAMED']
+            options.compilerArgs += ['--add-opens', 'java.base/java.util=ALL-UNNAMED']
+        }
     }
 }

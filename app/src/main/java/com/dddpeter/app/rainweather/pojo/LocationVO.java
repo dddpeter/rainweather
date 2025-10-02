@@ -3,6 +3,8 @@ package com.dddpeter.app.rainweather.pojo;
 import java.io.Serializable;
 
 public class LocationVO implements Serializable {
+    private static final long serialVersionUID = 2128654733382612025L;
+    
     private String address;    //获取详细地址信息
     private String country;    //获取国家
     private String province;    //获取省份

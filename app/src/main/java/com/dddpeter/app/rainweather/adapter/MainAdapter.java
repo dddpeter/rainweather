@@ -4,7 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import com.dddpeter.app.rainweather.database.DatabaseManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,12 +29,12 @@ import java.util.List;
 
 public class MainAdapter extends ArrayAdapter<JSONObject> {
     private int resourceId;
-    private SharedPreferences preferences;
+    private DatabaseManager databaseManager;
 
-    public MainAdapter(@NonNull Context context, int resource, @NonNull List<JSONObject> objects, SharedPreferences preferencesWI) {
+    public MainAdapter(@NonNull Context context, int resource, @NonNull List<JSONObject> objects, DatabaseManager databaseManager) {
         super(context, resource, objects);
         resourceId = resource;
-        preferences = preferencesWI;
+        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -52,11 +52,12 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
             mainTemprature.setText(item.getString("temperature") + "°C");
             mainWeather.setTypeface(CommonUtil.weatherIconFontFace(getContext()));
             mainWeather.setText(item.getString("weather"));
-            SharedPreferences p = view.getContext().getSharedPreferences("day_picture", MODE_PRIVATE);
-            if (!DataUtil.isDay()) {
-                p = view.getContext().getSharedPreferences("night_picture", MODE_PRIVATE);
+            String weatherImg;
+            if (DataUtil.isDay()) {
+                weatherImg = databaseManager.getString("day_picture:" + item.getString("weather"), "notclear.png");
+            } else {
+                weatherImg = databaseManager.getString("night_picture:" + item.getString("weather"), "notclear.png");
             }
-            String weatherImg = p.getString(item.getString("weather"), "notclear.png");
             imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(), weatherImg));
             mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower"), Html.FROM_HTML_MODE_LEGACY));
             btn.setOnClickListener(e -> {

@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/myblue"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".SplashScreenActivity">
 
     <ImageView

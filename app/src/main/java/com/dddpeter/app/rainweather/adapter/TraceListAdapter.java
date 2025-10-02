@@ -1,7 +1,7 @@
 package com.dddpeter.app.rainweather.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+// import android.content.SharedPreferences; // 不再需要
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,7 @@ public class TraceListAdapter extends ArrayAdapter<Trace> {
     private int tvDot;
     private int timellineDotFirst;
     private int timellineDotNormal;
-    private SharedPreferences preferences;
+    // private SharedPreferences preferences; // 不再需要
     private Context context;
     private List<Trace> traceList = new ArrayList<>(1);
 
