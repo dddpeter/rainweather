@@ -243,6 +243,10 @@ public class H24Fragment extends Fragment {
         temperatureChart.setPinchZoom(false);
         temperatureChart.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         
+        // 设置图表边框，与卡片边框保持一致
+        temperatureChart.setBorderWidth(0.3f); // 0.3dp边框
+        temperatureChart.setBorderColor(android.graphics.Color.parseColor("#33FFFFFF")); // 与卡片边框颜色一致
+        
         // 隐藏图例
         temperatureChart.getLegend().setEnabled(false);
         
@@ -299,9 +303,9 @@ public class H24Fragment extends Fragment {
             // 创建数据集
             LineDataSet dataSet = new LineDataSet(entries, "温度");
             dataSet.setColor(android.graphics.Color.parseColor("#FF6B6B"));
-            dataSet.setLineWidth(2f);
+            dataSet.setLineWidth(3f); // 与TodayFragment保持一致
             dataSet.setCircleColor(android.graphics.Color.parseColor("#FF6B6B"));
-            dataSet.setCircleRadius(4f);
+            dataSet.setCircleRadius(5f); // 与TodayFragment保持一致
             dataSet.setDrawCircleHole(false);
             dataSet.setValueTextColor(android.graphics.Color.WHITE);
             dataSet.setValueTextSize(10f);

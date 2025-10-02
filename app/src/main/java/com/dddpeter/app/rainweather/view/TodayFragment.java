@@ -635,6 +635,10 @@ public class TodayFragment extends Fragment {
         temperatureTrendChart.setPinchZoom(false);
         temperatureTrendChart.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         
+        // 设置图表边框，与卡片边框保持一致
+        temperatureTrendChart.setBorderWidth(0.3f); // 0.3dp边框
+        temperatureTrendChart.setBorderColor(android.graphics.Color.parseColor("#33FFFFFF")); // 与卡片边框颜色一致
+        
         // 隐藏图例
         temperatureTrendChart.getLegend().setEnabled(false);
         
@@ -685,8 +689,10 @@ public class TodayFragment extends Fragment {
             List<Entry> lowTempEntries = new ArrayList<>();
             List<String> labels = new ArrayList<>();
             
-            int len = recentArray.length();
-            for (int i = 1; i < len; i++) {
+            // 限制为7天数据，从索引1开始（跳过今天）
+            int maxDays = Math.min(8, recentArray.length()); // 最多取7天（索引1-7）
+            Log.d("TodayFragment", "温度图表数据：总天数=" + recentArray.length() + ", 显示天数=" + (maxDays - 1));
+            for (int i = 1; i < maxDays; i++) {
                 int j = i - 1;
                 JSONObject day = recentArray.getJSONObject(i);
                 
@@ -710,7 +716,11 @@ public class TodayFragment extends Fragment {
                 highTempEntries.add(new Entry(j, highTemp));
                 lowTempEntries.add(new Entry(j, lowTemp));
                 labels.add(dateLabel);
+                
+                Log.d("TodayFragment", "添加第" + (j+1) + "天数据: " + dateLabel + " 高温=" + highTemp + "°C 低温=" + lowTemp + "°C");
             }
+            
+            Log.d("TodayFragment", "温度图表数据收集完成: 共" + highTempEntries.size() + "天数据");
             
             // 创建最高温度数据集
             LineDataSet highTempDataSet = new LineDataSet(highTempEntries, "最高温度");
