@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景色 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/floating_tab_background" />
+        </shape>
+    </item>
+    
+    <!-- 上边缘高光效果 -->
+    <item android:top="0dp" android:left="0dp" android:right="0dp" android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#FFFFFF"
+                android:endColor="@android:color/transparent"
+                android:angle="270" />
+        </shape>
+    </item>
+</layer-list>

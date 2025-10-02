@@ -395,6 +395,22 @@ public class IndexActivity extends AppCompatActivity {
                 .setTabLayout(mTabLayout)
                 .build();
         mViewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), getLifecycle(), 4));
+        
+        // 强制TabLayout贴合底部
+        mTabLayout.post(() -> {
+            // 获取屏幕高度
+            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+            // 获取TabLayout的当前位置
+            int[] location = new int[2];
+            mTabLayout.getLocationOnScreen(location);
+            int currentBottom = location[1] + mTabLayout.getHeight();
+            
+            // 如果TabLayout没有完全贴合底部，调整其位置
+            if (currentBottom < screenHeight) {
+                int offset = screenHeight - currentBottom;
+                mTabLayout.setTranslationY(mTabLayout.getTranslationY() + offset);
+            }
+        });
     }
     
     

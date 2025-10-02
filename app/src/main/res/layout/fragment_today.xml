@@ -222,7 +222,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/weather_chart_card_bg"
+            app:cardBackgroundColor="@color/skyblue_night"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp">
 
@@ -230,13 +230,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="2dp">
+                android:padding="6dp">
 
                 <!-- 图表标题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="4dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 

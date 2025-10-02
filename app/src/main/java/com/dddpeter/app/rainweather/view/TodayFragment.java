@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.dddpeter.app.rainweather.H24Activity;
@@ -173,7 +174,7 @@ public class TodayFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requireContext().registerReceiver(mRefreshBroadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
             } else {
-                requireContext().registerReceiver(mRefreshBroadcastReceiver, intentFilter);
+                ContextCompat.registerReceiver(requireContext(), mRefreshBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
             }
         } else {
             h24Btn.setVisibility(View.GONE);
@@ -634,7 +635,7 @@ public class TodayFragment extends Fragment {
             //System.out.println(Integer.parseInt(temps[0].trim()));
         }
         int max = CommonUtil.maxOfAarray(highInt) + 5;
-        int min = CommonUtil.minOfAarray(lowInt) - 5;
+        int min = CommonUtil.minOfAarray(lowInt) + 5;
         renderer.setTextTypeface(CommonUtil.weatherIconFontFace(getContext()));
         renderer.setAxesColor(this.getResources().getColor(R.color.weather_chart_title, null));
         renderer.setZoomEnabled(true, true);
@@ -659,6 +660,7 @@ public class TodayFragment extends Fragment {
         renderer.setAxisTitleTextSize(25);
         renderer.setChartTitleTextSize(35);
         renderer.setShowGrid(true);
+        renderer.setShowLegend(false);
         renderer.setRange(new double[]{-0.5, 7.5, min, max});
         renderer.setYLabelsAlign(Paint.Align.LEFT);
         renderer.setYLabelsColor(0, this.getResources().getColor(R.color.tips, null));

@@ -13,7 +13,7 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <style name="tabs_bottom">
@@ -26,5 +26,6 @@
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/home_btn_bg</item>
     </style>
+
 
 </resources>

@@ -1,7 +1,6 @@
 package com.dddpeter.app.rainweather.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -73,9 +72,18 @@ public class CustomBotTabItem {
         tvTitle.setText(title);
         final ImageView imageView = (ImageView) view.findViewById(R.id.id_iv_image);
         imageView.setImageResource(resId);
-        //默认第一个tab选中，设置字体为选中色
+        
+        // 默认第一个tab选中，设置浮层样式
         if (position == 0) {
-            view.setBackgroundColor(Color.rgb(196, 216, 247));
+            view.setSelected(true);
+            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_selected_background));
+            tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_selected));
+            imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_selected));
+        } else {
+            view.setSelected(false);
+            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_background));
+            tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_normal));
+            imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_normal));
         }
         return view;
     }
@@ -107,12 +115,22 @@ public class CustomBotTabItem {
         if (view == null) {
             return;
         }
-        //   view.setBackgroundColor(R.drawable.home_btn_bg);
-        // TextView tvTitle = (TextView) view.findViewById(R.id.id_tv_title);
+        
+        TextView tvTitle = (TextView) view.findViewById(R.id.id_tv_title);
+        ImageView imageView = (ImageView) view.findViewById(R.id.id_iv_image);
+        
         if (selected) {
-            view.setBackgroundColor(Color.rgb(196, 216, 247));
+            // 选中状态：浅色背景 + 深蓝色图标
+            view.setSelected(true);
+            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_selected_background));
+            tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_selected));
+            imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_selected));
         } else {
-            view.setBackgroundColor(Color.rgb(255, 255, 255));
+            // 未选中状态：黑色背景 + 白色图标
+            view.setSelected(false);
+            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_background));
+            tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_normal));
+            imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_normal));
         }
     }
 
