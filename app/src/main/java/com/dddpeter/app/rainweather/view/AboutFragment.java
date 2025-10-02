@@ -74,6 +74,7 @@ public class AboutFragment extends Fragment {
         setupSquareGameBoard();
     }
     
+    
     private void setupSquareGameBoard() {
         // 使用ViewTreeObserver来确保在布局完成后设置尺寸
         gameBoardContainer.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
@@ -509,6 +510,16 @@ public class AboutFragment extends Fragment {
     
     private void saveGameState() {
         dbHelper.saveGameState(currentScore, bestScore, gameBoard);
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
     }
     
     @Override

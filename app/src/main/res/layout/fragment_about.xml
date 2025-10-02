@@ -1,12 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/x_black"
     android:padding="16dp"
     tools:context=".view.AboutFragment">
+
+    <!-- 游戏内容容器 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <!-- 游戏标题 -->
     <TextView
@@ -113,12 +118,12 @@
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/weather_chart_glass_background"
-            android:orientation="vertical"
             android:padding="16dp">
+
 
             <GridLayout
                 android:id="@+id/game_grid"
@@ -126,13 +131,13 @@
                 android:layout_height="match_parent"
                 android:columnCount="4"
                 android:rowCount="4"
-                android:layout_gravity="center"
+                android:layout_centerInParent="true"
                 android:useDefaultMargins="false"
                 android:alignmentMode="alignBounds"
                 android:columnOrderPreserved="false"
                 android:rowOrderPreserved="false" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -171,4 +176,6 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
