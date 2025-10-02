@@ -1,59 +1,89 @@
 <resources>
-
-    <color name="ba_1">#339933</color>
-    <color name="black_overlay">#333333</color>
-    <color name="skyblue">#9903A9F4</color>
-    <color name="skyblue_night">#0C1B6D</color>
-    <color name="skygrey">#B1B1B2</color>
-    <color name="skyrain">#435F6B</color>
-    <color name="skysnow">#09AABE</color>
-    <color name="skydust">#A58C3E</color>
-    <color name="tips">#336699</color>
-    <color name="myblue">#336699</color>
-    <color name="mybord">#e4e4e4</color>
-    <color name="fontWhite">#D9FAF6F6</color>
-    <color name="myorange">#FF9933</color>
-    <color name="colorPrimary">#339933</color>
-    <color name="colorPrimaryDark">#222</color>
-    <color name="colorAccent">#F49A00</color>
-    <color name="color0_">#28D28B</color>
-    <color name="color51_">#FDE73B</color>
-    <color name="color100_">#FDAA3A</color>
-    <color name="color150_">#FE3A45</color>
-    <color name="color200_">#F53AB6</color>
-    <color name="color300_">#A52504</color>
-    <color name="airbg">#E6009688</color>
-    <color name="contact">#80EDDAA1</color>
+    <!-- X App 风格颜色方案 -->
+    <color name="x_black">#000000</color>
+    <color name="x_black_secondary">#16181C</color>
+    <color name="x_black_tertiary">#2F3336</color>
+    <color name="x_gray">#71767B</color>
+    <color name="x_gray_light">#B9CAD3</color>
+    <color name="x_white">#FFFFFF</color>
+    <color name="x_blue">#1DA1F2</color>
+    <color name="x_green">#00BA7C</color>
+    <color name="x_red">#F4212E</color>
+    <color name="x_yellow">#FFD700</color>
+    <color name="x_orange">#FF8C00</color>
+    <color name="x_gold">#FFD700</color>
     
-    <!-- 空气指数相关颜色 -->
-    <color name="air_quality_card_bg">#F8F9FA</color>
-    <color name="air_quality_excellent">#00C851</color>
-    <color name="air_quality_good">#FFBB33</color>
-    <color name="air_quality_moderate">#FF8800</color>
-    <color name="air_quality_unhealthy">#FF4444</color>
-    <color name="air_quality_hazardous">#CC0000</color>
-    <color name="air_quality_label">#6C757D</color>
+    <!-- 2048游戏专用颜色 -->
+    <color name="game_2">#EEE4DA</color>
+    <color name="game_4">#EDE0C8</color>
+    <color name="game_8">#F2B179</color>
+    <color name="game_16">#F59563</color>
+    <color name="game_32">#F67C5F</color>
+    <color name="game_64">#F65E3B</color>
+    <color name="game_128">#EDCF72</color>
+    <color name="game_256">#EDCC61</color>
+    <color name="game_512">#EDC850</color>
+    <color name="game_1024">#EDC53F</color>
+    <color name="game_2048">#EDC22E</color>
+    <color name="game_text_dark">#776E65</color>
+    <color name="game_text_light">#F9F6F2</color>
+    <color name="x_green_grass">#9ACD32</color>
     
-    <!-- 天气图表相关颜色 -->
-    <color name="weather_chart_card_bg">#FFFFFF</color>
-    <color name="weather_chart_title">#2C3E50</color>
-    <color name="weather_chart_legend">#7F8C8D</color>
-    <color name="weather_chart_high_temp">#E74C3C</color>
-    <color name="weather_chart_low_temp">#3498DB</color>
-    <color name="weather_chart_grid">#ECF0F1</color>
+    <!-- 兼容原有颜色定义 -->
+    <color name="ba_1">@color/x_green</color>
+    <color name="black_overlay">@color/x_black_secondary</color>
+    <color name="skyblue">#000000</color>
+    <color name="skyblue_night">@color/x_black_tertiary</color>
+    <color name="skygrey">@color/x_gray</color>
+    <color name="skyrain">@color/x_blue</color>
+    <color name="skysnow">@color/x_blue</color>
+    <color name="skydust">@color/x_yellow</color>
+    <color name="tips">@color/x_blue</color>
+    <color name="myblue">@color/x_blue</color>
+    <color name="mybord">@color/x_gray_light</color>
+    <color name="fontWhite">@color/x_white</color>
+    <color name="myorange">@color/x_yellow</color>
+    <color name="colorPrimary">@color/x_blue</color>
+    <color name="colorPrimaryDark">@color/x_black</color>
+    <color name="colorAccent">@color/x_blue</color>
+    <color name="color0_">@color/x_green</color>
+    <color name="color51_">@color/x_yellow</color>
+    <color name="color100_">@color/x_yellow</color>
+    <color name="color150_">@color/x_red</color>
+    <color name="color200_">@color/x_red</color>
+    <color name="color300_">@color/x_red</color>
+    <color name="airbg">#1A000000</color>
+    <color name="contact">#1AFFFFFF</color>
     
-    <!-- 流式布局卡片颜色 -->
-    <color name="weather_card_bg">#FFFFFF</color>
-    <color name="weather_primary">#2C3E50</color>
-    <color name="weather_secondary">#7F8C8D</color>
-    <color name="cardview_light_background">#F5F5F5</color>
+    <!-- 空气指数相关颜色 - X App 风格 -->
+    <color name="air_quality_card_bg">@color/x_black_secondary</color>
+    <color name="air_quality_excellent">@color/x_green</color>
+    <color name="air_quality_good">@color/x_yellow</color>
+    <color name="air_quality_moderate">@color/x_yellow</color>
+    <color name="air_quality_unhealthy">@color/x_red</color>
+    <color name="air_quality_hazardous">@color/x_red</color>
+    <color name="air_quality_label">@color/x_gray</color>
     
-    <!-- 浮层 Tab 颜色 -->
-    <color name="floating_tab_background">#000000</color>
-    <color name="floating_tab_text_normal">#FFFFFF</color>
-    <color name="floating_tab_text_selected">#B3E5FC</color>
-    <color name="floating_tab_icon_normal">#FFFFFF</color>
-    <color name="floating_tab_icon_selected">#B3E5FC</color>
-    <color name="floating_tab_pressed">#333333</color>
-    <color name="floating_tab_selected_background">#333333</color>
+    <!-- 天气图表相关颜色 - X App 风格 -->
+    <color name="weather_chart_card_bg">@drawable/chart_glass_background</color>
+    <color name="weather_chart_title">@color/x_white</color>
+    <color name="weather_chart_legend">@color/x_white</color>
+    <color name="weather_chart_high_temp">@color/x_yellow</color>
+    <color name="weather_chart_low_temp">@color/x_green_grass</color>
+    <color name="weather_chart_grid">#40FFFFFF</color>
+    
+    <!-- 流式布局卡片颜色 - X App 风格 -->
+    <color name="weather_card_bg">@color/x_black_secondary</color>
+    <color name="weather_primary">@color/x_white</color>
+    <color name="weather_secondary">@color/x_gray</color>
+    <color name="cardview_light_background">@color/x_black</color>
+    
+    <!-- 浮层 Tab 颜色 - X App 风格 -->
+    <color name="floating_tab_background">@color/x_black</color>
+    <color name="floating_tab_text_normal">@color/x_white</color>
+    <color name="floating_tab_text_selected">@color/x_blue</color>
+    <color name="floating_tab_icon_normal">@color/x_white</color>
+    <color name="floating_tab_icon_selected">@color/x_blue</color>
+    <color name="floating_tab_pressed">@color/x_black_tertiary</color>
+    <color name="floating_tab_selected_background">@color/x_black_tertiary</color>
 </resources>

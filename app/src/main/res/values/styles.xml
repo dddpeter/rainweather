@@ -1,31 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- X App 风格主题 -->
     <style name="AppTheme" parent="XUITheme.Phone">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/cardview_light_background</item>
-        <item name="android:typeface">monospace</item>
+        <item name="colorPrimary">@color/x_blue</item>
+        <item name="colorPrimaryDark">@color/x_black</item>
+        <item name="colorAccent">@color/x_blue</item>
+        <item name="android:background">@color/x_black</item>
+        <item name="android:typeface">sans</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:statusBarColor">@color/x_black</item>
+        <item name="android:navigationBarColor">@color/x_black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         <item name="android:fitsSystemWindows">false</item>
     </style>
 
+    <!-- X App 风格底部标签样式 -->
     <style name="tabs_bottom">
         <item name="android:textSize">15sp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/mybord</item>
+        <item name="android:textColor">@color/x_gray</item>
         <item name="android:gravity">center</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/home_btn_bg</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@color/x_black_secondary</item>
     </style>
 
+    <!-- X App 风格卡片样式 -->
+    <style name="XCardStyle">
+        <item name="android:background">@color/x_black_secondary</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <!-- X App 风格按钮样式 -->
+    <style name="XButtonStyle">
+        <item name="android:background">@color/x_black_secondary</item>
+        <item name="android:textColor">@color/x_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- X App 风格文本样式 -->
+    <style name="XTextPrimary">
+        <item name="android:textColor">@color/x_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="XTextSecondary">
+        <item name="android:textColor">@color/x_gray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
 </resources>

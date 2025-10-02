@@ -76,12 +76,12 @@ public class CustomBotTabItem {
         // 默认第一个tab选中，设置浮层样式
         if (position == 0) {
             view.setSelected(true);
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_selected_background));
+            view.setBackgroundResource(R.drawable.tab_item_background);
             tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_selected));
             imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_selected));
         } else {
             view.setSelected(false);
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_background));
+            view.setBackgroundResource(R.drawable.tab_item_background);
             tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_normal));
             imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_normal));
         }
@@ -120,15 +120,15 @@ public class CustomBotTabItem {
         ImageView imageView = (ImageView) view.findViewById(R.id.id_iv_image);
         
         if (selected) {
-            // 选中状态：浅色背景 + 深蓝色图标
+            // 选中状态：带边框背景 + 深蓝色图标
             view.setSelected(true);
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_selected_background));
+            view.setBackgroundResource(R.drawable.tab_item_background);
             tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_selected));
             imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_selected));
         } else {
-            // 未选中状态：黑色背景 + 白色图标
+            // 未选中状态：带边框背景 + 白色图标
             view.setSelected(false);
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.floating_tab_background));
+            view.setBackgroundResource(R.drawable.tab_item_background);
             tvTitle.setTextColor(mContext.getResources().getColor(R.color.floating_tab_text_normal));
             imageView.setColorFilter(mContext.getResources().getColor(R.color.floating_tab_icon_normal));
         }

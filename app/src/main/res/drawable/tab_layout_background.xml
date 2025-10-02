@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景色 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/x_black" />
+        </shape>
+    </item>
+    
+    <!-- 上边框 -->
+    <item android:top="0dp" android:bottom="-1dp" android:left="0dp" android:right="0dp">
+        <shape android:shape="rectangle">
+            <stroke 
+                android:width="2dp" 
+                android:color="@color/x_white" />
+        </shape>
+    </item>
+</layer-list>

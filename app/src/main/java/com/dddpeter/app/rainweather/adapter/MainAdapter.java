@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,8 +44,8 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
         TextView mainWeather = view.findViewById(R.id.main_weather);
         TextView mainTemprature = view.findViewById(R.id.main_tempratuare);
         TextView mainfengli = view.findViewById(R.id.main_fengli);
-        Button btn = view.findViewById(R.id.main_detail_btn);
         ImageView imageView = view.findViewById(R.id.info_wimg);
+        
         try {
             mainCity.setText(item.getString("city"));
             mainTemprature.setText(item.getString("temperature") + "°C");
@@ -60,7 +59,9 @@ public class MainAdapter extends ArrayAdapter<JSONObject> {
             }
             imageView.setImageDrawable(CommonUtil.drawableFromAssets(view.getContext(), weatherImg));
             mainfengli.setText(Html.fromHtml(item.getString("winddir") + item.getString("windpower"), Html.FROM_HTML_MODE_LEGACY));
-            btn.setOnClickListener(e -> {
+            
+            // 设置整个卡片的点击事件
+            view.setOnClickListener(e -> {
                 Intent intent = new Intent(view.getContext(), TodayActivity.class);
                 try {
                     intent.putExtra("city", item.getString("city"));

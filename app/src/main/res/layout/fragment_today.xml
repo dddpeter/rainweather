@@ -7,7 +7,6 @@
     tools:context=".view.TodayFragment">
 
 <ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -20,12 +19,12 @@
         android:paddingRight="@dimen/activity_padding_lr">
 
         <!-- 流式布局容器 -->
-        <!-- 顶部天气区域，延伸到状态栏下方 -->
+        <!-- 顶部天气区域，延伸到状态栏下方 - X App 风格 -->
         <LinearLayout
             android:id="@+id/top_pic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/skyblue"
+            android:background="@color/x_black"
             android:fitsSystemWindows="true">
 
             <LinearLayout
@@ -55,7 +54,7 @@
                         android:background="@color/xui_transparent"
                         android:gravity="center"
                         android:text="@string/defaultCity"
-                        android:textColor="@color/fontWhite"
+                        android:textColor="@color/x_blue"
                         android:textSize="20sp" />
 
                     <ImageView
@@ -91,13 +90,14 @@
 
                         <ImageView
                             android:id="@+id/imageView1"
-                            android:layout_width="70dp"
+                            android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:layout_marginTop="-20dp"
+                            android:layout_marginTop="10dp"
                             android:layout_marginBottom="2dp"
                             android:background="@color/xui_transparent"
                             android:contentDescription="@string/app_name"
-                            android:gravity="center_horizontal"
+                            android:scaleType="fitCenter"
+                            android:adjustViewBounds="true"
                             android:src="@drawable/notclear" />
 
                         <TextView
@@ -108,8 +108,8 @@
                             android:background="@color/xui_transparent"
                             android:gravity="center"
                             android:text="晴"
-                            android:textColor="@color/fontWhite"
-                            android:textSize="22sp" />
+                            android:textColor="@color/x_yellow"
+                            android:textSize="24sp" />
                     </LinearLayout>
 
                     <!-- 温度和详细信息 -->
@@ -129,8 +129,8 @@
                             android:gravity="top|start"
                             android:paddingStart="30dp"
                             android:text="10°"
-                            android:textColor="@color/fontWhite"
-                            android:textSize="32sp" />
+                            android:textColor="#8BC34A"
+                            android:textSize="34sp" />
 
                         <!-- 风向 -->
                         <LinearLayout
@@ -155,7 +155,7 @@
                                 android:background="@color/xui_transparent"
                                 android:gravity="left"
                                 android:text="南风1级"
-                                android:textColor="@color/fontWhite"
+                                android:textColor="@color/x_blue"
                                 android:textSize="18sp" />
                         </LinearLayout>
 
@@ -181,7 +181,7 @@
                                 android:background="@color/xui_transparent"
                                 android:gravity="left"
                                 android:text="湿度:40%"
-                                android:textColor="@color/fontWhite"
+                                android:textColor="@color/x_green"
                                 android:textSize="18sp" />
                         </LinearLayout>
 
@@ -207,7 +207,7 @@
                                 android:background="@color/xui_transparent"
                                 android:gravity="left"
                                 android:text="压强:1000hpa"
-                                android:textColor="@color/fontWhite"
+                                android:textColor="@color/x_yellow"
                                 android:textSize="18sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -216,15 +216,15 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 7日天气趋势图表 -->
+        <!-- 7日天气趋势图表 - X App 风格 -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/skyblue_night"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardBackgroundColor="@color/x_black_secondary"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -251,18 +251,36 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="7日天气趋势"
-                        android:textColor="@color/weather_chart_title"
+                        android:textColor="@color/x_white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- 图表容器 -->
-                <RelativeLayout
-                    android:id="@+id/recent_today"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:background="@drawable/chart_background"
-                    android:padding="8dp"></RelativeLayout>
+                    android:layout_height="220dp"
+                    android:layout_marginHorizontal="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/weather_chart_glass_background"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/temperature_trend_chart"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
 
                 <!-- 图表说明 -->
                 <LinearLayout
@@ -289,7 +307,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="最高温度"
-                            android:textColor="@color/weather_chart_legend"
+                            android:textColor="@color/x_gray"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -310,7 +328,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="最低温度"
-                            android:textColor="@color/weather_chart_legend"
+                            android:textColor="@color/x_gray"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -329,14 +347,14 @@
             android:paddingRight="15dp"
             android:paddingBottom="8dp"
             android:text="今天天气怎么样呢"
-            android:textColor="@color/myblue"
+            android:textColor="@color/x_blue"
             android:textSize="16sp" />
 
         <Button
             android:id="@+id/back_btn"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/x_blue"
             android:text="返回"
             android:textSize="18sp"
             android:visibility="gone"></Button>
@@ -344,12 +362,12 @@
     </LinearLayout>
 </ScrollView>
 
-    <!-- 固定在底部的按钮区域 -->
+    <!-- 固定在底部的按钮区域 - X App 风格 -->
     <LinearLayout
         android:id="@+id/redirect"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/cardview_light_background"
+        android:background="@color/x_black_secondary"
         android:elevation="4dp"
         android:gravity="center_horizontal"
         android:padding="8dp">
@@ -360,9 +378,9 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="@color/x_blue"
             android:text="24小时天气"
-            android:textColor="@color/fontWhite"
+            android:textColor="@color/x_white"
             android:textSize="16sp"></Button>
 
         <Button
@@ -371,9 +389,9 @@
             android:layout_height="match_parent"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:background="@color/myorange"
+            android:background="@color/x_gray"
             android:text="主要城市天气"
-            android:textColor="@color/fontWhite"
+            android:textColor="@color/x_white"
             android:textSize="16sp"></Button>
     </LinearLayout>
 

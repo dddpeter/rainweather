@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -37,17 +38,20 @@ import com.dddpeter.app.rainweather.enums.CacheKey;
 import com.dddpeter.app.rainweather.pojo.LocationVO;
 import com.xuexiang.xui.XUI;
 
-import org.achartengine.ChartFactory;
-import org.achartengine.chart.PointStyle;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -65,7 +69,7 @@ public class TodayFragment extends Fragment {
     TextView wind;
     TextView ganmao;
     TextView shidu;
-    RelativeLayout recent;
+    LineChart temperatureTrendChart;
     LinearLayout topPic;
     Button h24Btn;
     Button mainBtn;
@@ -138,7 +142,10 @@ public class TodayFragment extends Fragment {
         wind = me.findViewById(R.id.wind);
         ganmao = me.findViewById(R.id.ganmao);
         shidu = me.findViewById(R.id.shidu);
-        recent = me.findViewById(R.id.recent_today);
+        temperatureTrendChart = me.findViewById(R.id.temperature_trend_chart);
+        
+        // 初始化温度趋势图表
+        initTemperatureTrendChart();
         topPic = me.findViewById(R.id.top_pic);
         h24Btn = me.findViewById(R.id.h24_btn);
         mainBtn = me.findViewById(R.id.main_btn);
@@ -595,112 +602,8 @@ public class TodayFragment extends Fragment {
             Log.w("TodayFragment", "forecast15d数组为空");
             return;
         }
-        getContext();
-        // 使用数据库管理器替代SharedPreferences
-        int len = recentArray.length();
-        int l = len - 1;
-        String[] high = new String[l];
-        String[] low = new String[l];
-        int[] highInt = new int[l];
-        int[] lowInt = new int[l];
-        String[] weathers = new String[l];
-        String[] days = new String[l];
-        // 1, 构造显示用渲染图
-        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-        // 2,进行显示
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        // 2.1, 构建数据
-        XYSeries seriesHigh = new XYSeries("最高温度");
-        XYSeries seriesLow = new XYSeries("最低温度");
-        for (int i = 1; i < len; i++) {
-            int j = i - 1;
-            JSONObject day = recentArray.getJSONObject(i);
-            days[j] = day.getString("forecasttime");
-            weathers[j] = day.getString("weather_am");
-            low[j] = day.getString("temperature_pm")
-                    .replace("低温", "")
-                    .replace(" ", "")
-                    .replace("℃", "");
-            high[j] = day.getString("temperature_am")
-                    .replace("高温", "")
-                    .replace(" ", "")
-                    .replace("℃", "");
-            lowInt[j] = Integer.parseInt(low[j]);
-            highInt[j] = Integer.parseInt(high[j]);
-            String weather = ParamApplication.databaseManager.getString("weahter_icon:" + weathers[j], "\ue73e");
-            renderer.addXTextLabel(j, days[j] + "\n" + weather);
-            seriesHigh.add(j, highInt[j]);
-            seriesLow.add(j, lowInt[j]);
-
-            //System.out.println(Integer.parseInt(temps[0].trim()));
-        }
-        int max = CommonUtil.maxOfAarray(highInt) + 5;
-        int min = CommonUtil.minOfAarray(lowInt) + 5;
-        renderer.setTextTypeface(CommonUtil.weatherIconFontFace(getContext()));
-        renderer.setAxesColor(this.getResources().getColor(R.color.weather_chart_title, null));
-        renderer.setZoomEnabled(true, true);
-        renderer.setPanEnabled(false, false);
-        renderer.setXLabels(0);
-        renderer.setExternalZoomEnabled(true);
-        renderer.setAxisTitleTextSize(20);
-        renderer.setLegendTextSize(16);
-        renderer.setChartTitleTextSize(18);
-        renderer.setMarginsColor(this.getResources().getColor(R.color.weather_chart_card_bg, null));
-        renderer.setLabelsColor(this.getResources().getColor(R.color.weather_chart_legend, null));
-        renderer.setXLabelsColor(this.getResources().getColor(R.color.weather_chart_legend, null));
-        renderer.setGridColor(this.getResources().getColor(R.color.weather_chart_grid, null));
-        renderer.setYTitle("温度(℃)");
-        renderer.setApplyBackgroundColor(true);
-        renderer.setFitLegend(true);
-        renderer.setLabelsTextSize(20);
-        renderer.setMargins(new int[]{50, 50, 70, 50});//设置图表的外边框(上/左/下/右)
-        renderer.setZoomRate(1.1f);
-        renderer.setPointSize(10);
-        renderer.setLabelsTextSize(25);
-        renderer.setAxisTitleTextSize(25);
-        renderer.setChartTitleTextSize(35);
-        renderer.setShowGrid(true);
-        renderer.setShowLegend(false);
-        renderer.setRange(new double[]{-0.5, 7.5, min, max});
-        renderer.setYLabelsAlign(Paint.Align.LEFT);
-        renderer.setYLabelsColor(0, this.getResources().getColor(R.color.tips, null));
-        dataset.addSeries(seriesLow);
-        dataset.addSeries(seriesHigh);
-        // 3, 对点的绘制进行设置
-        XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
-        // 3.1设置颜色
-
-        xyRenderer.setColor(this.getResources().getColor(R.color.weather_chart_low_temp, null));
-        xyRenderer.setDisplayChartValues(true);
-        xyRenderer.setFillPoints(true);
-        xyRenderer.setLineWidth(5);
-        xyRenderer.setChartValuesTextAlign(Paint.Align.CENTER);
-        xyRenderer.setChartValuesTextSize(25);
-        xyRenderer.setChartValuesSpacing(20);
-        // 3.2设置点的样式
-        xyRenderer.setPointStyle(PointStyle.CIRCLE);
-        // 3.3, 将要绘制的点添加到坐标绘制中
-        renderer.addSeriesRenderer(xyRenderer);
-        // 3.4,重复 1~3的步骤绘制第二个系列点
-        xyRenderer = new XYSeriesRenderer();
-        xyRenderer.setColor(this.getResources().getColor(R.color.weather_chart_high_temp, null));
-        xyRenderer.setDisplayChartValues(true);
-        xyRenderer.setFillPoints(true);
-        xyRenderer.setLineWidth(5);
-        xyRenderer.setChartValuesTextAlign(Paint.Align.CENTER);
-        xyRenderer.setChartValuesTextSize(25);
-        xyRenderer.setChartValuesSpacing(20);
-        xyRenderer.setPointStyle(PointStyle.CIRCLE);
-        renderer.addSeriesRenderer(xyRenderer);
-        View view = ChartFactory.getLineChartView(getContext(), dataset, renderer);
-        view.setBackgroundColor(getResources().getColor(R.color.weather_chart_card_bg, null));
-
-        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT
-        );
-        view.setLayoutParams(params1);
-        recent.addView(view, params1);
+        // 更新温度趋势图表
+        updateTemperatureTrendChart(recentArray);
         // 通过Activity类中的getWindowManager()方法获取窗口管理，再调用getDefaultDisplay()方法获取获取Display对象
         } catch (JSONException e) {
             Log.w("TodayFragment", "JSON解析异常: ", e);
@@ -717,5 +620,189 @@ public class TodayFragment extends Fragment {
         } catch (Exception e) {
 
         }
+    }
+
+    /**
+     * 初始化温度趋势图表
+     */
+    private void initTemperatureTrendChart() {
+        if (temperatureTrendChart == null) return;
+        
+        // 基本设置 - 禁用所有交互功能
+        temperatureTrendChart.setTouchEnabled(false);
+        temperatureTrendChart.setDragEnabled(false);
+        temperatureTrendChart.setScaleEnabled(false);
+        temperatureTrendChart.setPinchZoom(false);
+        temperatureTrendChart.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        
+        // 隐藏图例
+        temperatureTrendChart.getLegend().setEnabled(false);
+        
+        // 隐藏描述
+        temperatureTrendChart.getDescription().setEnabled(false);
+        
+        // 设置X轴
+        XAxis xAxis = temperatureTrendChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setTextColor(android.graphics.Color.WHITE);
+        xAxis.setTextSize(8f); // 减小字体大小
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setLabelCount(7, true);
+        xAxis.setYOffset(2f); // 减少X轴标签与轴线的距离
+        
+        // 设置Y轴
+        YAxis leftAxis = temperatureTrendChart.getAxisLeft();
+        leftAxis.setTextColor(android.graphics.Color.WHITE);
+        leftAxis.setTextSize(8f); // 减小字体大小
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setGridColor(android.graphics.Color.parseColor("#33FFFFFF"));
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setAxisMinimum(0f); // 设置Y轴最小值
+        leftAxis.setXOffset(10f); // 增加Y轴标签与轴线的距离
+        leftAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value) + "°C";
+            }
+        });
+        
+        YAxis rightAxis = temperatureTrendChart.getAxisRight();
+        rightAxis.setEnabled(false);
+        
+        // 设置动画
+        temperatureTrendChart.animateX(1000);
+    }
+
+    /**
+     * 更新温度趋势图表数据
+     */
+    private void updateTemperatureTrendChart(JSONArray recentArray) {
+        if (temperatureTrendChart == null || recentArray == null || recentArray.length() <= 1) return;
+        
+        try {
+            List<Entry> highTempEntries = new ArrayList<>();
+            List<Entry> lowTempEntries = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+            
+            int len = recentArray.length();
+            for (int i = 1; i < len; i++) {
+                int j = i - 1;
+                JSONObject day = recentArray.getJSONObject(i);
+                
+                // 解析温度数据
+                String lowTempStr = day.getString("temperature_pm")
+                        .replace("低温", "")
+                        .replace(" ", "")
+                        .replace("℃", "");
+                String highTempStr = day.getString("temperature_am")
+                        .replace("高温", "")
+                        .replace(" ", "")
+                        .replace("℃", "");
+                
+                float lowTemp = Float.parseFloat(lowTempStr);
+                float highTemp = Float.parseFloat(highTempStr);
+                
+                // 解析日期
+                String forecastTime = day.getString("forecasttime");
+                String dateLabel = extractDateFromTime(forecastTime);
+                
+                highTempEntries.add(new Entry(j, highTemp));
+                lowTempEntries.add(new Entry(j, lowTemp));
+                labels.add(dateLabel);
+            }
+            
+            // 创建最高温度数据集
+            LineDataSet highTempDataSet = new LineDataSet(highTempEntries, "最高温度");
+            highTempDataSet.setColor(getResources().getColor(R.color.weather_chart_high_temp, null));
+            highTempDataSet.setLineWidth(3f);
+            highTempDataSet.setCircleColor(getResources().getColor(R.color.weather_chart_high_temp, null));
+            highTempDataSet.setCircleRadius(5f);
+            highTempDataSet.setDrawCircleHole(false);
+            highTempDataSet.setValueTextColor(android.graphics.Color.WHITE);
+            highTempDataSet.setValueTextSize(7f); // 进一步减小字体大小
+            highTempDataSet.setDrawValues(true);
+            highTempDataSet.setValueTypeface(Typeface.DEFAULT); // 使用默认细字体
+            highTempDataSet.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return String.valueOf((int) value) + "°";
+                }
+            });
+            
+            // 创建最低温度数据集
+            LineDataSet lowTempDataSet = new LineDataSet(lowTempEntries, "最低温度");
+            lowTempDataSet.setColor(getResources().getColor(R.color.weather_chart_low_temp, null));
+            lowTempDataSet.setLineWidth(3f);
+            lowTempDataSet.setCircleColor(getResources().getColor(R.color.weather_chart_low_temp, null));
+            lowTempDataSet.setCircleRadius(5f);
+            lowTempDataSet.setDrawCircleHole(false);
+            lowTempDataSet.setValueTextColor(android.graphics.Color.WHITE);
+            lowTempDataSet.setValueTextSize(7f); // 进一步减小字体大小
+            lowTempDataSet.setDrawValues(true);
+            lowTempDataSet.setValueTypeface(Typeface.DEFAULT); // 使用默认细字体
+            lowTempDataSet.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return String.valueOf((int) value) + "°";
+                }
+            });
+            
+            // 创建数据
+            LineData lineData = new LineData(highTempDataSet, lowTempDataSet);
+            temperatureTrendChart.setData(lineData);
+            
+            // 设置X轴标签
+            temperatureTrendChart.getXAxis().setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    int index = (int) value;
+                    if (index >= 0 && index < labels.size()) {
+                        return labels.get(index);
+                    }
+                    return "";
+                }
+            });
+            
+            // 刷新图表
+            temperatureTrendChart.invalidate();
+            
+        } catch (Exception e) {
+            Log.e("TodayFragment", "更新温度趋势图表失败", e);
+        }
+    }
+
+    /**
+     * 从时间字符串中提取日期部分
+     */
+    private String extractDateFromTime(String forecastTime) {
+        if (forecastTime == null || forecastTime.trim().isEmpty()) {
+            return "今天";
+        }
+        
+        try {
+            // 处理不同的时间格式
+            String[] timeParts = forecastTime.split(" ");
+            
+            // 情况1: "2024-01-15 14:00:00" 或 "2024-01-15 14:00"
+            if (timeParts.length > 0) {
+                String datePart = timeParts[0];
+                if (datePart.contains("-")) {
+                    String[] dateComponents = datePart.split("-");
+                    if (dateComponents.length >= 3) {
+                        // 返回月-日格式
+                        return dateComponents[1] + "-" + dateComponents[2];
+                    }
+                }
+            }
+            
+            // 如果无法解析，返回原字符串的前10个字符
+            return forecastTime.length() > 10 ? forecastTime.substring(0, 10) : forecastTime;
+            
+        } catch (Exception e) {
+            Log.e("TodayFragment", "解析日期失败: " + forecastTime, e);
+        }
+        
+        return "今天";
     }
 }

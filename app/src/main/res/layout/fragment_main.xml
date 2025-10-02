@@ -11,10 +11,10 @@
     <TextView
         android:id="@+id/title_main"
         android:layout_width="fill_parent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="60dp"
         android:gravity="center"
         android:text="主要城市天气预报"
-        android:textColor="@color/tips"
+        android:textColor="@color/x_white"
         android:textSize="20sp"
         android:textStyle="bold"
         android:paddingTop="25dp"
@@ -27,11 +27,13 @@
         android:id="@+id/main_list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:textColor="@color/ba_1"
+        android:layout_marginHorizontal="12dp"
+        android:textColor="@color/x_white"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:divider="@drawable/list_view_style"
-        android:dividerHeight="0.5px"/>
+        android:divider="@android:color/transparent"
+        android:dividerHeight="16dp"
+        android:paddingVertical="4dp"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/home1"
             android:layout_width="wrap_content"

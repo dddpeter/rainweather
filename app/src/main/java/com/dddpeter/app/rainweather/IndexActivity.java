@@ -396,6 +396,9 @@ public class IndexActivity extends AppCompatActivity {
                 .build();
         mViewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), getLifecycle(), 4));
         
+        // 禁用ViewPager2的滑动切换功能
+        mViewPager.setUserInputEnabled(false);
+        
         // 强制TabLayout贴合底部
         mTabLayout.post(() -> {
             // 获取屏幕高度

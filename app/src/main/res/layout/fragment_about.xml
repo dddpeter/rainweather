@@ -1,88 +1,174 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:orientation="vertical"
+    android:background="@color/x_black"
+    android:padding="16dp"
     tools:context=".view.AboutFragment">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_padding_lr"
-    android:paddingRight="@dimen/activity_padding_lr">
+    <!-- 游戏标题 -->
     <TextView
-        android:id="@+id/historyinfo_title"
         android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:text="2048"
+        android:textSize="32sp"
         android:textStyle="bold"
+        android:textColor="@color/x_white"
         android:gravity="center"
-        android:paddingTop="20dp"
-        android:paddingBottom="6dp"
-        android:textColor="@color/tips"
-        android:text="历史上的今天"/>
-    <ListView
-        android:id="@+id/lvTrace"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 分数显示 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="20"
-        android:divider="@null"
-        android:clickable="false"
-        android:listSelector="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:layout_height="0dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/game_score_glass_background"
+            android:padding="12dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分数"
+                android:textSize="14sp"
+                android:textColor="@color/x_gray_light"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/score_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/x_white"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/game_score_glass_background"
+            android:padding="12dp"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最高分"
+                android:textSize="14sp"
+                android:textColor="@color/x_gray_light"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/best_score_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/x_gold"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 游戏说明 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="滑动屏幕移动方块，相同数字的方块会合并"
+        android:textSize="14sp"
+        android:textColor="@color/x_gray"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 游戏网格 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/game_board_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="20dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@color/mybord"
+            android:layout_height="match_parent"
+            android:background="@drawable/weather_chart_glass_background"
             android:orientation="vertical"
+            android:padding="16dp">
 
-            >
-            <ImageView
+            <GridLayout
+                android:id="@+id/game_grid"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:src="@drawable/dddpeter_logo"
-                android:background="@color/mybord"
-                android:layout_marginBottom="10dp"
-                android:paddingTop="5dp"
-                android:contentDescription="TODO">
-            </ImageView>
-            <TextView
-                android:id="@+id/contact"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="@color/mybord"
-                android:text="软件作者：烈焰之雨"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp" />
+                android:layout_height="match_parent"
+                android:columnCount="4"
+                android:rowCount="4"
+                android:layout_gravity="center"
+                android:useDefaultMargins="false"
+                android:alignmentMode="alignBounds"
+                android:columnOrderPreserved="false"
+                android:rowOrderPreserved="false" />
 
-            <TextView
-                android:id="@+id/contact_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="@color/mybord"
-                android:text="电子邮件：dddpeter@126.com"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp" />
         </LinearLayout>
-    <Button
-        android:id="@+id/blog_btn"
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 控制按钮 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_gravity="bottom"
-        android:background="@color/myorange"
-        android:text="😁去我的博客💯"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/new_game_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="新游戏"
+            android:textColor="@color/x_green"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/game_button_background"
+            android:layout_marginEnd="8dp"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/reset_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="重置"
+            android:textColor="@color/x_red"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/game_button_background"
+            android:layout_marginStart="8dp"
+            android:padding="12dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
-
-</ScrollView>

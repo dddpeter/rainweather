@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- 毛玻璃渐变背景 - 不要太黑，带有透明感和微妙的色彩 -->
+    <gradient
+        android:type="linear"
+        android:angle="135"
+        android:startColor="#2A1DA1F2"
+        android:centerColor="#1A1DA1F2"
+        android:endColor="#0A1DA1F2" />
+    <!-- 圆角 -->
+    <corners android:radius="16dp" />
+    <!-- 细边框 -->
+    <stroke
+        android:width="1dp"
+        android:color="#30FFFFFF" />
+</shape>
