@@ -126,10 +126,10 @@ public class TodayFragment extends Fragment {
         startActivity(intent);
     };
     View.OnClickListener l3 = v -> {
-        Intent intent = new Intent(getContext(), IndexActivity.class);
-        ParamApplication application = (ParamApplication) requireActivity().getApplication();
-        intent.putExtra("currentTab", Objects.requireNonNull(application).getTAB_TAG_RECENT());
-        startActivity(intent);
+        // 返回上一个页面
+        if (getActivity() != null) {
+            getActivity().onBackPressed();
+        }
     };
 
     private void findViwes(View me) {
