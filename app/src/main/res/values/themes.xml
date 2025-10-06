@@ -5,7 +5,6 @@
         <!-- 主色调 -->
         <item name="colorPrimary">@color/primary_blue</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
         
         <!-- 强调色 -->
         <item name="colorSecondary">@color/accent_blue</item>
@@ -19,10 +18,24 @@
         <item name="colorOnBackground">@color/text_primary_light</item>
         
         <!-- 状态栏和导航栏 -->
-        <item name="android:statusBarColor">@color/primary_blue</item>
+        <item name="android:statusBarColor">#012d78</item>
         <item name="android:navigationBarColor">@color/surface_light</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">true</item>
+        
+        <!-- 工具栏颜色 -->
+        
+        <!-- ActionBar图标和文字颜色 -->
+        <item name="actionBarStyle">@style/CustomActionBarStyle</item>
+        
+        <!-- 菜单图标颜色 -->
+        <item name="android:actionMenuTextColor">@color/toolbar_icon_color</item>
+        <item name="actionMenuTextColor">@color/toolbar_icon_color</item>
+        
+        <!-- Toolbar颜色 -->
+        <item name="colorOnPrimary">@color/toolbar_icon_color</item>
+        <item name="android:colorControlNormal">@color/toolbar_icon_color</item>
+        <item name="android:colorControlActivated">@color/toolbar_icon_color</item>
         
         <!-- 文字颜色 -->
         <item name="android:textColorPrimary">@color/text_primary_light</item>
@@ -41,6 +54,18 @@
         <item name="windowSplashScreenBackground">@color/primary_blue</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="postSplashScreenTheme">@style/Theme.RainWeather</item>
+    </style>
+    
+    <!-- 自定义ActionBar样式 -->
+    <style name="CustomActionBarStyle" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:titleTextColor">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/toolbar_icon_color</item>
+        <item name="actionMenuTextColor">@color/toolbar_icon_color</item>
+        <item name="android:colorControlNormal">@color/toolbar_icon_color</item>
+        <item name="android:colorControlActivated">@color/toolbar_icon_color</item>
+        <item name="android:colorControlHighlight">@color/toolbar_icon_color</item>
     </style>
 </resources>
 

@@ -3,6 +3,7 @@ package com.dddpeter.app.rainweather.ui
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -162,8 +163,16 @@ class MainActivity : AppCompatActivity() {
     private fun updateToolbarMenu(tabId: Int) {
         Timber.d("🔄 更新Toolbar菜单: tabId=$tabId")
         binding.toolbar.menu.clear()
+        
+        // 今日天气页面不显示actionbar
+        if (tabId == R.id.navigation_today) {
+            binding.toolbar.visibility = View.GONE
+            return
+        } else {
+            binding.toolbar.visibility = View.VISIBLE
+        }
+        
         val menuRes = when (tabId) {
-            R.id.navigation_today -> R.menu.menu_today
             R.id.navigation_main_cities -> R.menu.menu_main_cities
             else -> R.menu.menu_common
         }
@@ -213,7 +222,13 @@ class MainActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         
         // 隐藏当前Fragment
-        currentFragment?.let { transaction.hide(it) }
+        currentFragment?.let { 
+            transaction.hide(it)
+            // 如果当前Fragment是TodayFragment，恢复状态栏颜色
+            if (it is TodayFragment) {
+                it.restoreStatusBarColor()
+            }
+        }
         
         // 显示新Fragment
         if (fragment.isAdded) {
@@ -226,6 +241,11 @@ class MainActivity : AppCompatActivity() {
         
         currentFragment = fragment
         currentTabId = tabId
+        
+        // 如果是TodayFragment，设置状态栏颜色
+        if (fragment is TodayFragment) {
+            fragment.setStatusBarColor()
+        }
         
         // 更新Toolbar菜单
         updateToolbarMenu(tabId)
@@ -492,6 +512,13 @@ class MainActivity : AppCompatActivity() {
      */
     fun getApp(): RainWeatherApplication {
         return application as RainWeatherApplication
+    }
+    
+    /**
+     * 切换主题
+     */
+    fun toggleTheme() {
+        ThemeDialog().show(supportFragmentManager, "ThemeDialog")
     }
     
     companion object {

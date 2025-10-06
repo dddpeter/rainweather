@@ -3,54 +3,74 @@
     <!-- 亮色主题颜色（对应Flutter版本的lightColors） -->
     
     <!-- 主色调 -->
-    <color name="primary_blue">#012d78</color>
-    <color name="primary_dark">#001A4D</color>
-    <color name="accent_blue">#8edafc</color>
+    <color name="primary_blue">#1976D2</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="accent_blue">#42A5F5</color>
     
     <!-- 背景和表面 -->
-    <color name="background_light">#C0D8EC</color> <!-- 192,216,236 -->
+    <color name="background_light">#C0D8EC</color>
     <color name="surface_light">#FFFFFF</color>
     
     <!-- 文字颜色 -->
-    <color name="text_primary_light">#001A4D</color>
-    <color name="text_secondary_light">#003366</color>
-    <color name="text_tertiary_light">#6B7280</color>
+    <color name="text_primary_light">#1A1A1A</color>
+    <color name="text_secondary_light">#424242</color>
+    <color name="text_tertiary_light">#757575</color>
     
     <!-- 边框和分割线 -->
-    <color name="border_light">#B8D9F5</color>
-    <color name="divider_light">#E1F5FE</color>
+    <color name="border_light">#E0E0E0</color>
+    <color name="divider_light">#F0F0F0</color>
     
     <!-- 卡片 -->
     <color name="card_background_light">#FFFFFF</color>
-    <color name="card_border_light">#E1F5FE</color>
+    <color name="card_border_light">#E0E0E0</color>
     <color name="glass_background_light">#33FFFFFF</color>
     
     <!-- 温度颜色 -->
-    <color name="high_temp_light">#D32F2F</color>
-    <color name="low_temp_light">#8edafc</color>
+    <color name="high_temp_light">#FF5722</color>
+    <color name="low_temp_light">#2196F3</color>
     
     <!-- 状态颜色 -->
-    <color name="success">#2E7D32</color>
-    <color name="error">#D32F2F</color>
-    <color name="warning">#E65100</color>
-    <color name="accent_green">#4CAF50</color>
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FF9800</color>
+    <color name="accent_green">#66BB6A</color>
+    
+    <!-- 天气相关颜色 -->
+    <color name="sunny_light">#FFC107</color>
+    <color name="cloudy_light">#9E9E9E</color>
+    <color name="rainy_light">#2196F3</color>
+    <color name="snowy_light">#E1F5FE</color>
     
     <!-- 日出日落颜色（亮色） -->
     <color name="sunrise_light">#FF9800</color>
-    <color name="sunset_light">#1565C0</color>
-    <color name="sun_icon_light">#E53935</color>
+    <color name="sunset_light">#3F51B5</color>
+    <color name="sun_icon_light">#FF5722</color>
     <color name="moon_light">#673AB7</color>
     
     <!-- 标签颜色 -->
-    <color name="tag_background_light">#E8F5E8</color>
+    <color name="tag_background_light">#E3F2FD</color>
     <color name="tag_text_light">#1976D2</color>
     <color name="tag_border_light">#1976D2</color>
     <color name="current_tag_light">#FFFFFF</color>
-    <color name="current_tag_bg_light">#E53E3E</color>
+    <color name="current_tag_bg_light">#1976D2</color>
     
     <!-- 底部导航 -->
-    <color name="bottom_nav_selected_light">#012d78</color>
-    <color name="bottom_nav_unselected_light">#78909C</color>
+    <color name="bottom_nav_selected_light">#1976D2</color>
+    <color name="bottom_nav_unselected_light">#757575</color>
+    
+    <!-- 图标颜色 -->
+    <color name="icon_primary_light">#1976D2</color>
+    <color name="icon_secondary_light">#757575</color>
+    <color name="icon_accent_light">#42A5F5</color>
+    
+    <!-- TabLayout颜色 -->
+    <color name="tab_text_selected">#1976D2</color>
+    <color name="tab_text_unselected">#757575</color>
+    <color name="tab_indicator">#1976D2</color>
+    
+    <!-- Toolbar颜色 -->
+    <color name="toolbar_title_color">#1A1A1A</color>
+    <color name="toolbar_icon_color">#1A1A1A</color>
     
     <!-- 透明色 -->
     <color name="transparent">#00000000</color>

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -65,6 +67,10 @@ class TodayFragment : Fragment() {
     private lateinit var hourlyAdapter: HourlyWeatherAdapter
     private lateinit var lifeIndexAdapter: com.dddpeter.app.rainweather.ui.adapters.LifeIndexAdapter
     
+    // Remember original system bar appearance so we can restore it
+    private var originalStatusBarColor: Int? = null
+    private var originalLightStatusBars: Boolean? = null
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
         return binding.root
@@ -87,6 +93,9 @@ class TodayFragment : Fragment() {
         
         setupViews()
         observeData()
+        
+        // 设置状态栏颜色与头部保持一致
+        setStatusBarColor()
         
         // 仅在 MainActivity 中主动加载数据
         // 在 CityWeatherActivity 中，Activity 会统一加载数据
@@ -122,6 +131,22 @@ class TodayFragment : Fragment() {
             adapter = hourlyAdapter
         }
         
+        // 设置刷新按钮点击事件
+        binding.ivRefresh.setOnClickListener {
+            cityId?.let {
+                viewModel.loadWeatherForCity(it)
+            } ?: run {
+                viewModel.refreshWithLocation()
+            }
+        }
+        
+        // 设置主题按钮点击事件
+        binding.ivTheme.setOnClickListener {
+            // 切换主题
+            val activity = requireActivity() as? MainActivity
+            activity?.toggleTheme()
+        }
+        
         // 设置生活指数RecyclerView
         lifeIndexAdapter = com.dddpeter.app.rainweather.ui.adapters.LifeIndexAdapter()
         binding.rvLifeIndex.apply {
@@ -131,6 +156,40 @@ class TodayFragment : Fragment() {
         
         // 配置温度图表
         setupTemperatureChart()
+    }
+
+    fun setStatusBarColor() {
+        try {
+            val window = requireActivity().window
+            if (originalStatusBarColor == null) {
+                originalStatusBarColor = window.statusBarColor
+                originalLightStatusBars = WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars
+                Timber.d("📱 TodayFragment: 保存原始状态栏颜色=${originalStatusBarColor}, 浅色状态栏=${originalLightStatusBars}")
+            }
+            
+            // 设置透明状态栏，让头部区域延伸到状态栏
+            window.statusBarColor = Color.TRANSPARENT
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+            Timber.d("📱 TodayFragment: 设置状态栏为透明，让头部区域延伸")
+        } catch (e: Exception) {
+            Timber.e(e, "❌ 设置状态栏颜色失败")
+        }
+    }
+    
+    fun restoreStatusBarColor() {
+        try {
+            val window = requireActivity().window
+            originalStatusBarColor?.let { 
+                window.statusBarColor = it
+                Timber.d("📱 TodayFragment: 恢复状态栏颜色为 $it")
+            }
+            originalLightStatusBars?.let {
+                WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = it
+                Timber.d("📱 TodayFragment: 恢复状态栏浅色模式为 $it")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "❌ 恢复状态栏颜色失败")
+        }
     }
     
     private fun observeData() {
@@ -500,6 +559,8 @@ class TodayFragment : Fragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
+        // 恢复状态栏颜色
+        restoreStatusBarColor()
         _binding = null
     }
 }

@@ -86,6 +86,7 @@ class CityWeatherActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+        
     }
     
     private fun setupViewPager() {

@@ -24,7 +24,7 @@
                 android:background="@drawable/header_gradient_background"
                 android:fitsSystemWindows="true"
                 android:orientation="vertical"
-                android:paddingTop="20dp"
+                android:paddingTop="0dp"
                 android:paddingBottom="80dp">
 
                 <!-- 内容容器 -->
@@ -33,15 +33,53 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingStart="16dp"
+                    android:paddingTop="0dp"
                     android:paddingEnd="16dp"
                     android:paddingBottom="16dp">
 
+                    <!-- 顶部工具栏 -->
+
                     <!-- 城市名称 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <!-- 刷新按钮 -->
+                        <ImageView
+                            android:id="@+id/iv_refresh"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="刷新"
+                            android:focusable="true"
+                            android:padding="6dp"
+                            android:src="@drawable/ic_refresh"
+                            android:tint="@android:color/white" />
+
+                        <!-- 主题按钮 -->
+                        <ImageView
+                            android:id="@+id/iv_theme"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="主题"
+                            android:focusable="true"
+                            android:padding="6dp"
+                            android:src="@drawable/ic_theme"
+                            android:tint="@android:color/white" />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/tv_city_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
                         android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:text="北京"
@@ -70,8 +108,8 @@
                                 android:id="@+id/iv_weather_icon"
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:scaleType="fitCenter"
                                 android:adjustViewBounds="true"
+                                android:scaleType="fitCenter"
                                 android:src="@drawable/ic_weather_default" />
                         </LinearLayout>
 

@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@android:color/transparent"
-            app:titleTextColor="?attr/colorOnPrimary"
-            app:navigationIconTint="?attr/colorOnPrimary"
+            app:titleTextColor="@color/toolbar_title_color"
+            app:navigationIconTint="@color/toolbar_icon_color"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <!-- TabLayout -->
@@ -30,9 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            app:tabTextColor="?attr/colorOnPrimary"
-            app:tabSelectedTextColor="?attr/colorOnPrimary"
-            app:tabIndicatorColor="?attr/colorOnPrimary"
+            app:tabTextColor="@color/tab_text_unselected"
+            app:tabSelectedTextColor="@color/tab_text_selected"
+            app:tabIndicatorColor="@color/tab_indicator"
             app:tabIndicatorHeight="3dp"
             app:tabMode="fixed"
             app:tabGravity="fill" />
