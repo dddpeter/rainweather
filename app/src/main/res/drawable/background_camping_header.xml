@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景图片 -->
+    <item
+        android:height="290dp">
+        <bitmap
+            android:src="@drawable/background_camping"
+            android:gravity="top|center_horizontal"
+            android:scaleType="fitXY" />
+    </item>
+    <!-- 半透明遮罩，确保文字可读性 -->
+    <item
+        android:height="290dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#40000000" />
+        </shape>
+    </item>
+</layer-list>
