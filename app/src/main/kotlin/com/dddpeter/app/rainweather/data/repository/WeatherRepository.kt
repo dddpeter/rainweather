@@ -41,6 +41,7 @@ class WeatherRepository(
             if (response.isSuccessful && response.body()?.data != null) {
                 val weatherModel = response.body()!!.data!!
                 
+                
                 // 保存到缓存
                 weatherDao.insertWeatherData(
                     cityId = cityId,

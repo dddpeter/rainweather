@@ -228,8 +228,8 @@ class TodayFragment : Fragment() {
             binding.tvAqi.text = WeatherIconMapper.getAqiLevel(it.getAqiValue())
         }
         
-        // 更新24小时预报（显示前6小时）
-        weather.forecast24h?.take(6)?.let { hourlyList ->
+        // 更新24小时预报（显示前12小时）
+        weather.forecast24h?.take(12)?.let { hourlyList ->
             hourlyAdapter.submitList(hourlyList)
         }
         

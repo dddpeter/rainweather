@@ -132,6 +132,7 @@ class HourlyFragment : Fragment() {
     private fun updateUI(weather: com.dddpeter.app.rainweather.data.models.WeatherModel) {
         // 更新24小时预报
         weather.forecast24h?.let { hourlyList ->
+            
             // 更新图表
             updateTemperatureChart(hourlyList)
             
