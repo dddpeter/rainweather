@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../.."
+		},
+		{
+			"path": "../../../../../../../rainweather_flutter"
+		}
+	],
+	"settings": {
+		"avdmanager.sdkPath": "/Users/dddpeter/DevSoft/Android",
+		"avdmanager.sdkManager": "/Users/dddpeter/DevSoft/Android/cmdline-tools/latest/bin/sdkmanager",
+		"avdmanager.executable": "/Users/dddpeter/DevSoft/Android/cmdline-tools/latest/bin/avdmanager",
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}

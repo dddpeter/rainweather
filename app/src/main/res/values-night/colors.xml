@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 暗色主题颜色（对应Flutter版本的darkColors） -->
+    
+    <!-- 主色调 -->
+    <color name="primary_blue">#4A90E2</color>
+    <color name="primary_dark">#0A1B3D</color>
+    <color name="accent_blue">#8edafc</color>
+    
+    <!-- 背景和表面 -->
+    <color name="background_dark">#0A1B3D</color>
+    <color name="surface_dark">#1A2F5D</color>
+    
+    <!-- 文字颜色 -->
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#E8F4FD</color>
+    <color name="text_tertiary_dark">#B8D9F5</color>
+    
+    <!-- 边框和分割线 -->
+    <color name="border_dark">#35FFFFFF</color>
+    <color name="divider_dark">#2D4A7D</color>
+    
+    <!-- 卡片 -->
+    <color name="card_background_dark">#2A3F6D</color> <!-- 更亮的蓝灰色，更好的对比度 -->
+    <color name="card_border_dark">#55FFFFFF</color>
+    <color name="glass_background_dark">#4DFFFFFF</color>
+    
+    <!-- 温度颜色 -->
+    <color name="high_temp_dark">#FF5722</color>
+    <color name="low_temp_dark">#8edafc</color>
+    
+    <!-- 状态颜色（暗色主题相同） -->
+    <color name="success">#2E7D32</color>
+    <color name="error">#D32F2F</color>
+    <color name="warning">#E65100</color>
+    <color name="accent_green">#4CAF50</color>
+    
+    <!-- 日出日落颜色（暗色） -->
+    <color name="sunrise_dark">#FFB74D</color>
+    <color name="sunset_dark">#E91E63</color>
+    <color name="sun_icon_dark">#FFFFFF</color>
+    <color name="moon_dark">#B39DDB</color>
+    
+    <!-- 标签颜色 -->
+    <color name="tag_background_dark">#4A90E2</color>
+    <color name="tag_text_dark">#E8F4FD</color>
+    <color name="tag_border_dark">#4A90E2</color>
+    <color name="current_tag_dark">#FFFFFF</color>
+    <color name="current_tag_bg_dark">#4A90E2</color>
+    
+    <!-- 底部导航 -->
+    <color name="bottom_nav_selected_dark">#8edafc</color>
+    <color name="bottom_nav_unselected_dark">#90A4AE</color>
+    
+    <!-- 透明色 -->
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
+

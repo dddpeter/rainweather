@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- 主题选项组 -->
+    <RadioGroup
+        android:id="@+id/radio_group_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 浅色主题 -->
+        <RadioButton
+            android:id="@+id/radio_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="☀️ 浅色主题"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            android:background="?attr/selectableItemBackground" />
+
+        <!-- 深色主题 -->
+        <RadioButton
+            android:id="@+id/radio_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🌙 深色主题"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            android:background="?attr/selectableItemBackground" />
+
+        <!-- 跟随系统 -->
+        <RadioButton
+            android:id="@+id/radio_system"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚙️ 跟随系统"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            android:background="?attr/selectableItemBackground" />
+    </RadioGroup>
+
+    <!-- 说明文字 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="主题切换将立即生效，无需重启应用"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="12sp" />
+</LinearLayout>

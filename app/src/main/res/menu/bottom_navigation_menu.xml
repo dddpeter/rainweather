@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_today"
+        android:enabled="true"
+        android:icon="@drawable/ic_today"
+        android:title="@string/nav_today" />
+    
+    <item
+        android:id="@+id/navigation_hourly"
+        android:enabled="true"
+        android:icon="@drawable/ic_hourly"
+        android:title="@string/nav_hourly" />
+    
+    <item
+        android:id="@+id/navigation_forecast15d"
+        android:enabled="true"
+        android:icon="@drawable/ic_forecast"
+        android:title="@string/nav_forecast15d" />
+    
+    <item
+        android:id="@+id/navigation_main_cities"
+        android:enabled="true"
+        android:icon="@drawable/ic_cities"
+        android:title="@string/nav_main_cities" />
+</menu>
+

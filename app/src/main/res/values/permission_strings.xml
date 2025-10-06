@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 权限相关字符串 -->
+    <string name="permission_location_title">需要定位权限</string>
+    <string name="permission_location_message">雨天气需要访问您的位置信息，以便为您提供准确的本地天气预报。\n\n我们承诺：\n• 仅在应用使用时获取位置\n• 不会追踪您的位置历史\n• 位置信息仅用于天气查询</string>
+    <string name="permission_location_rationale">为了获取您所在位置的天气信息，雨天气需要访问您的位置。请在下一步中允许定位权限。</string>
+    <string name="permission_location_denied_message">没有定位权限，无法自动获取您所在位置的天气信息。\n\n您可以：\n• 手动搜索并添加城市\n• 在设置中授予定位权限</string>
+    <string name="permission_location_permanently_denied_title">无法获取定位权限</string>
+    <string name="permission_location_permanently_denied_message">您之前拒绝了定位权限并选择了"不再询问"。\n\n如需使用定位功能，请按照以下步骤操作：\n1. 点击"打开设置"按钮\n2. 找到"权限"或"应用权限"\n3. 开启"位置"权限</string>
+    
+    <string name="permission_notification_title">开启通知推送</string>
+    <string name="permission_notification_message">开启通知权限后，雨天气可以及时为您推送：\n• 恶劣天气预警\n• 气温骤变提醒\n• 日出日落通知</string>
+    
+    <!-- 权限对话框按钮 -->
+    <string name="permission_button_allow">允许</string>
+    <string name="permission_button_deny">拒绝</string>
+    <string name="permission_button_settings">打开设置</string>
+    <string name="permission_button_cancel">取消</string>
+    <string name="permission_button_retry">重试</string>
+    <string name="permission_button_continue">继续使用</string>
+    
+    <!-- 权限提示 -->
+    <string name="permission_toast_granted">定位权限已授予</string>
+    <string name="permission_toast_denied">定位权限被拒绝</string>
+    <string name="permission_toast_location_off">请在设置中开启位置服务</string>
+</resources>
+

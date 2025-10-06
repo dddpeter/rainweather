@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- 主题切换 -->
+    <item
+        android:id="@+id/action_theme"
+        android:icon="@drawable/ic_theme"
+        android:title="主题"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+
+    <!-- 设置 -->
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="设置"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+
+    <!-- 关于 -->
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_info"
+        android:title="关于"
+        app:iconTint="@android:color/white"
+        app:showAsAction="never" />
+</menu>
+

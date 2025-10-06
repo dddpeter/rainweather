@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 暗色主题 (Material Design 3) -->
+    <style name="Base.Theme.RainWeather" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- 主色调 -->
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- 强调色 -->
+        <item name="colorSecondary">@color/accent_blue</item>
+        <item name="colorSecondaryVariant">@color/accent_blue</item>
+        <item name="colorOnSecondary">@color/text_primary_dark</item>
+        
+        <!-- 背景和表面 -->
+        <item name="android:colorBackground">@color/background_dark</item>
+        <item name="colorSurface">@color/card_background_dark</item>
+        <item name="colorOnSurface">@color/text_primary_dark</item>
+        <item name="colorOnBackground">@color/text_primary_dark</item>
+        
+        <!-- 状态栏和导航栏 -->
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:navigationBarColor">@color/surface_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        
+        <!-- 文字颜色 -->
+        <item name="android:textColorPrimary">@color/text_primary_dark</item>
+        <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+        <item name="android:textColorTertiary">@color/text_tertiary_dark</item>
+        
+        <!-- Material3 组件颜色 -->
+        <item name="elevationOverlayEnabled">true</item>
+        <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
+    </style>
+    
+    <style name="Theme.RainWeather" parent="Base.Theme.RainWeather" />
+    
+    <!-- SplashScreen主题 -->
+    <style name="Theme.RainWeather.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primary_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.RainWeather</item>
+    </style>
+</resources>
+

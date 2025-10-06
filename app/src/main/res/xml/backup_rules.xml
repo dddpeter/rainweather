@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- 排除SharedPreferences备份 -->
+    <exclude domain="sharedpref" path="." />
+    
+    <!-- 排除数据库备份 -->
+    <exclude domain="database" path="." />
+    
+    <!-- 排除缓存 -->
+    <exclude domain="cache" path="." />
+</full-backup-content>
+

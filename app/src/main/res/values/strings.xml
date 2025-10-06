@@ -1,71 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- 应用名称 -->
     <string name="app_name">知雨天气</string>
+    
+    <!-- 底部导航 -->
+    <string name="nav_today">今日天气</string>
+    <string name="nav_hourly">24小时</string>
+    <string name="nav_forecast15d">15日预报</string>
+    <string name="nav_main_cities">主要城市</string>
+    
+    <!-- 通用 -->
+    <string name="loading">加载中…</string>
+    <string name="error">出错了</string>
+    <string name="retry">重试</string>
     <string name="refresh">刷新</string>
-    <string name="weather_content">\n\n请按菜单键进行定位刷新</string>
-    <string name="exit">退出</string>
-    <string name="copyright">版权所有©烈焰之雨</string>
-    <string name="ver">3.5.1</string>
-    <string name="tab1">今日</string>
-    <string name="tab2">城市</string>
-    <string name="tab3">24H</string>
-    <string name="tab4">关于</string>
-    <string name="title_activity_recent">最近天气</string>
-    <string name="title_activity_about">关于</string>
-    <string name="about_info">知雨天气</string>
-    <string name="title_activity_air">空气指数</string>
-    <string name="reset">清除缓存</string>
-    <string name="blank_string"></string>
-    <string name="defaultCity">北京</string>
-    <string name="returnStr">返回</string>
-    <string name="initInfo">不确定</string>
-    <string name="imgTodoStr">TODO</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
-    <string name="title_activity_main">MainActivity</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="delete">删除</string>
+    <string name="add">添加</string>
+    <string name="search">搜索</string>
+    <string name="back">返回</string>
+    
+    <!-- 天气相关 -->
+    <string name="current_weather">当前天气</string>
+    <string name="temperature">温度</string>
+    <string name="feels_like">体感温度</string>
+    <string name="humidity">湿度</string>
+    <string name="wind">风力</string>
+    <string name="air_pressure">气压</string>
+    <string name="visibility">能见度</string>
+    <string name="aqi">空气质量</string>
+    <string name="sunrise">日出</string>
+    <string name="sunset">日落</string>
+    <string name="moonrise">月出</string>
+    <string name="moonset">月落</string>
+    <string name="moon_phase">月相</string>
+    
+    <!-- 预报 -->
+    <string name="hourly_forecast">24小时预报</string>
+    <string name="daily_forecast">15日预报</string>
+    <string name="forecast_7d">7日预报</string>
+    <string name="forecast_15d">15日预报</string>
+    
+    <!-- 生活指数 -->
+    <string name="life_index">生活指数</string>
+    <string name="clothing_index">穿衣指数</string>
+    <string name="cold_index">感冒指数</string>
+    <string name="sport_index">运动指数</string>
+    <string name="car_wash_index">洗车指数</string>
+    <string name="uv_index">紫外线指数</string>
+    <string name="travel_index">旅游指数</string>
+    
+    <!-- 城市管理 -->
+    <string name="add_city">添加城市</string>
+    <string name="remove_city">删除城市</string>
+    <string name="search_city">搜索城市</string>
+    <string name="current_location">当前位置</string>
+    <string name="main_cities">主要城市</string>
+    <string name="city_added">城市已添加</string>
+    <string name="city_removed">城市已删除</string>
+    <string name="city_exists">城市已存在</string>
+    <string name="city_management_tip">长按拖拽可调整城市顺序，左滑可删除城市（当前位置城市除外）</string>
+    
+    <!-- 定位相关 -->
+    <string name="location_permission_required">需要定位权限才能获取您的位置</string>
+    <string name="location_permission_denied">定位权限被拒绝</string>
+    <string name="location_service_disabled">位置服务未开启</string>
+    <string name="locating">正在定位…</string>
+    <string name="location_success">定位成功</string>
+    <string name="location_failed">定位失败</string>
+    <string name="update_location">更新位置</string>
+    
+    <!-- 错误信息 -->
+    <string name="network_error">网络连接失败</string>
+    <string name="data_load_failed">数据加载失败</string>
+    <string name="no_data">暂无数据</string>
+    <string name="unknown_error">未知错误</string>
+    
+    <!-- 主题 -->
+    <string name="theme">主题</string>
+    <string name="theme_light">亮色</string>
+    <string name="theme_dark">暗色</string>
+    <string name="theme_system">跟随系统</string>
+    
+    <!-- 其他 -->
+    <string name="today">今天</string>
+    <string name="tomorrow">明天</string>
+    <string name="weather_tips">天气提示</string>
+    <string name="weather_alert">天气预警</string>
+    <string name="no_weather_alert">暂无预警信息</string>
 </resources>
