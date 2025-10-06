@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
     // Fragment缓存
     private val fragmentCache = mutableMapOf<Int, Fragment>()
     
+    // 权限检查完成标志
+    private var isPermissionCheckComplete = false
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         // 安装SplashScreen
         val splashScreen = installSplashScreen()
@@ -61,16 +64,10 @@ class MainActivity : AppCompatActivity() {
         // 初始化底部导航
         setupBottomNavigation()
         
-        // 恢复状态或加载默认Fragment
+        // 恢复状态
         if (savedInstanceState != null) {
             currentTabId = savedInstanceState.getInt(KEY_CURRENT_TAB, R.id.navigation_today)
             Timber.d("📦 恢复状态: tabId=$currentTabId")
-        }
-        
-        // 加载初始Fragment
-        if (savedInstanceState == null) {
-            loadFragment(R.id.navigation_today)
-        } else {
             // 恢复Fragment
             currentFragment = supportFragmentManager.findFragmentByTag(getFragmentTag(currentTabId))
         }
@@ -81,16 +78,39 @@ class MainActivity : AppCompatActivity() {
             updateToolbarMenu(currentTabId)
         }
         
-        // 延迟检查权限（在UI完全加载后）
-        lifecycleScope.launch {
-            delay(500) // 延迟500ms，让启动动画完成
-            checkAndRequestPermissions()
-        }
+        // 在SplashScreen期间检查权限
+        setupSplashScreenWithPermission(splashScreen)
     }
     
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(KEY_CURRENT_TAB, currentTabId)
+    }
+    
+    /**
+     * 设置SplashScreen期间的权限申请
+     */
+    private fun setupSplashScreenWithPermission(splashScreen: androidx.core.splashscreen.SplashScreen) {
+        // 设置SplashScreen保持显示直到权限检查完成
+        splashScreen.setKeepOnScreenCondition {
+            // 如果权限检查还没有完成，保持SplashScreen显示
+            !isPermissionCheckComplete
+        }
+        
+        // 在SplashScreen期间检查权限
+        lifecycleScope.launch {
+            // 稍微延迟一下，让SplashScreen动画开始
+            delay(200)
+            checkAndRequestPermissions()
+            
+            // 备用机制：如果3秒后权限检查还没有完成，强制完成
+            delay(3000)
+            if (!isPermissionCheckComplete) {
+                Timber.w("⚠️ 权限检查超时，强制完成")
+                isPermissionCheckComplete = true
+                loadFragmentAndHideSplash(R.id.navigation_today)
+            }
+        }
     }
     
     /**
@@ -209,6 +229,26 @@ class MainActivity : AppCompatActivity() {
         
         // 更新Toolbar菜单
         updateToolbarMenu(tabId)
+        
+        // 根据页面类型刷新数据
+        when (tabId) {
+            R.id.navigation_today -> {
+                (fragment as? TodayFragment)?.refresh()
+                Timber.d("🔄 切换到今日天气页面，刷新定位和天气数据")
+            }
+            R.id.navigation_main_cities -> {
+                (fragment as? MainCitiesFragment)?.refresh()
+                Timber.d("🔄 切换到主要城市页面，刷新数据")
+            }
+            R.id.navigation_hourly -> {
+                (fragment as? HourlyFragment)?.refresh()
+                Timber.d("🔄 切换到24小时页面，刷新数据")
+            }
+            R.id.navigation_forecast15d -> {
+                (fragment as? Forecast15dFragment)?.refresh()
+                Timber.d("🔄 切换到15日预报页面，刷新数据")
+            }
+        }
     }
     
     /**
@@ -239,18 +279,67 @@ class MainActivity : AppCompatActivity() {
         Timber.d("🔐 检查权限状态")
         
         // 检查定位权限
-        when (PermissionManager.getLocationPermissionStatus(this)) {
+        val permissionStatus = PermissionManager.getLocationPermissionStatus(this)
+        Timber.d("🔐 权限状态: $permissionStatus")
+        
+        when (permissionStatus) {
             PermissionManager.PermissionStatus.GRANTED -> {
                 Timber.d("✅ 定位权限已授予")
                 checkLocationService()
+                // 权限已授予，可以加载Fragment
+                loadFragmentAndHideSplash(R.id.navigation_today)
+                isPermissionCheckComplete = true
             }
             PermissionManager.PermissionStatus.DENIED -> {
-                Timber.d("⚠️ 定位权限未授予，显示权限说明")
-                showLocationPermissionRationale()
+                Timber.d("⚠️ 定位权限未授予，直接请求权限")
+                // 直接请求权限，不显示说明对话框
+                PermissionManager.requestLocationPermission(this)
+                // 权限请求后，立即完成检查（权限结果会在onRequestPermissionsResult中处理）
+                isPermissionCheckComplete = true
+                loadFragmentAndHideSplash(R.id.navigation_today)
             }
             PermissionManager.PermissionStatus.PERMANENTLY_DENIED -> {
-                Timber.w("❌ 定位权限被永久拒绝")
-                showLocationPermissionPermanentlyDeniedDialog()
+                Timber.w("❌ 定位权限被永久拒绝，使用默认位置")
+                // 权限被永久拒绝，直接使用默认位置
+                loadFragmentAndHideSplash(R.id.navigation_today)
+                isPermissionCheckComplete = true
+            }
+        }
+    }
+    
+    /**
+     * 加载Fragment并隐藏SplashScreen
+     */
+    private fun loadFragmentAndHideSplash(tabId: Int) {
+        loadFragment(tabId)
+        // Fragment加载完成后，SplashScreen会自动隐藏（因为currentFragment不再为null）
+        
+        // 不在这里刷新主要城市数据，等到用户切换到主要城市页面时再刷新
+        // refreshMainCitiesData()
+    }
+    
+    /**
+     * 刷新主要城市数据
+     */
+    private fun refreshMainCitiesData() {
+        // 确保MainCitiesFragment被创建
+        val mainCitiesFragment = fragmentCache[R.id.navigation_main_cities] as? MainCitiesFragment
+            ?: (createFragment(R.id.navigation_main_cities) as MainCitiesFragment).also {
+                fragmentCache[R.id.navigation_main_cities] = it
+            }
+        
+        // 检查Fragment是否已经创建View
+        if (mainCitiesFragment.isAdded && mainCitiesFragment.view != null) {
+            mainCitiesFragment.refresh()
+            Timber.d("🔄 刷新主要城市数据")
+        } else {
+            // 如果Fragment还没有创建View，延迟刷新
+            Timber.d("🔄 MainCitiesFragment还未创建View，延迟刷新")
+            mainCitiesFragment.view?.post {
+                if (mainCitiesFragment.isAdded && mainCitiesFragment.view != null) {
+                    mainCitiesFragment.refresh()
+                    Timber.d("🔄 延迟刷新主要城市数据")
+                }
             }
         }
     }
@@ -259,42 +348,72 @@ class MainActivity : AppCompatActivity() {
      * 显示定位权限说明对话框
      */
     private fun showLocationPermissionRationale() {
-        PermissionDialogs.showLocationPermissionRationale(
-            context = this,
-            onAllow = {
-                Timber.d("👤 用户同意授予定位权限")
-                PermissionManager.requestLocationPermission(this)
-            },
-            onDeny = {
-                Timber.d("👤 用户拒绝授予定位权限")
-                Toast.makeText(
-                    this,
-                    R.string.permission_location_denied_message,
-                    Toast.LENGTH_SHORT
-                ).show()
+        Timber.d("🔐 准备显示权限说明对话框")
+        
+        // 确保在UI线程中显示对话框
+        runOnUiThread {
+            try {
+                PermissionDialogs.showLocationPermissionRationale(
+                    context = this,
+                    onAllow = {
+                        Timber.d("👤 用户同意授予定位权限")
+                        PermissionManager.requestLocationPermission(this)
+                    },
+                    onDeny = {
+                        Timber.d("👤 用户拒绝授予定位权限")
+                        Toast.makeText(
+                            this,
+                            R.string.permission_location_denied_message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        // 即使拒绝权限，也加载Fragment（使用默认位置）
+                        loadFragmentAndHideSplash(R.id.navigation_today)
+                        isPermissionCheckComplete = true
+                    }
+                )
+            } catch (e: Exception) {
+                Timber.e(e, "❌ 显示权限对话框失败")
+                // 如果对话框显示失败，直接加载Fragment
+                loadFragmentAndHideSplash(R.id.navigation_today)
+                isPermissionCheckComplete = true
             }
-        )
+        }
     }
     
     /**
      * 显示定位权限被永久拒绝的对话框
      */
     private fun showLocationPermissionPermanentlyDeniedDialog() {
-        PermissionDialogs.showLocationPermissionPermanentlyDeniedDialog(
-            context = this,
-            onOpenSettings = {
-                Timber.d("👤 用户选择去设置页面")
-                PermissionManager.openAppSettings(this)
-            },
-            onCancel = {
-                Timber.d("👤 用户取消，使用默认位置")
-                Toast.makeText(
-                    this,
-                    "将使用默认位置（北京）",
-                    Toast.LENGTH_SHORT
-                ).show()
+        Timber.d("🔐 准备显示永久拒绝权限对话框")
+        
+        // 确保在UI线程中显示对话框
+        runOnUiThread {
+            try {
+                PermissionDialogs.showLocationPermissionPermanentlyDeniedDialog(
+                    context = this,
+                    onOpenSettings = {
+                        Timber.d("👤 用户选择去设置页面")
+                        PermissionManager.openAppSettings(this)
+                    },
+                    onCancel = {
+                        Timber.d("👤 用户取消，使用默认位置")
+                        Toast.makeText(
+                            this,
+                            "将使用默认位置（北京）",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        // 使用默认位置，加载Fragment
+                        loadFragmentAndHideSplash(R.id.navigation_today)
+                        isPermissionCheckComplete = true
+                    }
+                )
+            } catch (e: Exception) {
+                Timber.e(e, "❌ 显示永久拒绝权限对话框失败")
+                // 如果对话框显示失败，直接加载Fragment
+                loadFragmentAndHideSplash(R.id.navigation_today)
+                isPermissionCheckComplete = true
             }
-        )
+        }
     }
     
     /**
@@ -333,37 +452,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.permission_toast_granted, Toast.LENGTH_SHORT).show()
                 checkLocationService()
                 
-                // 触发数据刷新
+                // 权限授予后，触发数据刷新
                 (currentFragment as? TodayFragment)?.refresh()
             },
             onDenied = {
                 Timber.w("❌ 权限被拒绝")
                 Toast.makeText(this, R.string.permission_toast_denied, Toast.LENGTH_SHORT).show()
-                
-                // 显示拒绝后的说明
-                PermissionDialogs.showLocationPermissionDeniedDialog(
-                    context = this,
-                    onRetry = {
-                        PermissionManager.requestLocationPermission(this)
-                    },
-                    onCancel = {
-                        // 用户选择继续使用，不做特殊处理
-                    }
-                )
+                // 权限被拒绝，使用默认位置，不需要额外处理
             },
             onPermanentlyDenied = {
                 Timber.w("⚠️ 权限被永久拒绝")
-                
-                // 显示永久拒绝的对话框
-                PermissionDialogs.showLocationPermissionPermanentlyDeniedDialog(
-                    context = this,
-                    onOpenSettings = {
-                        PermissionManager.openAppSettings(this)
-                    },
-                    onCancel = {
-                        // 用户选择继续使用，不做特殊处理
-                    }
-                )
+                Toast.makeText(this, "权限被永久拒绝，将使用默认位置", Toast.LENGTH_SHORT).show()
+                // 权限被永久拒绝，使用默认位置，不需要额外处理
             }
         )
     }

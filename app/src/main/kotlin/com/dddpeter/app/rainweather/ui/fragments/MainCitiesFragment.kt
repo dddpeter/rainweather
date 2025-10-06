@@ -24,6 +24,7 @@ import com.dddpeter.app.rainweather.ui.adapters.CitySearchAdapter
 import com.dddpeter.app.rainweather.ui.adapters.MainCityAdapter
 import com.dddpeter.app.rainweather.viewmodels.WeatherViewModel
 import com.dddpeter.app.rainweather.viewmodels.WeatherViewModelFactory
+import com.dddpeter.app.rainweather.utils.CityNameProcessor
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -63,6 +64,9 @@ class MainCitiesFragment : Fragment() {
         
         database = (requireActivity() as MainActivity).getApp().database
         
+        // 初始化城市名字处理器
+        CityNameProcessor.initialize(requireContext())
+        
         setupViews()
         loadCities()
         
@@ -81,7 +85,16 @@ class MainCitiesFragment : Fragment() {
         cityAdapter = MainCityAdapter(
             onCityClick = { city ->
                 // 点击城市项，跳转到该城市的天气详情页面
-                CityWeatherActivity.start(requireContext(), city)
+                Timber.d("🏙️ 点击城市: id='${city.id}', name='${city.name}', isCurrentLocation=${city.isCurrentLocation}")
+                
+                // 如果是当前位置且城市ID无效，尝试重新处理城市名字
+                if (city.isCurrentLocation && !CityNameProcessor.isValidCityId(city.id)) {
+                    val processedCity = CityNameProcessor.createCityInfo(city.name)
+                    Timber.d("🏙️ 重新处理城市信息: id='${processedCity.id}', name='${processedCity.name}'")
+                    CityWeatherActivity.start(requireContext(), processedCity)
+                } else {
+                    CityWeatherActivity.start(requireContext(), city)
+                }
             },
             onDeleteClick = { city ->
                 showDeleteConfirmDialog(city)
@@ -213,12 +226,12 @@ class MainCitiesFragment : Fragment() {
             // 从ViewModel获取当前位置
             val location = viewModel.currentLocation.value
             if (location != null) {
-                CityModel(
-                    id = location.adcode.ifEmpty { "unknown" },
-                    name = location.district.ifEmpty { location.city.ifEmpty { location.province } },
-                    sortOrder = 0, // 默认排序，可以拖拽
-                    isCurrentLocation = true
-                )
+                val cityName = location.district.ifEmpty { location.city.ifEmpty { location.province } }
+                val cityInfo = CityNameProcessor.createCityInfo(cityName, location.adcode)
+                
+                Timber.d("🏙️ 当前定位城市: name='$cityName', id='${cityInfo.id}', adcode='${location.adcode}'")
+                
+                cityInfo
             } else {
                 null
             }

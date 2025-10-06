@@ -295,6 +295,14 @@ class Forecast15dFragment : Fragment() {
         Timber.d("📊 Updated 15-day forecast chart with ${dailyList.size} days")
     }
     
+    fun refresh() {
+        cityId?.let {
+            viewModel.loadWeatherForCity(it)
+        } ?: run {
+            viewModel.refreshWithLocation()
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -253,6 +253,14 @@ class HourlyFragment : Fragment() {
         }
     }
     
+    fun refresh() {
+        cityId?.let {
+            viewModel.loadWeatherForCity(it)
+        } ?: run {
+            viewModel.refreshWithLocation()
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

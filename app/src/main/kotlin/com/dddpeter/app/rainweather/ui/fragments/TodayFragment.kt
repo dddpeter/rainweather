@@ -91,9 +91,8 @@ class TodayFragment : Fragment() {
         // 仅在 MainActivity 中主动加载数据
         // 在 CityWeatherActivity 中，Activity 会统一加载数据
         if (cityId == null) {
-            Timber.d("📍 TodayFragment: 主页模式，开始初始化和加载定位数据")
-            // 首次进入时自动刷新定位和数据
-            viewModel.refreshWithLocation()
+            Timber.d("📍 TodayFragment: 主页模式，等待权限检查完成后加载数据")
+            // 不再主动调用refreshWithLocation，等待MainActivity权限检查完成后调用
         } else {
             Timber.d("🏙️ TodayFragment: 城市模式，等待 Activity 加载数据")
         }
@@ -265,9 +264,16 @@ class TodayFragment : Fragment() {
         val sunrise = weather.forecast15d?.firstOrNull()?.sunriseSunset?.split("|")?.getOrNull(0)
         val sunset = weather.forecast15d?.firstOrNull()?.sunriseSunset?.split("|")?.getOrNull(1)
         if (sunrise != null && sunset != null) {
+            // 解析月相信息
+            val nongLi = weather.current?.nongLi
+            val moonPhase = parseMoonPhase(nongLi)
+            val moonAge = parseMoonAge(nongLi)
+            
             val sunMoonData = com.dddpeter.app.rainweather.data.models.SunMoonData(
                 sunrise = sunrise,
-                sunset = sunset
+                sunset = sunset,
+                moonPhase = moonPhase,
+                moonAge = moonAge
             )
             binding.sunMoonTimeline.setSunMoonData(sunMoonData)
         }
@@ -415,6 +421,81 @@ class TodayFragment : Fragment() {
         } ?: run {
             viewModel.refreshWithLocation()
         }
+    }
+    
+    /**
+     * 解析月相信息
+     */
+    private fun parseMoonPhase(nongLi: String?): String? {
+        if (nongLi.isNullOrBlank()) return null
+        
+        // 从农历信息中提取月相，例如："2025-10-06  星期一  八月十五"
+        val regex = "\\s+([一二三四五六七八九十]+)月([一二三四五六七八九十]+)".toRegex()
+        val matchResult = regex.find(nongLi)
+        
+        if (matchResult != null) {
+            val month = matchResult.groupValues[1]
+            val day = matchResult.groupValues[2]
+            
+            // 根据农历日期判断月相
+            return when (day) {
+                "初一" -> "新月"
+                "初二", "初三" -> "峨眉月"
+                "初四", "初五", "初六" -> "上弦月"
+                "初七", "初八", "初九" -> "上凸月"
+                "初十", "十一", "十二" -> "盈凸月"
+                "十三", "十四" -> "渐盈凸月"
+                "十五", "十六" -> "满月"
+                "十七", "十八" -> "渐亏凸月"
+                "十九", "二十" -> "亏凸月"
+                "二十一", "二十二" -> "下凸月"
+                "二十三", "二十四", "二十五" -> "下弦月"
+                "二十六", "二十七", "二十八" -> "残月"
+                "二十九", "三十" -> "晦月"
+                else -> "未知月相"
+            }
+        }
+        
+        return null
+    }
+    
+    /**
+     * 解析月龄信息
+     */
+    private fun parseMoonAge(nongLi: String?): String? {
+        if (nongLi.isNullOrBlank()) return null
+        
+        // 从农历信息中提取月龄，例如："2025-10-06  星期一  八月十五"
+        val regex = "\\s+([一二三四五六七八九十]+)月([一二三四五六七八九十]+)".toRegex()
+        val matchResult = regex.find(nongLi)
+        
+        if (matchResult != null) {
+            val month = matchResult.groupValues[1]
+            val day = matchResult.groupValues[2]
+            
+            // 将中文数字转换为阿拉伯数字
+            val dayNumber = chineseToNumber(day)
+            if (dayNumber != null) {
+                return "${dayNumber}天"
+            }
+        }
+        
+        return null
+    }
+    
+    /**
+     * 中文数字转阿拉伯数字
+     */
+    private fun chineseToNumber(chinese: String): Int? {
+        val chineseNumbers = mapOf(
+            "一" to 1, "二" to 2, "三" to 3, "四" to 4, "五" to 5,
+            "六" to 6, "七" to 7, "八" to 8, "九" to 9, "十" to 10,
+            "十一" to 11, "十二" to 12, "十三" to 13, "十四" to 14, "十五" to 15,
+            "十六" to 16, "十七" to 17, "十八" to 18, "十九" to 19, "二十" to 20,
+            "二十一" to 21, "二十二" to 22, "二十三" to 23, "二十四" to 24, "二十五" to 25,
+            "二十六" to 26, "二十七" to 27, "二十八" to 28, "二十九" to 29, "三十" to 30
+        )
+        return chineseNumbers[chinese]
     }
     
     override fun onDestroyView() {

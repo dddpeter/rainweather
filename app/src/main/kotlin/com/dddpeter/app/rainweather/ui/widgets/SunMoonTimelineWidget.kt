@@ -54,7 +54,7 @@ class SunMoonTimelineWidget @JvmOverloads constructor(
                 
                 // 设置月龄
                 if (!moonAge.isNullOrEmpty()) {
-                    binding.tvMoonAge.text = "月龄：${moonAge}天"
+                    binding.tvMoonAge.text = moonAge
                 }
             } else {
                 binding.layoutMoonInfo.visibility = GONE

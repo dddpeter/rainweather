@@ -59,6 +59,9 @@ object PermissionManager {
     fun requestLocationPermission(activity: Activity) {
         Timber.d("🔐 请求定位权限")
         
+        // 记录权限请求历史
+        markLocationPermissionRequested(activity)
+        
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -106,9 +109,33 @@ object PermissionManager {
     fun isLocationPermissionPermanentlyDenied(activity: Activity): Boolean {
         val isGranted = isLocationPermissionGranted(activity)
         val shouldShowRationale = shouldShowLocationPermissionRationale(activity)
+        val hasRequestedBefore = hasRequestedLocationPermissionBefore(activity)
+        
+        Timber.d("🔐 永久拒绝检查: isGranted=$isGranted, shouldShowRationale=$shouldShowRationale, hasRequestedBefore=$hasRequestedBefore")
         
         // 如果权限未授予，并且不应该显示说明（意味着用户选择了"不再询问"）
-        return !isGranted && !shouldShowRationale
+        // 但是要注意：首次安装时shouldShowRationale也是false，所以需要额外检查
+        val isPermanentlyDenied = !isGranted && !shouldShowRationale && hasRequestedBefore
+        Timber.d("🔐 是否永久拒绝: $isPermanentlyDenied")
+        
+        return isPermanentlyDenied
+    }
+    
+    /**
+     * 检查是否之前请求过定位权限
+     * 通过检查SharedPreferences来记录权限请求历史
+     */
+    private fun hasRequestedLocationPermissionBefore(activity: Activity): Boolean {
+        val prefs = activity.getSharedPreferences("permission_history", Context.MODE_PRIVATE)
+        return prefs.getBoolean("location_permission_requested", false)
+    }
+    
+    /**
+     * 记录定位权限请求历史
+     */
+    fun markLocationPermissionRequested(activity: Activity) {
+        val prefs = activity.getSharedPreferences("permission_history", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("location_permission_requested", true).apply()
     }
     
     /**
@@ -156,14 +183,22 @@ object PermissionManager {
      * 获取定位权限状态描述
      */
     fun getLocationPermissionStatus(context: Context): PermissionStatus {
+        val isGranted = isLocationPermissionGranted(context)
+        val isPermanentlyDenied = context is Activity && isLocationPermissionPermanentlyDenied(context)
+        
+        Timber.d("🔐 权限状态检查: isGranted=$isGranted, isPermanentlyDenied=$isPermanentlyDenied")
+        
         return when {
-            isLocationPermissionGranted(context) -> {
+            isGranted -> {
+                Timber.d("✅ 权限状态: GRANTED")
                 PermissionStatus.GRANTED
             }
-            context is Activity && isLocationPermissionPermanentlyDenied(context) -> {
+            isPermanentlyDenied -> {
+                Timber.d("❌ 权限状态: PERMANENTLY_DENIED")
                 PermissionStatus.PERMANENTLY_DENIED
             }
             else -> {
+                Timber.d("⚠️ 权限状态: DENIED")
                 PermissionStatus.DENIED
             }
         }
