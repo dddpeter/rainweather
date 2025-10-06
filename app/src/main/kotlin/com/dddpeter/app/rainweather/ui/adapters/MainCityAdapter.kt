@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dddpeter.app.rainweather.data.models.CityModel
+import com.dddpeter.app.rainweather.data.models.CityWithWeather
 import com.dddpeter.app.rainweather.databinding.ItemMainCityBinding
 import java.util.Collections
 
@@ -18,11 +19,11 @@ import java.util.Collections
 class MainCityAdapter(
     private val onCityClick: (CityModel) -> Unit,
     private val onDeleteClick: (CityModel) -> Unit,
-    private val onOrderChanged: (List<CityModel>) -> Unit
-) : ListAdapter<CityModel, MainCityAdapter.ViewHolder>(CityDiffCallback()) {
+    private val onOrderChanged: (List<CityWithWeather>) -> Unit
+) : ListAdapter<CityWithWeather, MainCityAdapter.ViewHolder>(CityDiffCallback()) {
     
     private var itemTouchHelper: ItemTouchHelper? = null
-    private val cities = mutableListOf<CityModel>()
+    private val cities = mutableListOf<CityWithWeather>()
     
     fun attachToRecyclerView(recyclerView: RecyclerView) {
         val callback = ItemTouchHelperCallback()
@@ -30,7 +31,7 @@ class MainCityAdapter(
         itemTouchHelper?.attachToRecyclerView(recyclerView)
     }
     
-    override fun submitList(list: List<CityModel>?) {
+    override fun submitList(list: List<CityWithWeather>?) {
         cities.clear()
         list?.let { cities.addAll(it) }
         super.submitList(list?.let { ArrayList(it) })
@@ -57,7 +58,7 @@ class MainCityAdapter(
             binding.cardCity.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onCityClick(getItem(position))
+                    onCityClick(getItem(position).city)
                 }
             }
             
@@ -65,7 +66,7 @@ class MainCityAdapter(
             binding.ivDelete.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onDeleteClick(getItem(position))
+                    onDeleteClick(getItem(position).city)
                 }
             }
             
@@ -78,7 +79,10 @@ class MainCityAdapter(
             }
         }
         
-        fun bind(city: CityModel) {
+        fun bind(cityWithWeather: CityWithWeather) {
+            val city = cityWithWeather.city
+            
+            // 城市名称
             binding.tvCityName.text = city.name
             
             // 显示/隐藏当前位置标签
@@ -87,6 +91,11 @@ class MainCityAdapter(
             } else {
                 binding.tvCurrentLocationTag.visibility = View.GONE
             }
+            
+            // 天气信息
+            binding.tvWeatherIcon.text = cityWithWeather.getWeatherIconText()
+            binding.tvTemperature.text = cityWithWeather.getTemperatureText()
+            binding.tvWeatherDesc.text = cityWithWeather.getWeatherText()
         }
     }
     
@@ -133,12 +142,12 @@ class MainCityAdapter(
         override fun isItemViewSwipeEnabled(): Boolean = false // 禁用滑动
     }
     
-    private class CityDiffCallback : DiffUtil.ItemCallback<CityModel>() {
-        override fun areItemsTheSame(oldItem: CityModel, newItem: CityModel): Boolean {
-            return oldItem.id == newItem.id
+    private class CityDiffCallback : DiffUtil.ItemCallback<CityWithWeather>() {
+        override fun areItemsTheSame(oldItem: CityWithWeather, newItem: CityWithWeather): Boolean {
+            return oldItem.city.id == newItem.city.id
         }
         
-        override fun areContentsTheSame(oldItem: CityModel, newItem: CityModel): Boolean {
+        override fun areContentsTheSame(oldItem: CityWithWeather, newItem: CityWithWeather): Boolean {
             return oldItem == newItem
         }
     }

@@ -37,28 +37,75 @@
             android:layout_marginStart="16dp"
             android:orientation="vertical">
 
-            <!-- 城市名称 -->
-            <TextView
-                android:id="@+id/tv_city_name"
+            <!-- 城市名称和当前位置标签 -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="北京"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="北京" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <!-- 当前位置标签 -->
-            <TextView
-                android:id="@+id/tv_current_location_tag"
+                <TextView
+                    android:id="@+id/tv_city_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="北京"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="北京" />
+
+                <!-- 当前位置标签 -->
+                <TextView
+                    android:id="@+id/tv_current_location_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="当前位置"
+                    android:textColor="@color/accent_blue"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- 天气信息 -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="当前位置"
-                android:textColor="@color/accent_blue"
-                android:textSize="12sp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- 天气图标 -->
+                <TextView
+                    android:id="@+id/tv_weather_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="☀️"
+                    android:textSize="16sp"
+                    tools:text="☀️" />
+
+                <!-- 温度 -->
+                <TextView
+                    android:id="@+id/tv_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="22℃"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="14sp"
+                    tools:text="22℃" />
+
+                <!-- 天气描述 -->
+                <TextView
+                    android:id="@+id/tv_weather_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="晴"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="14sp"
+                    tools:text="晴" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- 删除按钮 -->

@@ -80,8 +80,9 @@ class TodayFragment : Fragment() {
         
         // 如果是查看特定城市，隐藏城市名称（Activity toolbar 会显示）
         if (cityId != null) {
-            // 新布局中没有城市名称显示，由Activity toolbar显示
-            Timber.d("🏙️ TodayFragment: 城市模式，cityId=$cityId")
+            // 隐藏城市名称显示，由Activity toolbar显示
+            binding.tvCityName.visibility = View.GONE
+            Timber.d("🏙️ TodayFragment: 城市模式，隐藏城市名称，cityId=$cityId")
         }
         
         setupViews()
@@ -91,7 +92,8 @@ class TodayFragment : Fragment() {
         // 在 CityWeatherActivity 中，Activity 会统一加载数据
         if (cityId == null) {
             Timber.d("📍 TodayFragment: 主页模式，开始初始化和加载定位数据")
-            viewModel.initializeWeather()
+            // 首次进入时自动刷新定位和数据
+            viewModel.refreshWithLocation()
         } else {
             Timber.d("🏙️ TodayFragment: 城市模式，等待 Activity 加载数据")
         }
@@ -150,15 +152,22 @@ class TodayFragment : Fragment() {
             }
         }
         
-        // 观察位置
+        // 观察位置（仅在主页模式下更新城市名称）
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentLocation.collect { location ->
-                if (location != null) {
-                    Timber.d("📍 TodayFragment 收到位置更新: district=${location.district}, cityId=$cityId")
-                    // 新布局中城市名称由Activity toolbar显示，这里不需要处理
-                    Timber.d("📍 位置更新: district=${location.district}")
+                if (cityId == null) {
+                    // 只在主页模式下更新城市名称
+                    if (location != null) {
+                        Timber.d("📍 TodayFragment 收到位置更新: district=${location.district}, cityId=$cityId")
+                        // 更新城市名称显示
+                        updateCityName(location)
+                    } else {
+                        Timber.d("📍 TodayFragment 收到位置更新: location=null")
+                        // 显示默认城市名称
+                        binding.tvCityName.text = "未知位置"
+                    }
                 } else {
-                    Timber.d("📍 TodayFragment 收到位置更新: location=null")
+                    Timber.d("📍 TodayFragment 城市模式，跳过位置更新")
                 }
             }
         }
@@ -179,6 +188,20 @@ class TodayFragment : Fragment() {
                 }
             }
         }
+    }
+    
+    /**
+     * 更新城市名称显示
+     */
+    private fun updateCityName(location: com.dddpeter.app.rainweather.data.models.LocationModel) {
+        val cityName = when {
+            !location.district.isNullOrEmpty() -> location.district
+            !location.city.isNullOrEmpty() -> location.city
+            !location.province.isNullOrEmpty() -> location.province
+            else -> "未知位置"
+        }
+        binding.tvCityName.text = cityName
+        Timber.d("🏙️ 更新城市名称: $cityName")
     }
     
     private fun updateWeatherUI(weather: com.dddpeter.app.rainweather.data.models.WeatherModel) {

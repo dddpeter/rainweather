@@ -101,7 +101,15 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.action_refresh -> {
                     // 刷新当前Fragment的数据
-                    (currentFragment as? TodayFragment)?.refresh()
+                    val fragment = currentFragment
+                    when (fragment) {
+                        is TodayFragment -> fragment.refresh()
+                        is MainCitiesFragment -> fragment.refresh()
+                        else -> {
+                            // 其他Fragment的刷新逻辑
+                            Toast.makeText(this, "刷新功能开发中", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     true
                 }
                 R.id.action_add_city -> {
@@ -242,8 +250,7 @@ class MainActivity : AppCompatActivity() {
             }
             PermissionManager.PermissionStatus.PERMANENTLY_DENIED -> {
                 Timber.w("❌ 定位权限被永久拒绝")
-                // 暂时不显示对话框，让用户自然使用应用
-                // 在需要定位时再提示
+                showLocationPermissionPermanentlyDeniedDialog()
             }
         }
     }
@@ -263,6 +270,27 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(
                     this,
                     R.string.permission_location_denied_message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+    
+    /**
+     * 显示定位权限被永久拒绝的对话框
+     */
+    private fun showLocationPermissionPermanentlyDeniedDialog() {
+        PermissionDialogs.showLocationPermissionPermanentlyDeniedDialog(
+            context = this,
+            onOpenSettings = {
+                Timber.d("👤 用户选择去设置页面")
+                PermissionManager.openAppSettings(this)
+            },
+            onCancel = {
+                Timber.d("👤 用户取消，使用默认位置")
+                Toast.makeText(
+                    this,
+                    "将使用默认位置（北京）",
                     Toast.LENGTH_SHORT
                 ).show()
             }

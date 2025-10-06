@@ -83,3 +83,35 @@ data class CityInfo(
     }
 }
 
+/**
+ * 带天气信息的城市模型（用于主要城市列表显示）
+ */
+@Parcelize
+data class CityWithWeather(
+    val city: CityModel,
+    val temperature: String? = null,
+    val weather: String? = null,
+    val weatherIcon: String? = null
+) : Parcelable {
+    /**
+     * 获取温度显示文本
+     */
+    fun getTemperatureText(): String {
+        return temperature ?: "--℃"
+    }
+    
+    /**
+     * 获取天气描述
+     */
+    fun getWeatherText(): String {
+        return weather ?: "未知"
+    }
+    
+    /**
+     * 获取天气图标
+     */
+    fun getWeatherIconText(): String {
+        return weatherIcon ?: "☀️"
+    }
+}
+
